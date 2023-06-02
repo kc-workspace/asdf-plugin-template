@@ -5,8 +5,3 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-  # dependabot for GitHub Actions for template repo
-  - package-ecosystem: "github-actions"
-    directory: "/templates"
-    schedule:
-      interval: "weekly"

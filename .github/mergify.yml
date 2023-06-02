@@ -37,7 +37,7 @@ pull_request_rules:
       - or:
           - author=kc-bot
           - author=kamontat
-          - author=dependabot[bot]
+          - author=dependabot
       - base=main
     actions:
       queue:
