@@ -1,0 +1,9 @@
+_subdirectory: templates
+
+project_name:
+  type: str
+  help: What is your project name?
+
+module_name:
+  type: str
+  help: What is your Python module name?
