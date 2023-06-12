@@ -1,23 +1,35 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
-
-
-export ASDF_PLUGIN_APP_NAME="{{ app_name }}"
-export ASDF_PLUGIN_APP_REPO="{{ app_git_repo }}"
-
 ## mark script as failed
-## e.g. `asdf_fail cannot found git-tag command`
+## e.g. `asdf_fail "cannot found git-tag command"`
 asdf_fail() {
-  local plugin_name="{{ plugin_name }}"
-  echo -e "$plugin_name: $*"
-	exit 1
+  local format="$1"
+  shift
+
+  printf "[ERR] %s: $format\n" \
+    "$ASDF_PLUGIN_NAME" "$@" >&2
+  exit 1
 }
 
-## log info messae to stderr
-## e.g. `asdf_info found git-tag command`
+## log info message to stderr
+## e.g. `asdf_info "found git-tag command"`
 asdf_info() {
-  printf "%@" >&2
+  local format="$1"
+  shift
+
+  printf "[INF] $format\n" "$@" >&2
+}
+
+## log debug message to stderr (only if $DEBUG had set)
+## e.g. `asdf_debug "found git-tag command"`
+asdf_debug() {
+  if [ -z "${DEBUG:-}" ]; then
+    return 0
+  fi
+
+  local format="$1"
+  shift
+  printf "[DBG] $format\n" "$@" >&2
 }
 
 ## url fetch wrapper
@@ -33,7 +45,10 @@ asdf_fetch() {
     )
 
     {% if 'github' in app_git_repo -%}
-    local token="${GITHUB_API_TOKEN:-${GITHUB_TOKEN:-$GH_TOKEN}}"
+    local token="${GITHUB_API_TOKEN:-}"
+    [ -z "$token" ] && token="${GITHUB_TOKEN:-}"
+    [ -z "$token" ] && token="${GH_TOKEN:-}"
+
     if [ -n "$token" ]; then
       options+=(
         --header
@@ -49,8 +64,22 @@ asdf_fetch() {
 ## Sorting version
 ## e.g. `get_versions | asdf_sort_versions`
 asdf_sort_versions() {
-	sed 'h; s/[+-]/./g; s/.p\([[:digit:]]\)/.z\1/; s/$/.z/; G; s/\n/ /' |
-		LC_ALL=C sort -t. -k 1,1 -k 2,2n -k 3,3n -k 4,4n -k 5,5n | awk '{print $2}'
+  sed 'h; s/[+-]/./g; s/.p\([[:digit:]]\)/.z\1/; s/$/.z/; G; s/\n/ /' |
+    LC_ALL=C sort -t. -k 1,1 -k 2,2n -k 3,3n -k 4,4n -k 5,5n | awk '{print $2}'
+}
+
+## Filtering version
+## e.g. `get_versions | asdf_filter_versions "1.11"`
+asdf_filter_versions() {
+  local query="$1"
+  grep -iE "^\\s*$query"
+}
+
+## Filtering only stable version
+## e.g. `get_versions | asdf_filter_stable`
+asdf_filter_stable() {
+  local query='(-src|-dev|-latest|-stm|[-\.]rc|-alpha|-beta|[-\.]pre|-next|snapshot|master)'
+  grep -ivE "$query"
 }
 
 ## List all tags from git repository
@@ -59,10 +88,10 @@ asdf_list_git_tags() {
   local repo="${1:-$ASDF_PLUGIN_APP_REPO}"
 
   # NOTE: You might want to adapt `sed` command to remove non-version strings from tags
-	git ls-remote --tags --refs "$repo" |
-		grep -o 'refs/tags/.*' |
+  git ls-remote --tags --refs "$repo" |
+    grep -o 'refs/tags/.*' |
     cut -d/ -f3- |
-		sed 's/^v//'
+    sed 's/^v//'
 }
 
 ## List all version sorted from git repository
@@ -71,13 +100,6 @@ asdf_sorted_version() {
   asdf_list_git_tags | asdf_sort_versions | xargs echo
 }
 
-asdf_find_latest() {
-  {% if 'github' in app_git_repo -%}
-  asdf_gh_latest
-  {%- else -%}
-  ## TODO: implement how to find latest version
-  {%- endif %}
-}
 {%- if 'github' in app_git_repo %}
 
 ## get version marked as latest on Github
@@ -86,18 +108,22 @@ asdf_gh_latest() {
   local repo="${1:-$ASDF_PLUGIN_APP_REPO}"
   local url="" version=""
   url="$(
-    asdf_fetch --head "$repo" |
+    asdf_fetch --head "$repo/releases/latest" |
       sed -n -e "s|^location: *||p" |
       sed -n -e "s|\r||p"
   )"
 
-  asdf_info "redirect url: %s\n" "$url"
+  asdf_debug "redirect url: %s" "$url"
   if [[ "$url" == "$repo/releases" ]]; then
-    asdf_info "use 'tail' mode get latest version"
-	  version="$(asdf_sorted_version | tail -n1)"
-  else
-    asdf_info "use 'gh-latest' mode get latest version"
-	  version="$(printf "%s\n" "$redirect_url" | sed 's|.*/tag/v\{0,1\}||')"
+    asdf_debug "use 'tail' mode get latest version"
+    version="$(asdf_sorted_version | tail -n1)"
+  elif [[ "$url" != "" ]]
+    asdf_debug "use 'gh-latest' mode get latest version"
+    version="$(printf "%s\n" "$url" | sed 's|.*/tag/v\{0,1\}||')"
   fi
+
+  [ -n "$version" ] &&
+    printf "%s" "$version" ||
+    return 1
 }
 {%- endif %}

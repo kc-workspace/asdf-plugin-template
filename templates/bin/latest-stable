@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-## Output the list of dependencies tailored to the operating system.
-## One dependency per line.
-## https://asdf-vm.com/plugins/create.html#bin-help-deps
+## Determine the latest stable version of a tool.
+## https://asdf-vm.com/plugins/create.html#bin-latest-stable
 
 set -euo pipefail
 
@@ -14,8 +13,4 @@ source "${ASDF_PLUGIN_PATH:?}/lib/commands.sh"
 
 ## -----------------------------------------------------------------------
 
-local deps=(git curl sed)
-
-for dep in "${deps[@]}"; do
-  printf "%s\n" "$dep"
-done
+_asdf_query_latest "$1"
