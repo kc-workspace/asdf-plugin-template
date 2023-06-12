@@ -1,9 +1,40 @@
 _subdirectory: templates
 
-project_name:
-  type: str
-  help: What is your project name?
+# _tasks:
+#   - "git init"
+#   - "git remote add origin {{ git_remote }}"
+#   - "git add ."
+#   - "git commit --message 'feat(core): initiate new plugin'"
 
-module_name:
+app_name:
   type: str
-  help: What is your Python module name?
+  help: What is your app name?
+  placeholder: xxxx
+
+app_git_repo:
+  type: str
+  help: Where is your app git repo?
+  placeholder: https://github.com/octocat/Hello-World
+
+plugin_org:
+  type: str
+  help: What is your plugin Github organization?
+  default: kc-workspace
+
+plugin_name:
+  type: str
+  help: What is your plugin name?
+  default: asdf-{{ app_name }}
+
+plugin_author:
+  type: str
+  help: Who are you (prefer full name)?
+  default: Kamontat Chantrachirathumrong
+
+git_remote:
+  type: str
+  help: What is your git remote type?
+  default: https://github.com/{{ plugin_org }}/{{ plugin_name }}.git
+  choices:
+    https: https://github.com/{{ plugin_org }}/{{ plugin_name }}.git
+    ssh: git@github.com:{{ plugin_org }}/{{ plugin_name }}.git
