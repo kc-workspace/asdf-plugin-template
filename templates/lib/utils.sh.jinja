@@ -117,7 +117,7 @@ asdf_gh_latest() {
   if [[ "$url" == "$repo/releases" ]]; then
     asdf_debug "use 'tail' mode get latest version"
     version="$(asdf_sorted_version | tail -n1)"
-  elif [[ "$url" != "" ]]
+  elif [[ "$url" != "" ]]; then
     asdf_debug "use 'gh-latest' mode get latest version"
     version="$(printf "%s\n" "$url" | sed 's|.*/tag/v\{0,1\}||')"
   fi
