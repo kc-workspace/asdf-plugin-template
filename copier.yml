@@ -1,11 +1,11 @@
 _subdirectory: templates
+_answers_file: config.yml
 
 _tasks:
-  # - "git init"
-  # - "git remote add origin {{ git_remote }}"
+  - "git init"
+  - "git remote add origin {{ git_remote }}"
   - "git add ."
   - "git commit --message 'feat(core): initiate new plugin'"
-  - "git push"
 
 app_name:
   type: str
