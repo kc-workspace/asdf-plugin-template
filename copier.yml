@@ -27,6 +27,21 @@ app_strip_component:
   when: "{{ 'tar.gz' in app_download_link }}"
   default: 0
 
+settings_os_mapper_enabled:
+  type: bool
+  help: Is default OS name (from 'uname') meet your requirement?
+  default: false
+
+setting_os_mapper_darwin:
+  type: str
+  help: What is your darwin (macOS) name?
+  default: darwin
+
+setting_os_mapper_linux:
+  type: str
+  help: What is your linux OS name?
+  default: linux
+
 plugin_org:
   type: str
   help: What is your plugin Github organization?

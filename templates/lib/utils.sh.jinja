@@ -139,7 +139,23 @@ asdf_list_git_tags() {
 ## Print current OS
 ## e.g. `asdf_get_os`
 asdf_get_os() {
-  uname | tr '[:upper:]' '[:lower:]'
+  local os="${ASDF_OVERRIDE_OS:-}"
+  if [ -n "$os" ]; then
+    asdf_info "user overriding OS to '%s'" "$os"
+    printf "%s" "$os"
+    return 0
+  fi
+
+  os="$(uname | tr '[:upper:]' '[:lower:]')"
+
+  {%- if settings_os_mapper_enabled %}
+  case "$os" in
+  darwin) os="{{ setting_os_mapper_darwin }}" ;;
+  linux) os="{{ setting_os_mapper_linux }}" ;;
+  esac
+  {%- endif %}
+
+  printf "%s" "$os"
 }
 
 ## Print current arch (support override by $ASDF_OVERRIDE_ARCH)
@@ -153,7 +169,6 @@ asdf_get_arch() {
   fi
 
   arch="$(uname -m)"
-
   case "$arch" in
   x86_64) arch="amd64" ;;
   x86 | i686 | i386) arch="386" ;;
