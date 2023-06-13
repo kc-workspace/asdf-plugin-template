@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.2](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.3.1...v1.3.2) (2023-06-13)
+
+
+### Improvements
+
+* add tgz support for unzip file ([16aa975](https://github.com/kc-workspace/asdf-plugin-template/commit/16aa9755bf8f90cc712da6a26168236dfca54630))
+* **utils:** list directory without wrap with debug logs ([c2d98e5](https://github.com/kc-workspace/asdf-plugin-template/commit/c2d98e56964fbc8296ed5c83c0ee1f7b96c5fbf0))
+
 ## [1.3.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.3.0...v1.3.1) (2023-06-13)
 
 
