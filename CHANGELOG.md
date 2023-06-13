@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.2](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.1.1...v1.1.2) (2023-06-13)
+
+
+### Bug Fixes
+
+* github workflow use invalid template format ([46a9935](https://github.com/kc-workspace/asdf-plugin-template/commit/46a993512d39c6b0ff8cfbeda5e10211aa27c541))
+
+
+### Performance Improvements
+
+* **template:** upgrade super-linter to v5 ([d85615b](https://github.com/kc-workspace/asdf-plugin-template/commit/d85615b69667bc21b5eb4794084d6fef21b741df))
+
 ## [1.1.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.1.0...v1.1.1) (2023-06-13)
 
 
