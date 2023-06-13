@@ -33,6 +33,15 @@ asdf_debug() {
   printf "[DBG] $format\n" "$@" >&2
 }
 
+## execute input command only if on debug mode
+## e.g. `asdf_on_debug echo 'hello debugger'`
+asdf_on_debug() {
+  if [ -z "${DEBUG:-}" ]; then
+    return 0
+  fi
+  "$@"
+}
+
 ## Sorting version
 ## e.g. `get_versions | asdf_version_sort`
 asdf_version_sort() {
@@ -140,8 +149,10 @@ asdf_install() {
   mv "$dldir" "$(dirname "$itdir")" &&
     asdf_debug "installed dir at %s" "$itdir"
   {%- elif app_download_type == 'file' -%}
-  local dlpath="$dldir/{{ app_download_file }}"
-  local itpath="$itdir/bin"
+  local dlpath itpath
+  dlpath="$dldir/{{ app_download_file }}"
+  itpath="$itdir/bin"
+
   mkdir -p "$itpath" 2>/dev/null
 
   asdf_debug "installing file from '%s' to '%s'" \
@@ -151,18 +162,18 @@ asdf_install() {
   chmod +x "$itpath/$file"
   {%- endif %}
 
-  asdf_debug "ls '%s': %s" \
-    "$itdir" \
-    "$(ls "$itdir" | tr '\n' ' ')"
+  asdf_debug "list file/folder at %s" \
+    "$itdir" &&
+    asdf_on_debug ls "$itdir"
   [ -d "$itdir/bin" ] &&
-    asdf_debug "ls '%s': %s" \
-      "$itdir/bin" \
-      "$(ls "$itdir/bin" | tr '\n' ' ')"
+    asdf_debug "list file/folder at %s" \
+      "$itdir/bin" &&
+    asdf_on_debug ls "$itdir/bin"
 
   local executor="$itdir/bin/$file"
   [ -f "$executor" ] ||
-    asdf_fail "command '%s' is missing from '%s' [%s]" \
-      "$file" "$itdir/bin" "$(ls "$itdir/bin" | tr '\n' ' ')"
+    asdf_fail "command '%s' is missing from '%s'" \
+      "$file" "$itdir/bin"
   $executor >/dev/null ||
     asdf_fail "'%s' execute failed"
 
@@ -182,7 +193,8 @@ asdf_download() {
   asdf_info "starting [%15s] %s" \
     "download" "$download"
 
-  local tmpfile="{{ app_download_link.split('/') | last }}"
+  local tmpfile
+  tmpfile="{{ app_download_link.split('/') | last }}"
   local tmpdir
   tmpdir="$(mktemp -d)"
   local tmppath="$tmpdir/$tmpfile"
@@ -201,6 +213,7 @@ asdf_download() {
       [[ "$tmppath" =~ \.zip$ ]]; then
       asdf_debug "extracting %s file to %s" \
         "$tmppath" "$outdir"
+      # shellcheck disable=SC2015
       asdf_extract_tar "$tmppath" "$outdir" &&
         rm "$tmppath" &&
         asdf_debug "finished [%15s] '%s' successfully" \
@@ -214,9 +227,9 @@ asdf_download() {
     fi
   fi
 
-  asdf_debug "ls '%s': %s" \
-    "$outdir" \
-    "$(ls "$outdir" | tr '\n' ' ')"
+  asdf_debug "list file/folder at %s" \
+    "$outdir" &&
+    asdf_on_debug ls "$outdir"
 
   local name="$ASDF_PLUGIN_APP_NAME"
   asdf_info "finished [%15s] '%s' successfully" \
