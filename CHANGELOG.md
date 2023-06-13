@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.3.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.3.0...v1.3.1) (2023-06-13)
+
+
+### Improvements
+
+* move utils.sh to common.sh and use utils.sh for user define function ([20e685e](https://github.com/kc-workspace/asdf-plugin-template/commit/20e685ef908906969e9e2ddc77ff8eed51369ec9))
+* skip bin/* and utils.sh file if exist as it user define file ([1d62295](https://github.com/kc-workspace/asdf-plugin-template/commit/1d62295e49d7409716b1cfa20949e2d21e123f94))
+* support os mapper to new name ([a450d44](https://github.com/kc-workspace/asdf-plugin-template/commit/a450d44f18cff46374718c8270d0eacc8f09a8be))
+* **template:** support download and install directory with custom bin path on file type ([978ba46](https://github.com/kc-workspace/asdf-plugin-template/commit/978ba4665f04ad00cd614ee1ffbb897ef0696cd6))
+* **template:** support extract zip file using tar cli ([a1d8791](https://github.com/kc-workspace/asdf-plugin-template/commit/a1d8791d6bafea4096d004a7c9c8f586af5fb6f7))
+
+
+### Bugfixes
+
+* **typo:** update question message ([6e2aa2c](https://github.com/kc-workspace/asdf-plugin-template/commit/6e2aa2c6ff1595e47245ba6c9adbe3caa5d0583b))
+
 ## [1.3.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.2.4...v1.3.0) (2023-06-13)
 
 
