@@ -27,7 +27,7 @@ app_download_link:
 
 app_download_type:
   type: str
-  help: What is your appl download type?
+  help: What is your app download type?
   default: file
   choices:
     - file
