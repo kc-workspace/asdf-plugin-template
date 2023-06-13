@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.1.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.0.0...v1.1.0) (2023-06-13)
+
+
+### Features
+
+* add first draft of asdf-plugin template ([8d46cf8](https://github.com/kc-workspace/asdf-plugin-template/commit/8d46cf8f53086ef6d4db1d49737479625fb1b541))
+* prepare to next release ([b5db296](https://github.com/kc-workspace/asdf-plugin-template/commit/b5db296b190533bdadbe4c04f2befd65fbab0d20))
+
+
+### Bug Fixes
+
+* linter failed ([f7f982b](https://github.com/kc-workspace/asdf-plugin-template/commit/f7f982b7bf8d76c940dc248b50fd879e0846b5b6))
+* mergify didn't merge dependabot ([b922954](https://github.com/kc-workspace/asdf-plugin-template/commit/b922954c61ace94e5552699e0c10182243a763ce))
+* script syntax error ([13873af](https://github.com/kc-workspace/asdf-plugin-template/commit/13873af5d95a3621dba1d20418b05fd3fa543eb9))
+* update templates as problem found ([6185f3d](https://github.com/kc-workspace/asdf-plugin-template/commit/6185f3d2ebb5f1eae0328101c81bf7f64c68d76f))
+
 ## 1.0.0 (2023-06-02)
 
 
