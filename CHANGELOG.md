@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.1.0...v1.1.1) (2023-06-13)
+
+
+### Bug Fixes
+
+* missing tasks after generate project ([1b563cc](https://github.com/kc-workspace/asdf-plugin-template/commit/1b563ccc2c6cbf70ba84377d99821f13eff2ce7c))
+
 ## [1.1.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.0.0...v1.1.0) (2023-06-13)
 
 
