@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.3](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.3.2...v1.3.3) (2023-06-13)
+
+
+### Improvements
+
+* add command argument for testing on CI ([ba10124](https://github.com/kc-workspace/asdf-plugin-template/commit/ba101245b38e5e7a1c4dc041f4b02ee56222bb6e))
+* **lib:** don't test command when installed as we tested on CI already ([453aa0c](https://github.com/kc-workspace/asdf-plugin-template/commit/453aa0c6ce62666c35845b5645e141b44252e45b))
+
 ## [1.3.2](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.3.1...v1.3.2) (2023-06-13)
 
 
