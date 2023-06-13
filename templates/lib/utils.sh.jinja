@@ -170,20 +170,25 @@ asdf_get_arch() {
 ## Install app to input location (support chmod)
 asdf_install() {
   local dldir="$1" itdir="$2"
-  local file="$ASDF_PLUGIN_APP_OUTPUT"
+  local file="$ASDF_PLUGIN_APP_NAME"
 
   local dlpath="$dldir/$file"
   asdf_debug "installing app at %s" "$itdir"
 
   if [ -d "$dlpath" ]; then
+    asdf_debug "moving dir from %s to %s" \
+      "$dlpath" "$itdir"
     mv "$dlpath" "$itdir" &&
-      asdf_debug "installed app at %s" "$itdir"
+      asdf_debug "installed dir at %s" "$itdir"
   elif [ -f "$dlpath" ]; then
     local itpath="$itdir/bin"
 
     mkdir -p "$itpath" 2>/dev/null
+
+    asdf_debug "moving file from %s to %s" \
+      "$dlpath" "$itpath"
     mv "$dlpath" "$itpath" &&
-      asdf_debug "installed app at %s" "$itpath"
+      asdf_debug "installed file at %s" "$itpath"
     chmod +x "$itpath/$file"
   else
     asdf_fail "unknown download path type (%s)" \
@@ -192,11 +197,13 @@ asdf_install() {
 
   local name="$ASDF_PLUGIN_APP_NAME"
   local executor="$itdir/bin/$name"
-  [ -f "$executor" ] || asdf_fail "'%s' is missing from '%s'" \
-    "$name" "$itdir/bin"
-  $executor >/dev/null || asdf_fail "'%s' execute failed"
+  [ -f "$executor" ] ||
+    asdf_fail "command '%s' is missing from '%s'" \
+      "$name" "$itdir/bin"
+  $executor >/dev/null ||
+    asdf_fail "'%s' execute failed"
 
-  asdf_info "finished [%-15s] '%s' successfully" \
+  asdf_info "finished [%15s] '%s' successfully" \
     "install" "$name"
 }
 
@@ -209,53 +216,39 @@ asdf_download() {
 
   local download
   download="{{ app_download_link }}"
-
-  asdf_info "starting [%-15s] %s" \
+  asdf_info "starting [%15s] %s" \
     "download" "$download"
 
   local tmpfile="{{ app_download_link.split('/') | last }}"
-  local tmpdir="$2"
+  local tmpdir="$(mktemp -d)"
   local tmppath="$tmpdir/$tmpfile"
-  asdf_debug "create temp path at %s" "$tmppath"
 
+  asdf_debug "download output %s" \
+    "$tmppath"
   asdf_fetch_file "$download" "$tmppath"
 
-  local name="$ASDF_PLUGIN_APP_NAME"
-  asdf_info "finished [%-15s] '%s' successfully" \
-    "download" "$name"
-}
-
-## Post download will handle
-## extract and move output to correct location
-asdf_post_download() {
-  local tmppath="$1"
-
-  local outfile="$ASDF_PLUGIN_APP_OUTPUT"
   local outdir="$2"
-  local outpath="$outdir/$outfile"
+  local outpath="$outdir/$ASDF_PLUGIN_APP_NAME"
 
-  if command -v "__asdf_post_download" >/dev/null; then
-    if __asdf_post_download; then
-      return 0
-    else
+  if command -v "asdf_post_download" >/dev/null; then
+    asdf_post_download "$tmppath" "$outpath" ||
       asdf_fail "custom post download failed"
+  else
+    if [[ "$tmppath" =~ \.tar\.gz$ ]]; then
+      asdf_debug "extracting %s file to %s" \
+        "$tmppath" "$outdir"
+      asdf_extract_tar "$tmppath" "$outdir" &&
+        rm "$tmppath"
+    else
+      asdf_debug "moving app from %s to %s" \
+        "$tmppath" "$outpath"
+      mv "$tmppath" "$outpath"
     fi
   fi
 
-  if [[ "$tmppath" =~ \.tar\.gz$ ]]; then
-    asdf_debug "extracting %s file to %s" \
-      "$tmppath" "$outdir"
-    asdf_extract_tar "$tmppath" "$outdir" &&
-      rm "$tmppath"
-  else
-    asdf_debug "moving app from %s to %s" \
-      "$tmppath" "$outpath"
-    mv "$tmppath" "$outpath"
-  fi
-
   local name="$ASDF_PLUGIN_APP_NAME"
-  asdf_info "finished [%-15s] '%s' successfully" \
-    "post-download" "$name"
+  asdf_info "finished [%15s] '%s' successfully" \
+    "download" "$name"
 }
 
 ## Extract contents of tar.gz file
