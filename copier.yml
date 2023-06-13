@@ -1,11 +1,11 @@
 _subdirectory: templates
-_answers_file: config.yml
+_answers_file: .copier-answers.yml
 
-_tasks:
-  - "git init"
-  - "git remote add origin {{ git_remote }}"
-  - "git add ."
-  - "git commit --message 'feat(core): initiate new plugin'"
+_tasks: []
+  # - "git init"
+  # - "git remote add origin {{ git_remote }}"
+  # - "git add ."
+  # - "git commit --message 'feat(core): initiate new plugin'"
 
 app_name:
   type: str
@@ -16,6 +16,16 @@ app_git_repo:
   type: str
   help: Where is your app git repo?
   placeholder: https://github.com/octocat/Hello-World
+
+app_download_link:
+  type: str
+  help: Where can we download app (variables '${arch}', '${os}', '${version}')?
+  placeholder: https://example.com/${version}/${arch}/${os}/download
+
+app_download_output:
+  type: str
+  help: What is your download output name?
+  default: "{{ app_download_link.split('/') | last }}"
 
 plugin_org:
   type: str
