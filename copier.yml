@@ -1,7 +1,8 @@
+---
 _subdirectory: templates
 _answers_file: .copier-answers.yml
 
-_tasks: []
+_tasks: [ ]
   # - "git init"
   # - "git remote add origin {{ git_remote }}"
   # - "git add ."
