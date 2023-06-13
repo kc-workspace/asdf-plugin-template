@@ -61,6 +61,11 @@ setting_os_mapper_linux:
   default: linux
   when: "{{ settings_os_mapper_enabled }}"
 
+setting_test_command_arguments:
+  type: str
+  help: How to test app commandline (e.g. --help)?
+  default: ''
+
 plugin_org:
   type: str
   help: What is your plugin Github organization?
