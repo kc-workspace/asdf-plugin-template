@@ -2,6 +2,10 @@
 _subdirectory: templates
 _answers_file: .copier-answers.yml
 
+_skip_if_exists:
+    - bin
+    - lib/utils.sh
+
 _tasks:
   - "git init"
   - "git remote add origin {{ git_remote }} || exit 0"
@@ -24,7 +28,7 @@ app_download_link:
 app_strip_component:
   type: int
   help: How many directory in tar.gz need to strip before found tool?
-  when: "{{ 'tar.gz' in app_download_link }}"
+  when: "{{ 'tar.gz' in app_download_link or 'zip' in app_download_link }}"
   default: 0
 
 settings_os_mapper_enabled:
@@ -36,11 +40,13 @@ setting_os_mapper_darwin:
   type: str
   help: What is your darwin (macOS) name?
   default: darwin
+  when: "{{ settings_os_mapper_enabled }}"
 
 setting_os_mapper_linux:
   type: str
   help: What is your linux OS name?
   default: linux
+  when: "{{ settings_os_mapper_enabled }}"
 
 plugin_org:
   type: str
