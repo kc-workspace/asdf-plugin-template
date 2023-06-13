@@ -21,11 +21,6 @@ app_download_link:
   help: Where can we download app (variables '${arch}', '${os}', '${version}')?
   placeholder: https://example.com/${version}/${arch}/${os}/download
 
-app_download_output:
-  type: str
-  help: What is your download output name?
-  default: "{{ app_download_link.split('/') | last }}"
-
 plugin_org:
   type: str
   help: What is your plugin Github organization?
