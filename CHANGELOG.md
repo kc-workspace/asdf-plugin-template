@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.2.4...v1.3.0) (2023-06-13)
+
+
+### Features
+
+* support strip directory on extract tar.gz file ([75dceb0](https://github.com/kc-workspace/asdf-plugin-template/commit/75dceb01bc9af4deab62aa795685aac3daf56a51))
+
 ## [1.2.4](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.2.3...v1.2.4) (2023-06-13)
 
 
