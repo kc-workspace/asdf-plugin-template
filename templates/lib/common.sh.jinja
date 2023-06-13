@@ -33,65 +33,6 @@ asdf_debug() {
   printf "[DBG] $format\n" "$@" >&2
 }
 
-## url fetch wrapper; CURL_OPTIONS=() for curl options
-## e.g. `asdf_fetch https://google.com`
-asdf_fetch() {
-  local options=()
-  local url="$1"
-  local token=""
-
-  if [[ "$url" =~ ^https://github.com ]]; then
-    token="${GITHUB_API_TOKEN:-}"
-    [ -z "$token" ] && token="${GITHUB_TOKEN:-}"
-    [ -z "$token" ] && token="${GH_TOKEN:-}"
-  fi
-
-  if command -v "curl" >/dev/null; then
-    options+=(
-      --fail
-      --silent
-      --show-error
-    )
-
-    [ -n "${CURL_OPTIONS:-}" ] &&
-      options+=("${CURL_OPTIONS[@]}")
-
-    if [ -n "$token" ]; then
-      options+=(
-        --header
-        "Authorization: token $token"
-      )
-    fi
-
-    asdf_debug "exec: curl %s %s" \
-      "${options[*]}" "$url"
-    if ! curl "${options[@]}" "$url"; then
-      asdf_fail "fetching %s failed" "$url"
-    fi
-
-    return 0
-  fi
-
-  asdf_fail "fetch command (e.g. curl) not found"
-}
-
-## fetch url and save to file
-## e.g. `asdf_fetch_file https://google.com /tmp/output`
-asdf_fetch_file() {
-  local url="$1"
-  export CURL_OPTIONS=(--output "$2" --location)
-  asdf_fetch "$url"
-  unset CURL_OPTIONS
-}
-
-## fetch url header
-## e.g. `asdf_fetch_head https://google.com`
-asdf_fetch_head() {
-  export CURL_OPTIONS=(--head)
-  asdf_fetch "$1"
-  unset CURL_OPTIONS
-}
-
 ## Sorting version
 ## e.g. `get_versions | asdf_version_sort`
 asdf_version_sort() {
@@ -268,6 +209,65 @@ asdf_download() {
   local name="$ASDF_PLUGIN_APP_NAME"
   asdf_info "finished [%15s] '%s' successfully" \
     "download" "$name"
+}
+
+## url fetch wrapper; CURL_OPTIONS=() for curl options
+## e.g. `asdf_fetch https://google.com`
+asdf_fetch() {
+  local options=()
+  local url="$1"
+  local token=""
+
+  if [[ "$url" =~ ^https://github.com ]]; then
+    token="${GITHUB_API_TOKEN:-}"
+    [ -z "$token" ] && token="${GITHUB_TOKEN:-}"
+    [ -z "$token" ] && token="${GH_TOKEN:-}"
+  fi
+
+  if command -v "curl" >/dev/null; then
+    options+=(
+      --fail
+      --silent
+      --show-error
+    )
+
+    [ -n "${CURL_OPTIONS:-}" ] &&
+      options+=("${CURL_OPTIONS[@]}")
+
+    if [ -n "$token" ]; then
+      options+=(
+        --header
+        "Authorization: token $token"
+      )
+    fi
+
+    asdf_debug "exec: curl %s %s" \
+      "${options[*]}" "$url"
+    if ! curl "${options[@]}" "$url"; then
+      asdf_fail "fetching %s failed" "$url"
+    fi
+
+    return 0
+  fi
+
+  asdf_fail "fetch command (e.g. curl) not found"
+}
+
+## fetch url and save to file
+## e.g. `asdf_fetch_file https://google.com /tmp/output`
+asdf_fetch_file() {
+  local url="$1"
+  export CURL_OPTIONS=(--output "$2" --location)
+  asdf_fetch "$url"
+  unset CURL_OPTIONS
+}
+
+## fetch url header
+## e.g. `asdf_fetch_head https://google.com`
+asdf_fetch_head() {
+  export CURL_OPTIONS=(--head)
+  asdf_fetch "$1"
+  unset CURL_OPTIONS
 }
 
 ## Extract contents of tar.gz file
