@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.2.1...v1.2.2) (2023-06-13)
+
+
+### Bug Fixes
+
+* shellcheck error ([ad7d3b5](https://github.com/kc-workspace/asdf-plugin-template/commit/ad7d3b5c7be6db8a766326d67f1e2d3a744bcaee))
+
 ## [1.2.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.2.0...v1.2.1) (2023-06-13)
 
 
