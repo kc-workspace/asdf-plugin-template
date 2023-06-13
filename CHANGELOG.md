@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.2.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.2.0...v1.2.1) (2023-06-13)
+
+
+### Performance Improvements
+
+* make log more beautiful ([20ff27d](https://github.com/kc-workspace/asdf-plugin-template/commit/20ff27d305ffa9d9df8a5d7ca8754d7573421661))
+* remove duplicate question ([28a79d2](https://github.com/kc-workspace/asdf-plugin-template/commit/28a79d2e74748e9758d8d8fe4d132d1831925f37))
+* support post_download function override and fix buges ([ae765d3](https://github.com/kc-workspace/asdf-plugin-template/commit/ae765d37e9b6e37ef01484a4d88a8f056f8f528e))
+* **template:** make list-all bin verbose for easier to modify on each project ([f8ac5bb](https://github.com/kc-workspace/asdf-plugin-template/commit/f8ac5bb1834868b30f3eaa349012c0330b886165))
+* **template:** provide solution to override how we do after downloaded ([92e871c](https://github.com/kc-workspace/asdf-plugin-template/commit/92e871c0010bae65ed399d7d518fc3d4b886cbc4))
+
 ## [1.2.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.1.2...v1.2.0) (2023-06-13)
 
 
