@@ -3,8 +3,8 @@ _subdirectory: templates
 _answers_file: .copier-answers.yml
 
 _skip_if_exists:
-    - bin
     - lib/utils.sh
+    - bin
 
 _tasks:
   - "git init"
@@ -25,10 +25,23 @@ app_download_link:
   help: Where can we download app (variables '${arch}', '${os}', '${version}')?
   placeholder: https://example.com/${version}/${arch}/${os}/download
 
+app_download_type:
+  type: str
+  help: What is your appl download type?
+  default: file
+  choices:
+    - file
+    - directory
+
+app_download_file:
+  type: str
+  help: Where is your app path from download directory (variables '${arch}', '${os}', '${version}')?
+  when: "{{ app_download_type == 'file' }}"
+  default: "{{ app_name }}"
+
 app_strip_component:
   type: int
   help: How many directory in tar.gz need to strip before found tool?
-  when: "{{ 'tar.gz' in app_download_link or 'zip' in app_download_link }}"
   default: 0
 
 settings_os_mapper_enabled:
