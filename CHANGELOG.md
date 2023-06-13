@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.3](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.2.2...v1.2.3) (2023-06-13)
+
+
+### Bugfixes
+
+* SC1090 error from project shellcheck ([8e72d34](https://github.com/kc-workspace/asdf-plugin-template/commit/8e72d34b03b4579c3763efb38f83143fb79c34c4))
+
+
+### Miscellaneous
+
+* ignore linting CHANGELOG file ([74007d1](https://github.com/kc-workspace/asdf-plugin-template/commit/74007d137383974727c15589deb5bc32a9ace984))
+* update release CHANGELOG format ([4dcf664](https://github.com/kc-workspace/asdf-plugin-template/commit/4dcf664a17c8c1c602ab12f1925b8c11d25b6d04))
+
 ## [1.2.2](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.2.1...v1.2.2) (2023-06-13)
 
 
