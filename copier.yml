@@ -4,9 +4,7 @@ _answers_file: .copier-answers.yml
 
 _tasks:
   - "git init"
-  - "git remote add origin {{ git_remote }}"
-  - "git add ."
-  - "git commit --message 'feat(core): initiate new plugin'"
+  - "git remote add origin {{ git_remote }} || exit 0"
 
 app_name:
   type: str
