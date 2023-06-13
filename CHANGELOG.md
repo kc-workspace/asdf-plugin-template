@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.4](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.2.3...v1.2.4) (2023-06-13)
+
+
+### Bugfixes
+
+* linters fail ([7fac734](https://github.com/kc-workspace/asdf-plugin-template/commit/7fac7341ea40142976f32d977e44cec77dd6a422))
+
 ## [1.2.3](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.2.2...v1.2.3) (2023-06-13)
 
 
