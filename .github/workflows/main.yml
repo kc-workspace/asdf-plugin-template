@@ -49,4 +49,5 @@ jobs:
           DEFAULT_BRANCH: ${{ env.DEFAULT_BRANCH }}
           VALIDATE_ALL_CODEBASE: false
           IGNORE_GITIGNORED_FILES: true
+          FILTER_REGEX_EXCLUDE: "templates/**/*.jinja"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
