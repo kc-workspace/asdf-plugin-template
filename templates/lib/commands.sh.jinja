@@ -21,15 +21,20 @@ _asdf_query_latest() {
   ## ref: https://github.com/asdf-vm/asdf/blob/5b7d0fea0a10681d89dd7bf4010e0a39e6696841/lib/functions/versions.bash#L136
   local query="$1"
 
+  {%- if 'github' in app_git_repo %}
+
   if [[ "$query" == "[0-9]" ]]; then
     if asdf_gh_latest; then
       return 0
     fi
   fi
+  {%- endif %}
 
   asdf_list_git_tags |
-    asdf_version_filter_by "$query" |
-    asdf_version_stable_only |
+    asdf_version_only 'v' |
+    asdf_version_format 'v' |
+    asdf_version_only "$query" |
+    asdf_version_only_stable |
     asdf_version_sort |
     tail -n1
 }

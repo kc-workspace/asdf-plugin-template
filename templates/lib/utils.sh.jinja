@@ -99,36 +99,41 @@ asdf_version_sort() {
     LC_ALL=C sort -t. -k 1,1 -k 2,2n -k 3,3n -k 4,4n -k 5,5n | awk '{print $2}'
 }
 
-## Filtering version
-## e.g. `get_versions | asdf_version_filter_by "1.11"`
-asdf_version_filter_by() {
-  local query="$1"
-  grep -iE "^\\s*$query"
-}
-
 ## Filtering only stable version
-## e.g. `get_versions | asdf_version_stable_only`
-asdf_version_stable_only() {
+## e.g. `get_versions | asdf_version_only_stable`
+asdf_version_only_stable() {
   local query='(-src|-dev|-latest|-stm|[-\.]rc|-alpha|-beta|[-\.]pre|-next|snapshot|master)'
   grep -ivE "$query"
+}
+
+## Format version by remove prefix (default is `v`)
+## e.g. `get_versions | asdf_version_format 'v'`
+asdf_version_format() {
+  local prefix="${1:-v}"
+  sed "s/^$prefix//"
+}
+
+## Filter input regex from pipe list
+## e.g. `get_versions | asdf_version_regex '[0-9]+'`
+asdf_version_regex() {
+  local query="$1"
+  grep -iE "$query"
+}
+
+## Filter input version from pipe list
+## e.g. `get_versions | asdf_version_only '1.11'`
+asdf_version_only() {
+  local query="$1"
+  grep -iE "^\\s*$query"
 }
 
 ## List all tags from git repository
 ## e.g. `asdf_list_git_tags`
 asdf_list_git_tags() {
   local repo="$ASDF_PLUGIN_APP_REPO"
-
-  # NOTE: You might want to adapt `sed` command to remove non-version strings from tags
   git ls-remote --tags --refs "$repo" |
     grep -o 'refs/tags/.*' |
-    cut -d/ -f3- |
-    sed 's/^v//'
-}
-
-## List all version sorted from git repository
-## e.g. `asdf_list_versions`
-asdf_list_versions() {
-  asdf_list_git_tags | asdf_version_sort | xargs echo
+    cut -d/ -f3-
 }
 
 ## Print current OS
@@ -202,7 +207,8 @@ asdf_download() {
   os="$(asdf_get_os)"
   arch="$(asdf_get_arch)"
 
-  local download="{{ app_download_link }}"
+  local download
+  download="{{ app_download_link }}"
   asdf_info "starting download from %s" "$download"
 
   local tmpfile="{{ app_download_link.split('/') | last }}"
@@ -257,10 +263,7 @@ asdf_gh_latest() {
   )"
 
   asdf_debug "redirect url: %s" "$url"
-  if [[ "$url" == "$repo/releases" ]]; then
-    asdf_debug "use '%s' mode to resolve latest" "tail"
-    version="$(asdf_list_versions | tail -n1)"
-  elif [[ "$url" != "" ]]; then
+  if [ -n "$url" ] && [[ "$url" != "$repo/releases" ]]; then
     version="$(printf "%s\n" "$url" | sed 's|.*/tag/v\{0,1\}||')"
     asdf_debug "use '%s' mode to resolve latest" "github"
   fi
