@@ -11,7 +11,7 @@ export ASDF_PLUGIN_APP_REPO="{{ app_git_repo }}"
 export ASDF_PLUGIN_NAME="{{ plugin_name }}"
 export ASDF_PLUGIN_REPO="https://github.com/{{ plugin_org }}/{{ plugin_name }}"
 
-# shellcheck source=./utils.sh
+# shellcheck source-path=SCRIPTDIR/utils.sh
 source "${ASDF_PLUGIN_PATH:?}/lib/utils.sh"
 
 ## For bin/latest-stable script
