@@ -235,7 +235,8 @@ asdf_download() {
     asdf_post_download "$tmppath" "$outpath" ||
       asdf_fail "custom post download failed"
   else
-    if [[ "$tmppath" =~ \.tar\.gz$ ]]; then
+    if [[ "$tmppath" =~ \.tar\.gz$ ]] ||
+      [[ "$tmppath" =~ \.zip$ ]]; then
       asdf_debug "extracting %s file to %s" \
         "$tmppath" "$outdir"
       asdf_extract_tar "$tmppath" "$outdir" &&
