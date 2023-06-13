@@ -14,4 +14,13 @@ source "${ASDF_PLUGIN_PATH:?}/lib/commands.sh"
 
 ## -----------------------------------------------------------------------
 
-asdf_download "$ASDF_INSTALL_VERSION" "$ASDF_DOWNLOAD_PATH"
+TEMP_DIRECTORY="$(mktemp -d)"
+## Override post download behavior
+# __asdf_post_download() {
+#   local tmppath="$1" outpath="$2"
+# }
+
+asdf_download "$ASDF_INSTALL_VERSION" "$TEMP_DIRECTORY"
+asdf_post_download "$TEMP_DIRECTORY" "$ASDF_DOWNLOAD_PATH"
+
+unset TEMP_DIRECTORY
