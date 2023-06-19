@@ -30,7 +30,7 @@ kc_asdf_step_start() {
   local step="$1" format="$2"
   shift 2
 
-  kc_asdf_info "%9s %-15s | $format" \
+  kc_asdf_info "%9s | %-10s | $format" \
     "starting" "$step" "$@"
 }
 
@@ -39,7 +39,7 @@ kc_asdf_step_success() {
   local step="$1" format="$2"
   shift 2
 
-  kc_asdf_info "%9s %-15s | $format" \
+  kc_asdf_info "%9s | %-10s | $format" \
     "finished" "$step" "$@"
 }
 
@@ -298,6 +298,28 @@ kc_asdf_extract() {
   kc_asdf_debug "exec: tar %s" \
     "${options[*]}"
   tar "${options[@]}"
+}
+
+## Check shasum of input txt
+## usage: `kc_asdf_checksum /tmp/test/checksum.txt`
+kc_asdf_checksum() {
+  local input="$1"
+  local dir file
+  dir="$(dirname "$input")"
+  file="$(basename "$input")"
+
+  local cmd="{{ download_checksum_cmd }}"
+
+  kc_asdf_debug "exec: %s --check %s (%s)" \
+    "$cmd" "$file" "$dir"
+
+  local tmp="$PWD"
+  cd "$dir" ||
+    return 1
+  "$cmd" --check "$file" >/dev/null ||
+    return 1
+  cd "$tmp" ||
+    return 1
 }
 
 ## Get latest tags from Github
