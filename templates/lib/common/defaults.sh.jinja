@@ -306,7 +306,7 @@ kc_asdf_gh_latest() {
   local repo="$KC_ASDF_APP_REPO"
   local url="" version=""
 
-  [[ "$url" =~ ^https://github.com ]] ||
+  [[ "$repo" =~ ^https://github.com ]] ||
     return 30
 
   url="$(kc_asdf_fetch_location "$repo/releases/latest")"

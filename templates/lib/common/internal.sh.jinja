@@ -151,7 +151,7 @@ __asdf_bin_install() {
 __asdf_bin_latest-stable() {
   local query="$1" def_query="[0-9]"
   if [[ "$query" == "$def_query" ]]; then
-    ## Try get latest version from Github releases
+    kc_asdf_debug "try get latest version from github"
     if kc_asdf_gh_latest; then
       return 0
     fi
