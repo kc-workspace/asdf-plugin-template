@@ -1,10 +1,10 @@
 ---
 _subdirectory: templates
 
-# _skip_if_exists:
-#   - bin
-#   - lib/utils.sh
-#   - .github/linters/*.dict.txt
+_skip_if_exists:
+  - bin
+  - lib/utils.sh
+  - .github/linters/*.dict.txt
 
 _tasks:
   - "git init"
@@ -34,6 +34,11 @@ app_repo:
     {% if not (app_repo | regex_search('^https://.+')) %}
     Application repository must start with https://
     {% endif %}
+
+app_version_prefix:
+  type: str
+  help: "[AP] What is your application version prefix?"
+  default: v
 
 download_link:
   type: str

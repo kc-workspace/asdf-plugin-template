@@ -159,11 +159,13 @@ __asdf_bin_latest-stable() {
 
   kc_asdf_debug "fallback '%s' mode to resolve latest" "tail"
 
-  local tmp_file filter="^\\s*v"
+  local tmp_file filter="^\\s*{{ app_version_prefix }}"
   tmp_file="$(kc_asdf_tags_list)"
   tmp_file="$(kc_asdf_tags_only "$tmp_file" "$filter")"
   tmp_file="$(kc_asdf_tags_format "$tmp_file" "$filter")"
   tmp_file="$(kc_asdf_tags_only "$tmp_file" "$query")"
+  command -v _kc_asdf_latest_filter >/dev/null &&
+    tmp_file="$(_kc_asdf_latest_filter "$tmp_file" "$query")"
   tmp_file="$(kc_asdf_tags_stable "$tmp_file")"
   tmp_file="$(kc_asdf_tags_sort "$tmp_file")"
   kc_asdf_debug "final tags read from %s" "$tmp_file" &&
@@ -172,10 +174,12 @@ __asdf_bin_latest-stable() {
 }
 
 __asdf_bin_list-all() {
-  local tmp_file filter="^\\s*v"
+  local tmp_file filter="^\\s*{{ app_version_prefix }}"
   tmp_file="$(kc_asdf_tags_list)"
   tmp_file="$(kc_asdf_tags_only "$tmp_file" "$filter")"
   tmp_file="$(kc_asdf_tags_format "$tmp_file" "$filter")"
+  command -v _kc_asdf_list_filter >/dev/null &&
+    tmp_file="$(_kc_asdf_list_filter "$tmp_file")"
   tmp_file="$(kc_asdf_tags_sort "$tmp_file")"
   kc_asdf_debug "final tags read from %s" "$tmp_file" &&
     xargs echo <"$tmp_file" &&
