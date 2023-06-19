@@ -31,7 +31,7 @@ app_website:
   help: "[AP] What is your application website?"
   placeholder: https://example.com
   validator: >-
-    {% if not (app_repo | regex_search('^https://.+')) %}
+    {% if not (app_website | regex_search('^https://.+')) %}
     Application website must start with https://
     {% endif %}
 
