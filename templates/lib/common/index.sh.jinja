@@ -3,6 +3,11 @@
 ## Environment variables
 ## https://asdf-vm.com/plugins/create.html#environment-variables-overview
 
+# shellcheck source-path=SCRIPTDIR/defaults.sh
+source "${KC_ASDF_PLUGIN_PATH:?}/lib/common/defaults.sh"
+# shellcheck source-path=SCRIPTDIR/internal.sh
+source "${KC_ASDF_PLUGIN_PATH:?}/lib/common/internal.sh"
+
 ## These are set on bin/* scripts
 # export KC_ASDF_PLUGIN_ENTRY_PATH
 # export KC_ASDF_PLUGIN_ENTRY_NAME
@@ -21,11 +26,6 @@ export KC_ASDF_DOWNLOAD_LOC="{%- if download_type == 'archive-file' -%}
 export KC_ASDF_ORG="{{ plugin_org }}"
 export KC_ASDF_NAME="{{ plugin_name }}"
 export KC_ASDF_REPO="{% include pathjoin('macros', 'github-link.jinja') %}"
-
-# shellcheck source-path=SCRIPTDIR/defaults.sh
-source "${KC_ASDF_PLUGIN_PATH:?}/lib/common/defaults.sh"
-# shellcheck source-path=SCRIPTDIR/internal.sh
-source "${KC_ASDF_PLUGIN_PATH:?}/lib/common/internal.sh"
 
 export KC_ASDF_OS
 KC_ASDF_OS="$(kc_asdf_get_os)"
