@@ -4,7 +4,7 @@ _subdirectory: templates
 _skip_if_exists:
   - bin
   - lib/utils.sh
-  - .github/linters/*.dict.txt
+  - .github/linters/cspell-custom.dict.txt
 
 _tasks:
   - "git init"
