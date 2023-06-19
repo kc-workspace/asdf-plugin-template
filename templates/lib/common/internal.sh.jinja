@@ -163,7 +163,7 @@ __asdf_bin_latest-stable() {
   tmp_file="$(kc_asdf_tags_list)"
   tmp_file="$(kc_asdf_tags_only "$tmp_file" "$filter")"
   tmp_file="$(kc_asdf_tags_format "$tmp_file" "$filter")"
-  tmp_file="$(kc_asdf_tags_only "$tmp_file" "$query")"
+  tmp_file="$(kc_asdf_tags_only "$tmp_file" "^\\s*$query")"
   command -v _kc_asdf_latest_filter >/dev/null &&
     tmp_file="$(_kc_asdf_latest_filter "$tmp_file" "$query")"
   tmp_file="$(kc_asdf_tags_stable "$tmp_file")"
