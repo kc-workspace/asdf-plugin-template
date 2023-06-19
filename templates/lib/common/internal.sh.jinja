@@ -49,7 +49,7 @@ __asdf_bin_download() {
         "$tmpdir/$checksum_file"
     else
       if ! grep "$tmpfile" "$tmpdir/$checksum_tmpfile" >"$tmpdir/$checksum_file"; then
-        kc_asdf_throw 9 "cannot found checksum entry for download name %s" \
+        kc_asdf_throw 9 "cannot found checksum key (%s) from download file" \
           "$tmpfile"
       fi
     fi
