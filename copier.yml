@@ -57,14 +57,14 @@ download_checksum_enabled:
 download_checksum_cmd:
   type: str
   help: "[DL] What is checksum command?"
-  default: sha256sum
+  default: 256
   when: "{{ download_checksum_enabled }}"
   choices:
-    - sha1sum
-    - sha224sum
-    - sha256sum
-    - sha384sum
-    - sha512sum
+    sha1sum: 1
+    sha224sum: 224
+    sha256sum: 256
+    sha384sum: 384
+    sha512sum: 512
 
 download_checksum_link:
   type: str
