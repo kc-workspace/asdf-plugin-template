@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 ## User utility functions
-## Should prefix with usr_asdf_*
-## For example: `usr_asdf_get_template()`
+## This will load on very beginning of the scripts
+## so make sure that you only define functions
