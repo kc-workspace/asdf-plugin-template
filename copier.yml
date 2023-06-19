@@ -132,7 +132,7 @@ custom_os_yaml:
 custom_arch_enabled:
   type: bool
   help: "[AR] If you would like to custom Arch name?"
-  default: false
+  default: true
 
 custom_arch_yaml:
   type: yaml
