@@ -26,6 +26,15 @@ app_description:
   help: "[AP] What is your application do?"
   mulitline: true
 
+app_website:
+  type: str
+  help: "[AP] What is your application website?"
+  placeholder: https://example.com
+  validator: >-
+    {% if not (app_repo | regex_search('^https://.+')) %}
+    Application website must start with https://
+    {% endif %}
+
 app_repo:
   type: str
   help: "[AP] Where is your application repo?"
