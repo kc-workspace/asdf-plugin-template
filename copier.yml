@@ -172,12 +172,12 @@ test_cmd_args:
 
 plugin_org:
   type: str
-  help: "[PI] What is your plugin organization on Github?"
+  help: "[PI] What is your plugin organization on GitHub?"
   default: kc-workspace
 
 plugin_name:
   type: str
-  help: "[PI] What is your plugin name on Github?"
+  help: "[PI] What is your plugin name on GitHub?"
   default: asdf-{{ app_name }}
   validator: >-
     {% if not (plugin_name | regex_search('^asdf')) %}
