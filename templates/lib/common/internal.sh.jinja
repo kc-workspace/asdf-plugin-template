@@ -194,7 +194,10 @@ __asdf_bin_help-overview() {
 
 __asdf_bin_help-deps() {
   kcs_asdf_help_header "Dependencies"
-  local deps=(git curl sed)
+  local deps=(git curl sed grep mktemp xargs)
+  {% if download_checksum_enabled -%}
+    deps+=({{ download_checksum_cmd }})
+  {%- endif %}
   for dep in "${deps[@]}"; do
     kc_asdf_printf "$dep"
   done
