@@ -8,27 +8,33 @@ source "${KC_ASDF_PLUGIN_PATH:?}/lib/common/defaults.sh"
 # shellcheck source-path=SCRIPTDIR/internal.sh
 source "${KC_ASDF_PLUGIN_PATH:?}/lib/common/internal.sh"
 
+## System information
+KC_ASDF_OS="$(kc_asdf_get_os)"
+KC_ASDF_ARCH="$(kc_asdf_get_arch)"
+## Plugin information
+KC_ASDF_ORG="{{ plugin_org }}"
+KC_ASDF_NAME="{{ plugin_name }}"
+KC_ASDF_REPO="{% include pathjoin('macros', 'github-link.jinja') %}"
+## Application information
+KC_ASDF_APP_NAME="{{ app_name }}"
+KC_ASDF_APP_DESC="{{ app_description }}"
+KC_ASDF_APP_REPO="{{ app_repo }}"
+## Download settings
+KC_ASDF_DOWNLOAD_URL="{{ download_link }}"
+KC_ASDF_DOWNLOAD_NAME="{% include pathjoin('macros', 'download-name.jinja') %}"
+KC_ASDF_CHECKSUM_URL="{%- if download_checksum_enabled -%}
+  {{ download_checksum_link }}
+{%- endif -%}"
+KC_ASDF_DOWNLOAD_LOC="{%- if download_type == 'archive-file' -%}
+  {{ download_location }}
+{%- endif -%}"
+
 ## These are set on bin/* scripts
 # export KC_ASDF_PLUGIN_ENTRY_PATH
 # export KC_ASDF_PLUGIN_ENTRY_NAME
 # export KC_ASDF_PLUGIN_PATH
-export KC_ASDF_APP_NAME="{{ app_name }}"
-export KC_ASDF_APP_DESC="{{ app_description }}"
-export KC_ASDF_APP_REPO="{{ app_repo }}"
-export KC_ASDF_DOWNLOAD_URL="{{ download_link }}"
-export KC_ASDF_DOWNLOAD_NAME="{% include pathjoin('macros', 'download-name.jinja') %}"
-export KC_ASDF_CHECKSUM_URL="{%- if download_checksum_enabled -%}
-  {{ download_checksum_link }}
-{%- endif -%}"
-export KC_ASDF_DOWNLOAD_LOC="{%- if download_type == 'archive-file' -%}
-  {{ download_location }}
-{%- endif -%}"
-export KC_ASDF_ORG="{{ plugin_org }}"
-export KC_ASDF_NAME="{{ plugin_name }}"
-export KC_ASDF_REPO="{% include pathjoin('macros', 'github-link.jinja') %}"
-
-export KC_ASDF_OS
-KC_ASDF_OS="$(kc_asdf_get_os)"
-
-export KC_ASDF_ARCH
-KC_ASDF_ARCH="$(kc_asdf_get_arch)"
+export KC_ASDF_APP_NAME KC_ASDF_APP_DESC KC_ASDF_APP_REPO
+export KC_ASDF_DOWNLOAD_URL KC_ASDF_DOWNLOAD_NAME KC_ASDF_DOWNLOAD_LOC
+export KC_ASDF_CHECKSUM_URL
+export KC_ASDF_ORG KC_ASDF_NAME KC_ASDF_REPO
+export KC_ASDF_OS KC_ASDF_ARCH
