@@ -145,7 +145,8 @@ __asdf_bin_install() {
   inpath="$indir/$filename"
   outpath="$outdir/$filename"
 
-  if ! mv "$inpath" "$outpath"; then
+  if ! mv "$inpath" "$outpath" &&
+    chmod +x "$outpath"; then
     kc_asdf_throw 9 "cannot move directory from %s to %s" \
       "$inpath" "$outpath"
   fi
