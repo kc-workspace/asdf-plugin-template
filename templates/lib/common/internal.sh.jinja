@@ -40,9 +40,18 @@ __asdf_bin_download() {
       "$checksum_url"
     kc_asdf_debug "checksum output: %s" "$tmpdir/$checksum_tmpfile"
     kc_asdf_fetch_file "$checksum_url" "$tmpdir/$checksum_tmpfile"
-    if ! grep "$tmpfile" "$tmpdir/$checksum_tmpfile" >"$tmpdir/$checksum_file"; then
-      kc_asdf_throw 9 "cannot found checksum entry for download name %s" \
-        "$tmpfile"
+
+    if command -v _kc_asdf_custom_checksum >/dev/null; then
+      kc_asdf_debug "use custom function to update checksum file"
+      _kc_asdf_custom_checksum \
+        "$tmpfile" \
+        "$tmpdir/$checksum_tmpfile" \
+        "$tmpdir/$checksum_file"
+    else
+      if ! grep "$tmpfile" "$tmpdir/$checksum_tmpfile" >"$tmpdir/$checksum_file"; then
+        kc_asdf_throw 9 "cannot found checksum entry for download name %s" \
+          "$tmpfile"
+      fi
     fi
 
     if kc_asdf_checksum "$tmpdir/$checksum_file"; then
