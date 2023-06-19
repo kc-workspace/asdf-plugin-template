@@ -8,6 +8,12 @@
 #   return 0
 # }
 
+## To filter latest version out
+# _kc_asdf_latest_filter() {
+#   local tmpfile="$1" query="$2"
+#   kc_asdf_tags_only "$tmpfile" "$query"
+# }
+
 ## -----------------------------------------------------------------------
 
 set -euo pipefail

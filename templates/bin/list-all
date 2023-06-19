@@ -8,6 +8,12 @@
 #   return 0
 # }
 
+## To filter version out from list
+# _kc_asdf_list_filter() {
+#   local tmpfile="$1"
+#   kc_asdf_tags_only "$tmpfile" "1"
+# }
+
 ## -----------------------------------------------------------------------
 
 set -euo pipefail
