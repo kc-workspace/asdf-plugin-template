@@ -62,5 +62,4 @@ jobs:
       - name: asdf_plugin_test
         uses: asdf-vm/actions/plugin-test@v2
         with:
-          command: {{ app_name }}
-            {%- if setting_test_command_arguments != '' %} {{ setting_test_command_arguments }}{% endif %}
+          command: {% include pathjoin('macros', 'test-cmd.jinja') %}

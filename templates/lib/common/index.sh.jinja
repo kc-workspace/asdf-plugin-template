@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+## Environment variables
+## https://asdf-vm.com/plugins/create.html#environment-variables-overview
+
+## These are set on bin/* scripts
+# export KC_ASDF_PLUGIN_ENTRY_PATH
+# export KC_ASDF_PLUGIN_ENTRY_NAME
+# export KC_ASDF_PLUGIN_PATH
+export KC_ASDF_APP_NAME="{{ app_name }}"
+export KC_ASDF_APP_DESC="{{ app_description }}"
+export KC_ASDF_APP_REPO="{{ app_repo }}"
+export KC_ASDF_DOWNLOAD_URL="{{ download_link }}"
+export KC_ASDF_DOWNLOAD_NAME="{% include pathjoin('macros', 'download-name.jinja') %}"
+export KC_ASDF_CHECKSUM_URL="{%- if download_checksum_enabled -%}
+  {{ download_checksum_link }}
+{%- endif -%}"
+export KC_ASDF_DOWNLOAD_LOC="{%- if download_type == 'archive-file' -%}
+  {{ download_location }}
+{%- endif -%}"
+export KC_ASDF_ORG="{{ plugin_org }}"
+export KC_ASDF_NAME="{{ plugin_name }}"
+export KC_ASDF_REPO="{% include pathjoin('macros', 'github-link.jinja') %}"
+
+# shellcheck source-path=SCRIPTDIR/defaults.sh
+source "${KC_ASDF_PLUGIN_PATH:?}/lib/common/defaults.sh"
+# shellcheck source-path=SCRIPTDIR/internal.sh
+source "${KC_ASDF_PLUGIN_PATH:?}/lib/common/internal.sh"
+
+export KC_ASDF_OS
+KC_ASDF_OS="$(kc_asdf_get_os)"
+
+export KC_ASDF_ARCH
+KC_ASDF_ARCH="$(kc_asdf_get_arch)"

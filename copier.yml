@@ -1,90 +1,184 @@
 ---
 _subdirectory: templates
-_answers_file: .copier-answers.yml
 
-_skip_if_exists:
-    - lib/utils.sh
-    - bin
+# _skip_if_exists:
+#   - bin
+#   - lib/utils.sh
+#   - .github/linters/*.dict.txt
 
 _tasks:
   - "git init"
-  - "git remote add origin {{ git_remote }} || exit 0"
+  - "git remote add origin {{ plugin_repo }} || exit 0"
 
 app_name:
   type: str
-  help: What is your app name?
+  help: "[AP] What is your application name?"
   placeholder: xxxx
+  validator: >-
+    {% if (app_name | length == 0) %}
+    Application must have name
+    {% elif (app_name | regex_search('^asdf')) %}
+    Application name must not start with 'asdf'
+    {% endif %}
 
-app_git_repo:
+app_description:
   type: str
-  help: Where is your app git repo?
+  help: "[AP] What is your application do?"
+  mulitline: true
+
+app_repo:
+  type: str
+  help: "[AP] Where is your application repo?"
   placeholder: https://github.com/octocat/Hello-World
+  validator: >-
+    {% if not (app_repo | regex_search('^https://.+')) %}
+    Application repository must start with https://
+    {% endif %}
 
-app_download_link:
+download_link:
   type: str
-  help: Where can we download app (variables '${arch}', '${os}', '${version}')?
-  placeholder: https://example.com/${version}/${arch}/${os}/download
+  help: "[DL] Where is your download link (support '{arch}', '{os}', '{version}')?"
+  placeholder: https://example.com/{version}/{arch}/{os}/download
+  validator: >-
+    {% if not (download_link | regex_search('^https://.+')) %}
+    Download link must start with https://
+    {% endif %}
 
-app_download_type:
-  type: str
-  help: What is your app download type?
-  default: file
-  choices:
-    - file
-    - directory
-
-app_download_file:
-  type: str
-  help: Where is your app path from download directory (variables '${arch}', '${os}', '${version}')?
-  when: "{{ app_download_type == 'file' }}"
-  default: "{{ app_name }}"
-
-app_strip_component:
-  type: int
-  help: How many directory in tar.gz need to strip before found tool?
-  default: 0
-
-settings_os_mapper_enabled:
+download_checksum_enabled:
   type: bool
-  help: Is default OS name (from 'uname') meet your requirement?
+  help: "[DL] Is your download url provide checksum file?"
   default: false
 
-setting_os_mapper_darwin:
+download_checksum_cmd:
   type: str
-  help: What is your darwin (macOS) name?
-  default: darwin
-  when: "{{ settings_os_mapper_enabled }}"
+  help: "[DL] What is checksum command?"
+  default: sha256sum
+  when: "{{ download_checksum_enabled }}"
+  choices:
+    - sha1sum
+    - sha224sum
+    - sha256sum
+    - sha384sum
+    - sha512sum
 
-setting_os_mapper_linux:
+download_checksum_link:
   type: str
-  help: What is your linux OS name?
-  default: linux
-  when: "{{ settings_os_mapper_enabled }}"
+  help: "[DL] Where is your download checksum link (support '{arch}', '{os}', '{version}')?"
+  placeholder: https://example.com/{version}/{arch}/{os}/checksum.txt
+  when: "{{ download_checksum_enabled }}"
+  validator: >-
+    {% if not (download_checksum_link | regex_search('^https://.+')) %}
+    Checksum link must start with https://
+    {% endif %}
 
-setting_test_command_arguments:
+download_type:
   type: str
-  help: How to test app commandline (e.g. --help)?
-  default: ''
+  help: "[DL] What is your download type?"
+  default: |
+    {%- if
+      (download_link | regex_search('\\.tar\\.gz$')) or
+      (download_link | regex_search('\\.tgz$')) or
+      (download_link | regex_search('\\.zip$'))
+    -%}
+    archive-file
+    {%- else -%}
+    single-file
+    {%- endif -%}
+  choices:
+    Single file: single-file
+    Archive file: archive-file
+
+download_strip:
+  type: int
+  help: "[DL] How many times we should strip directory when extract download?"
+  when: "{{ download_type == 'archive-file' }}"
+  default: 0
+  validator: "{% if download_strip < 0 %}Zero for not strip or >0 for strip times{% endif %}"
+
+download_location:
+  type: str
+  help: "[DL] Where is your path from download directory to install (support '{arch}', '{os}', '{version}')?"
+  when: "{{ download_type == 'archive-file' }}"
+  default: "{{ app_name }}"
+
+install_type:
+  type: str
+  help: "[IT] How to install app (directory mean copy whole directory to install path)?"
+  when: "{{ download_type == 'archive-file' }}"
+  default: single-file
+  choices:
+    Single file: single-file
+    Directory: directory
+
+custom_os_enabled:
+  type: bool
+  help: "[OS] If you would like to custom OS name?"
+  default: false
+
+custom_os_yaml:
+  type: yaml
+  help: "[OS] What is OS mapper on yaml (single level key-value)?"
+  when: "{{ custom_os_enabled }}"
+  multiline: true
+  default: |
+    linux: Linux
+    darwin: MacOS
+
+custom_arch_enabled:
+  type: bool
+  help: "[AR] If you would like to custom Arch name?"
+  default: false
+
+custom_arch_yaml:
+  type: yaml
+  help: "[AR] What is Arch mapper on yaml (single level key-value)?"
+  when: "{{ custom_arch_enabled }}"
+  multiline: true
+  default: |
+    x86_64: amd64
+    x86: 386
+    i686: 386
+    i386: 386
+    powerpc64le: ppc64le
+    ppc64le: ppc64le
+    armv5*: armv5
+    armv6*: armv6
+    armv7*: armv7
+    aarch64*: arm64
+
+custom_non_stable_version:
+  type: str
+  help: "[VR] What is your application non-stable version look like?"
+  default: "(-src|-dev|-latest|-stm|[-\\.]rc|-alpha|-beta|[-\\.]pre|-next|snapshot|master)"
+
+test_cmd_args:
+  type: str
+  help: "[TS] What is command arguments for testing?"
+  default: ""
 
 plugin_org:
   type: str
-  help: What is your plugin Github organization?
+  help: "[PI] What is your plugin organization on Github?"
   default: kc-workspace
 
 plugin_name:
   type: str
-  help: What is your plugin name?
+  help: "[PI] What is your plugin name on Github?"
   default: asdf-{{ app_name }}
+  validator: >-
+    {% if not (plugin_name | regex_search('^asdf')) %}
+    Plugin name must start with 'asdf'
+    {% endif %}
 
 plugin_author:
   type: str
-  help: Who are you (prefer full name)?
+  help: "[PI] What is your name (prefer fullname)?"
   default: Kamontat Chantrachirathumrong
 
-git_remote:
+plugin_repo:
   type: str
-  help: What is your git remote type?
-  default: https://github.com/{{ plugin_org }}/{{ plugin_name }}.git
+  help: "[PI] What is your plugin repo type?"
+  default: "{% include pathjoin('macros', 'github-link.jinja') %}"
   choices:
-    https: https://github.com/{{ plugin_org }}/{{ plugin_name }}.git
-    ssh: git@github.com:{{ plugin_org }}/{{ plugin_name }}.git
+    https: "{% include pathjoin('macros', 'github-link.jinja') %}"
+    ssh: "{% include pathjoin('macros', 'github-ssh.jinja') %}"

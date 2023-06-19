@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+
+## Install app to input location (support chmod)
+asdf_install() {
+  local version="$1" dldir="$2" itdir="$3"
+  local file="$ASDF_PLUGIN_APP_NAME"
+
+  ## These are for app_download_file templates
+  os="$(asdf_get_os)"
+  arch="$(asdf_get_arch)"
+
+  asdf_debug "installing app at %s" "$itdir"
+
+  {% if app_download_type == 'directory' -%}
+  asdf_debug "installing dir from '%s' to '%s'" \
+    "$dldir" "$itdir"
+  mv "$dldir" "$(dirname "$itdir")" &&
+    asdf_debug "installed dir at %s" "$itdir"
+  {%- elif app_download_type == 'file' -%}
+  local dlpath itpath
+  dlpath="$dldir/{{ app_download_file }}"
+  itpath="$itdir/bin"
+
+  mkdir -p "$itpath" 2>/dev/null
+
+  asdf_debug "installing file from '%s' to '%s'" \
+    "$dlpath" "$itpath/$file"
+  mv "$dlpath" "$itpath/$file" &&
+    asdf_debug "installed file at %s" "$itpath/$file"
+  chmod +x "$itpath/$file"
+  {%- endif %}
+
+  asdf_debug "list file/folder at %s" \
+    "$itdir" &&
+    asdf_on_debug ls "$itdir"
+  [ -d "$itdir/bin" ] &&
+    asdf_debug "list file/folder at %s" \
+      "$itdir/bin" &&
+    asdf_on_debug ls "$itdir/bin"
+
+  local executor="$itdir/bin/$file"
+  [ -f "$executor" ] ||
+    asdf_fail "command '%s' is missing from '%s'" \
+      "$file" "$itdir/bin"
+
+  asdf_info "finished [%15s] '%s' successfully" \
+    "install" "$file"
+}
+
+## Download app to input location (should be temp directory)
+## e.g. `asdf_download v1.0.1 /tmp/test`
+asdf_download() {
+  local version="$1" os arch
+  os="$(asdf_get_os)"
+  arch="$(asdf_get_arch)"
+
+  local download
+  download="{{ app_download_link }}"
+  asdf_info "starting [%15s] %s" \
+    "download" "$download"
+
+  local tmpfile
+  tmpfile="{{ app_download_link.split('/') | last }}"
+  local tmpdir
+  tmpdir="$(mktemp -d)"
+  local tmppath="$tmpdir/$tmpfile"
+
+  asdf_debug "download output %s" \
+    "$tmppath"
+  asdf_fetch_file "$download" "$tmppath"
+
+  local outdir="$2"
+
+  if command -v "asdf_post_download" >/dev/null; then
+    asdf_post_download "$tmppath" "$outdir" ||
+      asdf_fail "custom post download failed"
+  else
+    if [[ "$tmppath" =~ \.tar\.gz$ ]] ||
+      [[ "$tmppath" =~ \.tgz$ ]] ||
+      [[ "$tmppath" =~ \.zip$ ]]; then
+      asdf_debug "extracting %s file to %s" \
+        "$tmppath" "$outdir"
+      # shellcheck disable=SC2015
+      asdf_extract_tar "$tmppath" "$outdir" &&
+        rm -r "$tmppath" &&
+        asdf_debug "finished [%15s] '%s' successfully" \
+          "extract" "$tmpfile" ||
+        asdf_fail "failed to extract '%s' file" \
+          "$tmppath"
+    else
+      asdf_debug "moving app from %s to %s" \
+        "$tmppath" "$outdir"
+      mv "$tmppath" "$outdir"
+    fi
+  fi
+
+  asdf_debug "list file/folder at %s" \
+    "$outdir" &&
+    asdf_on_debug ls "$outdir"
+
+  local name="$ASDF_PLUGIN_APP_NAME"
+  asdf_info "finished [%15s] '%s' successfully" \
+    "download" "$name"
+}

@@ -19,5 +19,5 @@ KC_ASDF_PLUGIN_ENTRY_NAME="$(basename "$KC_ASDF_PLUGIN_ENTRY_PATH")"
 export KC_ASDF_PLUGIN_PATH
 KC_ASDF_PLUGIN_PATH=$(dirname "$(dirname "$KC_ASDF_PLUGIN_ENTRY_PATH")")
 
-# shellcheck source-path=SCRIPTDIR/../lib/commands.sh
-source "$KC_ASDF_PLUGIN_PATH/lib/commands.sh" "$@"
+# shellcheck source=/dev/null
+source "$KC_ASDF_PLUGIN_PATH/lib/commands.sh" "$KC_ASDF_PLUGIN_ENTRY_NAME"

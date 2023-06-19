@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+## Environment variables
+## https://asdf-vm.com/plugins/create.html#environment-variables-overview
+
+## These are set on bin/* scripts
+# export ASDF_PLUGIN_SCRIPT="$ASDF_PLUGIN_SCRIPT"
+# export ASDF_PLUGIN_PATH="$ASDF_PLUGIN_PATH"
+export ASDF_PLUGIN_APP_NAME="{{ app_name }}"
+export ASDF_PLUGIN_APP_REPO="{{ app_git_repo }}"
+export ASDF_PLUGIN_NAME="{{ plugin_name }}"
+export ASDF_PLUGIN_REPO="https://github.com/{{ plugin_org }}/{{ plugin_name }}"
+
+# shellcheck source-path=SCRIPTDIR/defaults.sh
+source "${ASDF_PLUGIN_PATH:?}/lib/common/defaults.sh"
