@@ -17,17 +17,14 @@ if command -v kc_asdf_main >/dev/null; then
   kc_asdf_main ||
     kc_asdf_throw 99 "main function failed"
 else
-  case "${KC_ASDF_PLUGIN_ENTRY_NAME:?}" in
-  download) __asdf_bin_download "$@" ;;
-  help.config) __asdf_bin_help-config "$@" ;;
-  help.deps) __asdf_bin_help-deps "$@" ;;
-  help.links) __asdf_bin_help-links "$@" ;;
-  help.overview) __asdf_bin_help-overview "$@" ;;
-  install) __asdf_bin_install "$@" ;;
-  latest-stable) __asdf_bin_latest-stable "$@" ;;
-  list-all) __asdf_bin_list-all "$@" ;;
-  *) __asdf_bin_unknown "$1" ;;
-  esac
+  path="${KC_ASDF_PLUGIN_PATH:?}/lib/bin/${KC_ASDF_PLUGIN_ENTRY_NAME//./-}.sh"
+  kc_asdf_debug "sourcing lib: %s" \
+    "$path"
+
+  # shellcheck source=/dev/null
+  source "$path" ||
+    __asdf_bin_unknown "${KC_ASDF_PLUGIN_ENTRY_NAME:?}"
+  __asdf_bin "$@"
 fi
 
 unset name args

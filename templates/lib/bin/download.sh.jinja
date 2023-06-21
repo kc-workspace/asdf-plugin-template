@@ -1,0 +1,122 @@
+#!/usr/bin/env bash
+
+## variables:
+##   - ASDF_INSECURE - disable checksum check
+__asdf_bin() {
+  local type="${ASDF_INSTALL_TYPE:?}"
+  local version="${ASDF_INSTALL_VERSION:?}"
+  local outdir="${ASDF_DOWNLOAD_PATH:?}"
+
+  local tmpl_variables
+  tmpl_variables=(
+    "os=$KC_ASDF_OS"
+    "arch=$KC_ASDF_ARCH"
+    "version=$version"
+  )
+
+  local download_url
+  download_url="$(
+    kc_asdf_template "${KC_ASDF_DOWNLOAD_URL:?}" "${tmpl_variables[@]}"
+  )"
+
+  kc_asdf_step_start "download" "'%s' %s %s" \
+    "$KC_ASDF_APP_NAME" "$type" "$version"
+  kc_asdf_debug "using download '%s' type (url=%s)" \
+    "{{ download_type }}" "$download_url"
+
+  if [[ "$type" == "ref" ]] &&
+    command -v _kc_asdf_download_source >/dev/null; then
+    if ! command -v _kc_asdf_install_source >/dev/null; then
+      kc_asdf_throw 4 "download source failed because no install logic define"
+    fi
+
+    kc_asdf_debug "downloading using 'ref' mode"
+    if ! _kc_asdf_download_source "$version" "$outdir"; then
+      kc_asdf_throw 3 "download source failed"
+    fi
+  elif [[ "$type" == "version" ]]; then
+    kc_asdf_debug "downloading using 'version' mode"
+
+    local tmpdir tmpfile tmppath
+    tmpdir="$(kc_asdf_temp_dir)"
+    tmpfile="$(
+      kc_asdf_template "${KC_ASDF_DOWNLOAD_NAME:?}" "${tmpl_variables[@]}"
+    )"
+    tmppath="$tmpdir/$tmpfile"
+
+    kc_asdf_debug "download output: %s" "$tmppath"
+    kc_asdf_fetch_file "$download_url" "$tmppath"
+
+    {% if download_checksum_enabled -%}
+    if [ -z "${ASDF_INSECURE:-}" ]; then
+      local checksum_url
+      checksum_url="$(
+        kc_asdf_template "${KC_ASDF_CHECKSUM_URL:?}" "${tmpl_variables[@]}"
+      )"
+
+      kc_asdf_step_start "checksum" "verifying '%s'" "$tmpfile"
+      if ! kc_asdf_checksum "$tmppath" "$checksum_url"; then
+        kc_asdf_throw 5 "checksum function return error" \
+          "$tmpfile"
+      else
+        kc_asdf_step_success "checksum" "PASSED"
+      fi
+    else
+      kc_asdf_info "you are downloading with insecure mode"
+    fi
+    {% endif %}
+
+    local outdir="${ASDF_DOWNLOAD_PATH:?}"
+    local outpath
+
+    {% if download_type == 'multiple-file' -%}
+    local regex="{{ download_type_multiple_file_regex }}"
+    if echo "$tmpfile" | grep -qiE "$regex$"; then
+      outpath="$outdir"
+      kc_asdf_step_start "extract" "archive file '%s' to %s" "$tmpfile" "$outpath"
+      if ! kc_asdf_extract "$tmppath" "$outpath"; then
+        kc_asdf_throw 8 "cannot extract download file from %s" \
+          "$tmppath"
+      fi
+      kc_asdf_debug "extracted '%s' successfully" "$tmpfile"
+    else
+      local filename="$KC_ASDF_APP_NAME"
+      outpath="$outdir/$filename"
+      kc_asdf_step_start "copy" "single file '%s' to %s" \
+        "$tmpfile" "$outpath"
+      if ! cp "$tmppath" "$outpath"; then
+        kc_asdf_throw 8 "cannot move file from %s to %s" \
+          "$tmppath" "$outpath"
+      fi
+    fi
+    {%- elif download_type == 'archive-file' -%}
+    outpath="$outdir"
+
+    kc_asdf_step_start "extract" "file %s into %s" "$tmpfile" "$outpath"
+    if ! kc_asdf_extract "$tmppath" "$outpath"; then
+      kc_asdf_throw 8 "cannot extract download file from %s" \
+        "$tmppath"
+    fi
+    kc_asdf_debug "extracted '%s' successfully" "$tmpfile"
+    {%- elif download_type == 'single-file' -%}
+    local filename="$KC_ASDF_APP_NAME"
+    outpath="$outdir/$filename"
+
+    kc_asdf_step_start "copy" "file %s to %s" \
+      "$tmpfile" "$outpath"
+    if ! cp "$tmppath" "$outpath"; then
+      kc_asdf_throw 8 "cannot move file from %s to %s" \
+        "$tmppath" "$outpath"
+    fi
+    {%- endif %}
+
+    # shellcheck disable=SC2011
+    kc_asdf_debug "download directory: [%s]" \
+      "$(ls "$outpath" | xargs echo)"
+    kc_asdf_when_not_debug rm -r "$tmpdir"
+  else
+    kc_asdf_throw 4 "install type (%s) not support" "$type"
+  fi
+
+  kc_asdf_step_success "download" "successfully"
+}

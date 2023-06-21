@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+__asdf_bin() {
+  kcs_asdf_help_header "Links"
+  local format="%-12s : %s"
+  kc_asdf_printf "$format" \
+    "Application" "$KC_ASDF_APP_REPO"
+  kc_asdf_printf "$format" \
+    "Plugin" "$KC_ASDF_REPO"
+}

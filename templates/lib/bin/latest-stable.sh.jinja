@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+__asdf_bin() {
+  local query="$1" def_query="[0-9]"
+  if [[ "$query" == "$def_query" ]]; then
+    kc_asdf_debug "try get latest version from github"
+    if kc_asdf_gh_latest; then
+      return 0
+    fi
+  fi
+
+  kc_asdf_debug "fallback '%s' mode to resolve latest" "tail"
+
+  local tmp_file filter="^\\s*{{ app_version_prefix }}"
+  tmp_file="$(kc_asdf_tags_list)"
+  tmp_file="$(kc_asdf_tags_only "$tmp_file" "$filter")"
+  tmp_file="$(kc_asdf_tags_format "$tmp_file" "$filter")"
+  tmp_file="$(kc_asdf_tags_only "$tmp_file" "^\\s*$query")"
+  command -v _kc_asdf_latest_filter >/dev/null &&
+    tmp_file="$(_kc_asdf_latest_filter "$tmp_file" "$query")"
+  tmp_file="$(kc_asdf_tags_stable "$tmp_file")"
+  tmp_file="$(kc_asdf_tags_sort "$tmp_file")"
+  kc_asdf_debug "final tags read from %s" "$tmp_file" &&
+    tail -n1 "$tmp_file" &&
+    kc_asdf_when_not_debug rm "$tmp_file"
+}

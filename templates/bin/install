@@ -3,12 +3,14 @@
 ## Install a specific version of a tool to a specified location.
 ## https://asdf-vm.com/plugins/create.html#bin-install
 
-## Your script specific code
+## -----------------------
+## Customization functions
+
 # kc_asdf_main() {
 #   return 0
 # }
 
-## -----------------------------------------------------------------------
+## -----------------------
 
 set -euo pipefail
 

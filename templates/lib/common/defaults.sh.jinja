@@ -301,25 +301,41 @@ kc_asdf_extract() {
 }
 
 ## Check shasum of input txt
-## usage: `kc_asdf_checksum /tmp/test/checksum.txt`
+## usage: `kc_asdf_checksum /tmp/hello.tar.gz https://example.com/checksum.txt`
 kc_asdf_checksum() {
-  local input="$1"
-  local dir file
-  dir="$(dirname "$input")"
-  file="$(basename "$input")"
+  local filepath="$1" cs_url="$2"
+  local cs_tmp="checksum.tmp" cs_txt="checksum.txt"
+  local cs_bit="{{ download_checksum_bit }}"
+  local dir filename
+  dir="$(dirname "$filepath")"
+  filename="$(basename "$filepath")"
 
-  local bit="{{ download_checksum_cmd }}"
-  local cmd="sha${bit}sum"
-  command -v "$cmd" >/dev/null ||
-    cmd="shasum"
+  kc_asdf_debug "starting checking shasum of %s" "$filename"
+  kc_asdf_fetch_file "$cs_url" "$dir/$cs_tmp"
+  if command -v _kc_asdf_custom_checksum >/dev/null; then
+    kc_asdf_debug "use custom function to update checksum file"
+    _kc_asdf_custom_checksum \
+      "$filename" \
+      "$dir/$cs_tmp" \
+      "$dir/$cs_txt"
+  else
+    if ! grep "$filename" "$dir/$cs_tmp" >"$dir/$cs_txt"; then
+      kc_asdf_error "cannot found %s entry on checksum file (%s)" \
+        "$filename" "$dir/$cs_tmp"
+      return 9
+    fi
+  fi
 
+  local shasum="sha${cs_bit}sum"
+  command -v "$shasum" >/dev/null ||
+    shasum="shasum"
   kc_asdf_debug "exec: %s --check %s (%s)" \
-    "$cmd" "$file" "$dir"
+    "$shasum" "$cs_txt" "$dir"
 
   local tmp="$PWD"
   cd "$dir" ||
     return 1
-  "$cmd" --check "$file" >/dev/null ||
+  "$shasum" --check "$cs_txt" >/dev/null ||
     return 1
   cd "$tmp" ||
     return 1

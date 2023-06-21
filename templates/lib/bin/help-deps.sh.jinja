@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+__asdf_bin() {
+  kcs_asdf_help_header "Dependencies"
+  local deps=(git curl sed grep mktemp xargs)
+  {% if download_checksum_enabled -%}
+  deps+=(sha{{ download_checksum_bit }}sum)
+  {%- endif %}
+  for dep in "${deps[@]}"; do
+    kc_asdf_printf "$dep"
+  done
+  echo
+}
