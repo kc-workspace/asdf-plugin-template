@@ -22,12 +22,10 @@ KC_ASDF_APP_REPO="{{ app_repo }}"
 ## Download settings
 KC_ASDF_DOWNLOAD_URL="{{ download_link }}"
 KC_ASDF_DOWNLOAD_NAME="{% include pathjoin('macros', 'download-name.jinja') %}"
-KC_ASDF_CHECKSUM_URL="{%- if download_checksum_enabled -%}
-  {{ download_checksum_link }}
-{%- endif -%}"
-KC_ASDF_DOWNLOAD_LOC="{%- if download_type == 'archive-file' -%}
-  {{ download_location }}
-{%- endif -%}"
+KC_ASDF_CHECKSUM_URL="{{ download_checksum_link }}"
+KC_ASDF_DOWNLOAD_LOC="{{ download_location }}"
+## Source settings
+KC_ASDF_SOURCE_URL="{{ source_link }}"
 
 ## These are set on bin/* scripts
 # export KC_ASDF_PLUGIN_ENTRY_PATH
@@ -38,3 +36,4 @@ export KC_ASDF_DOWNLOAD_URL KC_ASDF_DOWNLOAD_NAME KC_ASDF_DOWNLOAD_LOC
 export KC_ASDF_CHECKSUM_URL
 export KC_ASDF_ORG KC_ASDF_NAME KC_ASDF_REPO
 export KC_ASDF_OS KC_ASDF_ARCH
+export KC_ASDF_SOURCE_URL
