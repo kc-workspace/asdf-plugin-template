@@ -3,7 +3,9 @@ _subdirectory: templates
 
 _skip_if_exists:
   - bin
+  - "!bin/README.md"
   - lib/utils.sh
+  - "!lib/bin"
   - .github/linters/cspell-custom.dict.txt
 
 _tasks:
@@ -63,8 +65,8 @@ download_checksum_enabled:
   help: "[DL] Is your download url provide checksum file?"
   default: false
 
-download_checksum_cmd:
-  type: str
+download_checksum_bit:
+  type: int
   help: "[DL] What is checksum command?"
   default: 256
   when: "{{ download_checksum_enabled }}"
@@ -101,6 +103,13 @@ download_type:
   choices:
     Single file: single-file
     Archive file: archive-file
+    Multiple types: multiple-types
+
+download_type_archive_regex:
+  type: str
+  help: "[DL] What is your file extension is archive file?"
+  when: "{{ download_type == 'multiple-types' }}"
+  default: "(\\.tar\\.gz|\\.tgz|\\.zip)$"
 
 download_strip:
   type: int
@@ -114,6 +123,21 @@ download_location:
   help: "[DL] Where is your path from download directory to install (support '{arch}', '{os}', '{version}')?"
   when: "{{ download_type == 'archive-file' }}"
   default: "{{ app_name }}"
+
+source_enabled:
+  type: bool
+  help: "[SR] Is your application support build from source?"
+  default: false
+
+source_link:
+  type: str
+  help: "[DL] Where is your source link (support '{arch}', '{os}', '{version}')?"
+  when: "{{ source_enabled }}"
+  placeholder: https://example.com/{version}/{arch}/{os}.git
+  validator: >-
+    {% if not (source_link | regex_search('^https://.+')) %}
+    Download link must start with https://
+    {% endif %}
 
 install_type:
   type: str
