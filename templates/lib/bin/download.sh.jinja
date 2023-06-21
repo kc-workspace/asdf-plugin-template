@@ -69,17 +69,10 @@ __asdf_bin() {
     local outdir="${ASDF_DOWNLOAD_PATH:?}"
     local outpath
 
-    {% if download_type == 'multiple-file' -%}
-    local regex="{{ download_type_multiple_file_regex }}"
-    if echo "$tmpfile" | grep -qiE "$regex$"; then
-      outpath="$outdir"
-      kc_asdf_step_start "extract" "archive file '%s' to %s" "$tmpfile" "$outpath"
-      if ! kc_asdf_extract "$tmppath" "$outpath"; then
-        kc_asdf_throw 8 "cannot extract download file from %s" \
-          "$tmppath"
-      fi
-      kc_asdf_debug "extracted '%s' successfully" "$tmpfile"
-    else
+    local download_type
+    download_type="$(kc_asdf_get_download_type)"
+
+    if [[ "$download_type" == "single-file" ]]; then
       local filename="$KC_ASDF_APP_NAME"
       outpath="$outdir/$filename"
       kc_asdf_step_start "copy" "single file '%s' to %s" \
@@ -88,27 +81,18 @@ __asdf_bin() {
         kc_asdf_throw 8 "cannot move file from %s to %s" \
           "$tmppath" "$outpath"
       fi
+    elif [[ "$download_type" == "archive-file" ]]; then
+      outpath="$outdir"
+      kc_asdf_step_start "extract" "archive file '%s' to %s" "$tmpfile" "$outpath"
+      if ! kc_asdf_extract "$tmppath" "$outpath"; then
+        kc_asdf_throw 8 "cannot extract download file from %s" \
+          "$tmppath"
+      fi
+      kc_asdf_debug "extracted '%s' successfully" "$tmpfile"
+    else
+      kc_asdf_throw 7 "invalid download type %s" \
+        "$download_type"
     fi
-    {%- elif download_type == 'archive-file' -%}
-    outpath="$outdir"
-
-    kc_asdf_step_start "extract" "file %s into %s" "$tmpfile" "$outpath"
-    if ! kc_asdf_extract "$tmppath" "$outpath"; then
-      kc_asdf_throw 8 "cannot extract download file from %s" \
-        "$tmppath"
-    fi
-    kc_asdf_debug "extracted '%s' successfully" "$tmpfile"
-    {%- elif download_type == 'single-file' -%}
-    local filename="$KC_ASDF_APP_NAME"
-    outpath="$outdir/$filename"
-
-    kc_asdf_step_start "copy" "file %s to %s" \
-      "$tmpfile" "$outpath"
-    if ! cp "$tmppath" "$outpath"; then
-      kc_asdf_throw 8 "cannot move file from %s to %s" \
-        "$tmppath" "$outpath"
-    fi
-    {%- endif %}
 
     # shellcheck disable=SC2011
     kc_asdf_debug "download directory: [%s]" \

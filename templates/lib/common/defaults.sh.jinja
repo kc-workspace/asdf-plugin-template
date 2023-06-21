@@ -284,6 +284,19 @@ kc_asdf_get_arch() {
   printf "%s" "$arch"
 }
 
+## Get download type based on input filename
+## usage: `kc_asdf_get_download_type test.tar.gz`
+kc_asdf_get_download_type() {
+  local type="{{ download_type }}"
+  local filename="$1"
+  if [[ "$type" == "multiple-types" ]]; then
+    type="single-file"
+    echo "$filename" | grep -qiE "{{ download_type_archive_regex }}" &&
+      type="archive-file"
+  fi
+  printf "%s" "$type"
+}
+
 ## Extract compress file
 ## usage: `kc_asdf_extract /tmp/file.tar.gz /tmp/file`
 kc_asdf_extract() {

@@ -27,28 +27,32 @@ __asdf_bin() {
       kc_asdf_throw 3 "install source failed"
     fi
   elif [[ "$type" == "version" ]]; then
+    local download_type install_type="{{ install_type }}"
+    download_type="$(kc_asdf_get_download_type)"
+
     kc_asdf_debug "installing using 'version' mode"
+    if [[ "$download_type" == "archive-file" ]] &&
+      [[ "$install_type" == "single-file" ]]; then
+      outdir="$outdir/bin"
+      kc_asdf_debug "creating bin directory at %s" "$outdir"
+      mkdir -p "$outdir" 2>/dev/null
 
-    {% if download_type == 'archive-file' and install_type == 'single-file' -%}
-    outdir="$outdir/bin"
-    kc_asdf_debug "creating bin directory at %s" "$outdir"
-    mkdir -p "$outdir" 2>/dev/null
+      local filename="$KC_ASDF_APP_NAME"
+      inpath="$indir/${KC_ASDF_DOWNLOAD_LOC:?}"
+      outpath="$outdir/$filename"
+    elif [[ "$download_type" == "archive-file" ]] &&
+      [[ "$install_type" == "single-file" ]]; then
+      inpath="$indir"
+      outpath="$(dirname "$outdir")"
+    else
+      outdir="$outdir/bin"
+      kc_asdf_debug "creating bin directory at %s" "$outdir"
+      mkdir -p "$outdir" 2>/dev/null
 
-    local filename="$KC_ASDF_APP_NAME"
-    inpath="$indir/${KC_ASDF_DOWNLOAD_LOC:?}"
-    outpath="$outdir/$filename"
-    {%- elif download_type == 'archive-file' and install_type == 'directory' -%}
-    inpath="$indir"
-    outpath="$(dirname "$outdir")"
-    {%- else -%}
-    outdir="$outdir/bin"
-    kc_asdf_debug "creating bin directory at %s" "$outdir"
-    mkdir -p "$outdir" 2>/dev/null
-
-    local filename="$KC_ASDF_APP_NAME"
-    inpath="$indir/$filename"
-    outpath="$outdir/$filename"
-    {%- endif %}
+      local filename="$KC_ASDF_APP_NAME"
+      inpath="$indir/$filename"
+      outpath="$outdir/$filename"
+    fi
 
     kc_asdf_debug "copying input (%s) to output (%s)" \
       "$inpath" "$outpath"
