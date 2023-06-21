@@ -19,6 +19,11 @@
       alt="version"
       src="https://img.shields.io/github/v/release/{% include pathjoin('macros', 'github-name.jinja') %}?style=flat-square&logo=github">
   </a>
+  <a href="https://github.com/{% include pathjoin('macros', 'github-name.jinja') %}/commits/main">
+    <img
+      alt="version"
+      src="https://img.shields.io/github/last-commit/{% include pathjoin('macros', 'github-name.jinja') %}/main?style=flat-square&logo=github">
+  </a>
 </p>
 
 <!-- Links section -->
@@ -101,12 +106,14 @@ Something you just query too many data from GitHub,
 ## <description>
 ## https://asdf-vm.com/plugins/create.html
 
-## Your script specific code
+## -----------------------
+## Customization functions
+
 # kc_asdf_main() {
 #   return 0
 # }
 
-## -----------------------------------------------------------------------
+## -----------------------
 
 set -euo pipefail
 
@@ -116,8 +123,8 @@ KC_ASDF_PLUGIN_ENTRY_NAME="$(basename "$KC_ASDF_PLUGIN_ENTRY_PATH")"
 export KC_ASDF_PLUGIN_PATH
 KC_ASDF_PLUGIN_PATH=$(dirname "$(dirname "$KC_ASDF_PLUGIN_ENTRY_PATH")")
 
-# shellcheck source=/dev/null
-source "$KC_ASDF_PLUGIN_PATH/lib/commands.sh" "$KC_ASDF_PLUGIN_ENTRY_NAME"
+# shellcheck source-path=SCRIPTDIR/../lib/commands.sh
+source "$KC_ASDF_PLUGIN_PATH/lib/commands.sh" "$@"
 ```
 
 <!-- LINKS SECTION -->
