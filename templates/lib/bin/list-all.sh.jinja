@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 
 __asdf_bin() {
-  local tmp_file filter="^\\s*{{ app_version_prefix }}"
+  local tmp_file
   tmp_file="$(kc_asdf_tags_list)"
+
+  {%- if app_version_prefix != '' %}
+  local filter="^\\s*{{ app_version_prefix }}"
   tmp_file="$(kc_asdf_tags_only "$tmp_file" "$filter")"
   tmp_file="$(kc_asdf_tags_format "$tmp_file" "$filter")"
+  {%- endif %}
+
   command -v _kc_asdf_list_filter >/dev/null &&
     tmp_file="$(_kc_asdf_list_filter "$tmp_file")"
   tmp_file="$(kc_asdf_tags_sort "$tmp_file")"
