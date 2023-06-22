@@ -70,7 +70,7 @@ __asdf_bin() {
     local outpath
 
     local download_type
-    download_type="$(kc_asdf_get_download_type)"
+    download_type="$(kc_asdf_get_download_type "$tmpfile")"
 
     if [[ "$download_type" == "single-file" ]]; then
       local filename="$KC_ASDF_APP_NAME"
