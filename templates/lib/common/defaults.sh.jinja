@@ -104,8 +104,8 @@ kc_asdf_exec() {
 ## Fetch redirected location from url
 ## e.g. `kc_asdf_fetch_location https://google.com`
 kc_asdf_fetch_location() {
-  local max_redirs=10 tmp_file
-  tmp_file="$(kc_asdf_temp_file)"
+  local max_redirs=10 tmpfile
+  tmpfile="$(kc_asdf_temp_file)"
   export CURL_OPTIONS=(
     --head
     --write-out "%{url_effective}"
@@ -114,16 +114,16 @@ kc_asdf_fetch_location() {
   export WGET_OPTIONS=(
     --server-response
     --spider
-    --output-file "$tmp_file"
+    --output-file "$tmpfile"
   )
 
   if ! kc_asdf_fetch "$1"; then
     unset CURL_OPTIONS WGET_OPTIONS
     return 11
-  elif [ -f "$tmp_file" ]; then
-    sed -n -e "s|^[ ]*Location: *||p" <"$tmp_file" |
+  elif [ -f "$tmpfile" ]; then
+    sed -n -e "s|^[ ]*Location: *||p" <"$tmpfile" |
       tail -n1 &&
-      rm "$tmp_file"
+      rm "$tmpfile"
   fi
 
   unset CURL_OPTIONS WGET_OPTIONS
@@ -255,6 +255,12 @@ kc_asdf_get_os() {
   esac
   {%- endif %}
 
+  if command -v _kc_asdf_custom_os >/dev/null; then
+    local tmp="$os"
+    os="$(_kc_asdf_custom_os "$os")"
+    kc_asdf_debug "developer has custom OS name from %s to %s" "$tmp" "$os"
+  fi
+
   printf "%s" "$os"
 }
 
@@ -280,6 +286,12 @@ kc_asdf_get_arch() {
   {% endfor -%}
   esac
   {%- endif %}
+
+  if command -v _kc_asdf_custom_arch >/dev/null; then
+    local tmp="$arch"
+    arch="$(_kc_asdf_custom_arch "$arch")"
+    kc_asdf_debug "developer has custom ARCH name from %s to %s" "$tmp" "$arch"
+  fi
 
   printf "%s" "$arch"
 }

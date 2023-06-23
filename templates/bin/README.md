@@ -10,10 +10,11 @@
 
 > https://asdf-vm.com/plugins/create.html#golden-rules-for-plugin-scripts
 
-## Generic script
+## Generic scripts callback
 
-All scripts have optional to implement it's own functionality
-using `kc_asdf_main` function
+This listed custom function that can defined on any bin/* scripts.
+
+1. To customize functionality of script (without use any default logic), use `kc_asdf_main()`
 
 ```bash
 ## Example code of kc_asdf_main function
@@ -22,7 +23,30 @@ kc_asdf_main() {
 }
 ```
 
-## List all
+## Generic utilities callback
+
+This listed custom function that should defined on **lib/utils.sh**.
+To custom some default configuration.
+
+1. To custom final OS name, use `_kc_asdf_custom_os()`
+
+```bash
+_kc_asdf_custom_os() {
+  local os="$1"
+  printf "%s" "$os"
+}
+```
+
+2. To custom final ARCH name, use `_kc_asdf_custom_arch()`
+
+```bash
+_kc_asdf_custom_arch() {
+  local arch="$1"
+  printf "%s" "$arch"
+}
+```
+
+## List all callback
 
 1. To filter value from list, use `_kc_asdf_list_filter()`.
 
@@ -34,7 +58,7 @@ _kc_asdf_list_filter() {
 }
 ```
 
-## Latest stable
+## Latest stable callback
 
 1. To filter value from list, use `_kc_asdf_list_filter()`.
 
@@ -47,21 +71,7 @@ _kc_asdf_latest_filter() {
 }
 ```
 
-## Install
-
-1. To support install from source code, use `_kc_asdf_install_source()`
-
-```bash
-## This will required _kc_asdf_download_source to defined too
-## when `asdf install plugin ref:main`
-_kc_asdf_install_source() {
-  local version="$1"
-  local download_path="$2" install_path="$3"
-  local concurrency="$4"
-}
-```
-
-## Download
+## Download callback
 
 1. To support generate checksum file, use `_kc_asdf_custom_checksum()`
 
@@ -84,5 +94,19 @@ _kc_asdf_custom_checksum() {
 _kc_asdf_download_source() {
   local version="$1"
   local download_path="$2"
+}
+```
+
+## Install callback
+
+1. To support install from source code, use `_kc_asdf_install_source()`
+
+```bash
+## This will required _kc_asdf_download_source to defined too
+## when `asdf install plugin ref:main`
+_kc_asdf_install_source() {
+  local version="$1"
+  local download_path="$2" install_path="$3"
+  local concurrency="$4"
 }
 ```
