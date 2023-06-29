@@ -63,3 +63,5 @@ jobs:
         uses: asdf-vm/actions/plugin-test@v2
         with:
           command: {% include pathjoin('macros', 'test-cmd.jinja') %}
+        env:
+          DEBUG: 1
