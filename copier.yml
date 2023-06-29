@@ -75,7 +75,7 @@ archive_regex:
 
 archive_conf_strip:
   type: int
-  help: "[ARC] How many times we should strip directory when extract result?"
+  help: "[ARC] How many times we should strip directory when extract result (not support by unzip)?"
   default: 0
   validator: "{% from pathjoin('macros', 'validators.jinja') import valid_uint %}{{ valid_uint(archive_conf_strip) }}"
   when: "{{ archive_enabled }}"
