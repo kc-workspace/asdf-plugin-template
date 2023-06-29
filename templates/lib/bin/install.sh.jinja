@@ -9,22 +9,22 @@ __asdf_bin() {
   local version="${ASDF_INSTALL_VERSION:?}"
   local indir="${ASDF_DOWNLOAD_PATH:?}"
   local outdir="${ASDF_INSTALL_PATH:?}"
-  local concurrency="${ASDF_CONCURRENCY:?}"
+  local concurrency="${ASDF_CONCURRENCY:-1}"
 
   kc_asdf_debug "$ns" "installing %s %s %s" \
     "$KC_ASDF_APP_NAME" "$type" "$version"
   kc_asdf_debug "$ns" "download location is %s" "$indir"
   kc_asdf_debug "$ns" "install location is %s" "$outdir"
 
-  if [[ "$type" == "ref" ]] &&
-    command -v _kc_asdf_custom_install_source >/dev/null; then
-    if ! command -v _kc_asdf_custom_download_source >/dev/null; then
-      kc_asdf_error "$ns" "_kc_asdf_custom_download_source() is required"
-      return 1
+  if [[ "$type" == "ref" ]]; then
+    if command -v _kc_asdf_custom_install_source >/dev/null; then
+      _kc_asdf_custom_install_source "$version" \
+        "$indir" "$outdir" "$concurrency"
+      return $?
     fi
-    _kc_asdf_custom_install_source "$version" \
-      "$indir" "$outdir" "$concurrency"
-    return $?
+
+    kc_asdf_error "$ns" "reference mode is not support by current plugin"
+    return 1
   fi
 
   kc_asdf_step "install" "$outdir" \

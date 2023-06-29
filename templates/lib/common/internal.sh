@@ -30,26 +30,28 @@ __asdf_bin_unknown() {
 }
 
 ## Print log to stderr
-## usage: `kc_asdf_log '<key>' '<namespace>' '<format>' '<variables>'`
+## usage: `kc_asdf_log '<level>' '<namespace>' '<format>' '<variables>'`
 ## variables:
-##   - ASDF_LOG_FORMAT="{datetime} [{key}] {namespace} - {message}"
+##   - ASDF_LOG_FORMAT="{datetime} [{level}] {namespace} - {message}"
 __asdf_log() {
-  local key="$1" ns="$2" _format="$3"
+  local level="$1" ns="$2" _format="$3"
   shift 3
 
-  local default="{datetime} [{key}] {namespace} - {message}"
+  local default="{time} [{level}] {namespace} - {message}"
   local template="${ASDF_LOG_FORMAT:-$default}"
 
   local variables=(
-    "datetime=$(date "+%Y-%m-%d %H:%M:%S")"
-    "key=$key"
-    "namespace=$(printf '%-20s' "$ns")"
+    "datetime=$(date +"%Y-%m-%d %H:%M:%S")"
+    "date=$(date +"%Y-%m-%d")"
+    "time=$(date +"%H:%M:%S")"
+    "level=$level"
+    "namespace=$(printf '%-28s' "$ns")"
+    "ns=$ns"
     "message=$_format"
   )
 
   local format
   format="$(kc_asdf_template "$template" "${variables[@]}")"
-
   # shellcheck disable=SC2059
   printf "$format\n" "$@" >&2
 }

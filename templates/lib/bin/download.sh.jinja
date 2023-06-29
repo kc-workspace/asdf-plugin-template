@@ -19,21 +19,29 @@ __asdf_bin() {
     "version=$version"
   )
 
-  if [[ "$type" == "ref" ]] &&
-    command -v _kc_asdf_custom_download_source >/dev/null; then
-    if ! command -v _kc_asdf_custom_install_source >/dev/null; then
-      kc_asdf_error "$ns" "_kc_asdf_custom_install_source() is required"
-      return 1
+  {%- if custom_require_commands != '' %}
+
+  [ -z "${ASDF_NO_CHECK:-}" ] &&
+    kc_asdf_require_commands \
+      {{ custom_require_commands }}
+  {%- endif %}
+
+  if [[ "$type" == "ref" ]]; then
+    if command -v _kc_asdf_custom_download_source >/dev/null; then
+      local source_url
+      source_url="{{ source_url }}"
+      source_url="$(kc_asdf_template "$source_url" "${vars[@]}")"
+      kc_asdf_debug "$ns" "source link is %s" "$source_url"
+      [ -z "$source_url" ] &&
+        kc_asdf_error "$ns" "invalid source link: %s" \
+          "$source_url" &&
+        return 1
+      _kc_asdf_custom_download_source "$version" "$source_url" "$outdir"
+      return $?
     fi
-    local source_url
-    source_url="{{ source_url }}"
-    source_url="$(kc_asdf_template "$source_url" "${vars[@]}")"
-    kc_asdf_debug "$ns" "source link is %s" "$source_url"
-    [ -z "$source_url" ] &&
-      kc_asdf_error "invalid source link: %s" "$source_url" &&
-      return 1
-    _kc_asdf_custom_download_source "$version" "$source_url" "$outdir"
-    return $?
+
+    kc_asdf_error "$ns" "reference mode is not support by current plugin"
+    return 1
   fi
 
   local download_url
@@ -43,9 +51,9 @@ __asdf_bin() {
     kc_asdf_debug "$ns" "developer custom download link" &&
     download_url="$(_kc_asdf_custom_download_url "$version" "$download_url")"
   kc_asdf_debug "$ns" "download link is %s" "$download_url"
-    [ -z "$download_url" ] &&
-      kc_asdf_error "invalid download link: %s" "$download_url" &&
-      return 1
+  [ -z "$download_url" ] &&
+    kc_asdf_error "invalid download link: %s" "$download_url" &&
+    return 1
 
   local tmpdir tmpfile tmppath
   tmpdir="$(kc_asdf_temp_dir)"
@@ -86,7 +94,7 @@ __asdf_bin() {
     kc_asdf_step "transfer" "$outpath" \
       kc_asdf_transfer "copy" "$tmppath" "$outpath" ||
       return 1
-  {% if archive_enabled -%}
+    {% if archive_enabled -%}
   elif [[ "$mode" == "archive" ]]; then
     {% if archive_conf_path != '' -%}
     outpath="$(kc_asdf_temp_dir)"
@@ -106,7 +114,7 @@ __asdf_bin() {
       kc_asdf_transfer "move" "$tmppath" "$outpath" ||
       return 1
     {% endif %}
-  {%- endif %}{% if package_enabled %}
+    {%- endif %}{% if package_enabled %}
   elif [[ "$mode" == "package" ]]; then
     {% if package_conf_path != '' -%}
     outpath="$(kc_asdf_temp_dir)"
@@ -126,7 +134,7 @@ __asdf_bin() {
       kc_asdf_transfer "move" "$tmppath" "$outpath" ||
       return 1
     {% endif %}
-  {%- endif %}
+    {%- endif %}
   else
     kc_asdf_error "$ns" "invalid download mode name '%s'" "$mode"
     return 1

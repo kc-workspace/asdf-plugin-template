@@ -2,6 +2,7 @@
 _subdirectory: templates
 
 _skip_if_exists:
+  - README.plugin.md
   - bin
   - "!bin/README.md"
   - lib/utils.sh
@@ -14,6 +15,9 @@ _tasks:
   - "git init"
   - "git remote remove origin || exit 0"
   - "git remote add origin {{ plugin_repo }} || exit 0"
+  - "git add --all || exit 0"
+  - "git commit -m 'feat(core): applied template' || exit 0"
+  - "git push origin main || exit 0"
 
 app_name:
   type: str
@@ -184,10 +188,6 @@ version_file_names:
   help: "[VER] What is your version filename list (separated by space)?"
   when: "{{ version_file_enabled }}"
 
-test_cmd_args:
-  type: str
-  help: "[TST] What is command arguments for testing?"
-
 custom_os_enabled:
   type: bool
   help: "[CST] If you would like to custom OS name?"
@@ -235,6 +235,14 @@ custom_bin_paths:
   type: str
   help: "[CST] What is your application bin scripts (separated by space)?"
   default: bin
+
+custom_require_commands:
+  type: str
+  help: "[CST] What is your application command requirement (separated by space)?"
+
+test_cmd_args:
+  type: str
+  help: "[TST] What is command arguments for testing?"
 
 plugin_org:
   type: str

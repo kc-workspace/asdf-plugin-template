@@ -11,7 +11,7 @@ export COMPONENTS=(
   argocd aws
   cloudflared cmctl
   flux2
-  gh git-chglog golang
+  gh git-chglog golang golangci-lint gradle
   helm hub
   kubectl
   terragrunt
@@ -26,41 +26,64 @@ export FAILED="${RED_COLOR}failed${RESET_COLOR}"
 
 main() {
   local template="$PWD"
+  local deployed_file
+  deployed_file="$(on_deploy)"
 
-  local name temp plugin
+  local name plugin_name
+  local temp plugin
   local latest latest_logs
+  local failed_count=0
 
   for name in "$@"; do
-    temp="$template/.temp/asdf-$name"
+    plugin_name="asdf-$name"
+    temp="$template/.temp/$plugin_name"
     plugin="$HOME/.asdf/plugins/$name"
 
     printf "# $BLUE_COLOR%s$RESET_COLOR\n" "$name"
 
+    if test -n "$deployed_file"; then
+      if ! grep -qiE "^$plugin_name$" "$deployed_file"; then
+        step exec_default check_noop \
+          gh repo create --disable-wiki \
+          "kc-workspace/$plugin_name" --public || {
+          ((failed_count++))
+          continue
+        }
+      fi
+    fi
     if [ -d "$temp" ]; then
       step exec_default check_noop \
         copier copy \
         --vcs-ref HEAD \
         --UNSAFE \
         "$template" "$temp" \
-        --defaults --overwrite ||
-        break
+        --defaults --overwrite || {
+        ((failed_count++))
+        continue
+      }
     else
       step exec_prompt check_noop \
         copier copy \
         --vcs-ref HEAD \
         --UNSAFE \
         "$template" "$temp" \
-        --overwrite ||
-        break
+        --overwrite || {
+        ((failed_count++))
+        continue
+      }
     fi
     step exec_default check_noop \
-      rm -rf "$plugin" ||
-      break
+      rm -rf "$plugin" || {
+      ((failed_count++))
+      continue
+    }
     step exec_default check_noop \
-      cp -r "$temp" "$plugin" ||
-      break
+      cp -r "$temp" "$plugin" || {
+      ((failed_count++))
+      continue
+    }
 
-    test -n "$NO_TEST" &&
+    { test -n "$NO_TEST" || test -n "$deployed_file"; } &&
       echo &&
       continue
 
@@ -68,35 +91,61 @@ main() {
     latest="$(asdf latest "$name" 2>"$latest_logs")"
     [ -z "$latest" ] &&
       print_status "$FAILED" "latest is required [cat $latest_logs]" &&
-      break
+      ((failed_count++)) &&
+      continue
 
     step exec_sep_logs check_asdf_list \
-      asdf list all "$name" ||
-      break
+      asdf list all "$name" || {
+      ((failed_count++))
+      continue
+    }
     DEBUG=1 step exec_default check_noop \
-      asdf install "$name" latest ||
-      break
+      asdf install "$name" latest || {
+      ((failed_count++))
+      continue
+    }
     DEBUG=1 step exec_default check_noop \
-      asdf uninstall "$name" "$latest" ||
-      break
+      asdf uninstall "$name" "$latest" || {
+      ((failed_count++))
+      continue
+    }
     step exec_default check_noop \
-      asdf install "$name" "$latest" ||
-      break
+      asdf install "$name" "$latest" || {
+      ((failed_count++))
+      continue
+    }
     step exec_default check_ls \
-      ls -A "$HOME/.asdf/installs/$name/$latest"
+      ls -A "$HOME/.asdf/installs/$name/$latest" || {
+      ((failed_count++))
+      continue
+    }
     step exec_default check_ls \
-      ls -A "$HOME/.asdf/installs/$name/$latest/bin"
+      ls -A "$HOME/.asdf/installs/$name/$latest/bin" || {
+      ((failed_count++))
+      continue
+    }
     step exec_default check_noop \
-      asdf shell "$name" "$latest" ||
-      break
+      asdf shell "$name" "$latest" || {
+      ((failed_count++))
+      continue
+    }
     step exec_default check_noop \
-      asdf "$name" test ||
-      break
+      asdf "$name" test || {
+      ((failed_count++))
+      continue
+    }
     step exec_default check_noop \
-      asdf uninstall "$name" "$latest" ||
-      break
+      asdf uninstall "$name" "$latest" || {
+      ((failed_count++))
+      continue
+    }
     echo
   done
+
+  if [ "$failed_count" -gt 0 ]; then
+    printf "task has been failed %d times\n" "$failed_count" >&2
+    return 1
+  fi
 }
 
 step() {
@@ -173,11 +222,22 @@ check_ls() {
   local logs="$1" errs="$2"
   print_status "$PASSED" "[$(xargs echo <"$logs")]"
   rm "$logs" "$errs" >/dev/null 2>&1
+  return 0
 }
 
 print_status() {
   local status="$1" message="$2"
   printf "  >> $status %s\n" "$message"
+}
+
+on_deploy() {
+  test -z "$DEPLOY" &&
+    return 0
+
+  local temp
+  temp="$(mktemp)"
+  gh repo list kc-workspace --visibility public --json name --jq '.[].name' >"$temp"
+  printf "%s" "$temp"
 }
 
 __internal() {
@@ -193,7 +253,7 @@ __internal() {
     args=("${COMPONENTS[@]}")
   fi
 
-  "$cb" "${args[@]}"
+  "$cb" "${args[@]}" || exit 1
 }
 
 __internal main "$@"

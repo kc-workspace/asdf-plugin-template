@@ -309,6 +309,23 @@ kc_asdf_template() {
   printf "%s" "$template"
 }
 
+## Validate commands must exist;
+## otherwise, it will exit with error
+## usage: `kc_asdf_require_commands 'java'`
+kc_asdf_require_commands() {
+  local ns="req-cmd.defaults"
+
+  kc_asdf_debug "$ns" "current plugins requires [%s] commands" \
+    "$*"
+  for cmd in "$@"; do
+    if ! command -v "$cmd" >/dev/null; then
+      kc_asdf_error "$ns" "requires '%s' command but missing" \
+        "$cmd"
+      exit 1
+    fi
+  done
+}
+
 ## Create temp file and return path
 ## usage: `kc_asdf_temp_file`
 kc_asdf_temp_file() {

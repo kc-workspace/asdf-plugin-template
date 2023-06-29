@@ -8,6 +8,8 @@ __asdf_bin() {
   {%- if version_file_enabled %}
 
   local files=({{ version_file_names }})
+  kc_asdf_debug "$ns" "legacy file names including [%s]" \
+    "${files[*]}"
   printf '%s' "${files[*]}"
   {%- endif %}
 }
