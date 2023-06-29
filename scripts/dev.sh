@@ -13,7 +13,7 @@ export COMPONENTS=(
   flux2
   gh git-chglog golang golangci-lint gradle
   helm hub
-  kubectl
+  kind kubectl
   terragrunt
 )
 
