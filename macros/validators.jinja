@@ -1,0 +1,59 @@
+{%- macro valid_link(link) -%}
+  {%- if not (link | regex_search('^https://.+')) -%}
+    Input should be valid https link
+  {%- endif -%}
+{%- endmacro -%}
+
+{%- macro valid_path(path) -%}
+  {%- if (path | regex_search('^/')) -%}
+    Input path should not begin with /
+  {%- endif -%}
+{%- endmacro -%}
+
+{%- macro valid_require_str(input) -%}
+  {%- if input | length == 0 -%}
+    Input is required
+  {%- endif -%}
+{%- endmacro -%}
+
+{%- macro valid_name(name) -%}
+  {%- if name | length == 0 -%}
+    Application name is required
+  {%- elif (name | regex_search('^asdf')) -%}
+    Application name must not start with 'asdf'
+  {%- endif -%}
+{%- endmacro -%}
+
+{%- macro valid_plugin_name(name) -%}
+  {%- if name | length == 0 -%}
+    Plugin name is required
+  {%- elif not (name | regex_search('^asdf-')) -%}
+    Plugin name must start with 'asdf-'
+  {%- endif -%}
+{%- endmacro -%}
+
+{%- macro valid_desc(desc) -%}
+  {%- if desc | length < 10 -%}
+    Description must be at least 10 characters
+  {%- endif -%}
+{%- endmacro -%}
+
+{%- macro valid_uint(num) -%}
+  {%- if num < 0 -%}
+    Input number must be positive number or zero
+  {%- endif -%}
+{%- endmacro -%}
+
+{%- macro valid_yaml_only_str(yaml) -%}
+  {%- for key, value in yaml.items() -%}
+    {%- if value is not string -%}
+      Input YAML (key={{ key }}, value={{ value }}) is not string
+    {%- endif -%}
+  {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro valid_pub(value) -%}
+  {%- if not (value | regex_search('^-----BEGIN PGP PUBLIC KEY BLOCK-----')) -%}
+    Invalid public key syntax
+  {%- endif -%}
+{%- endmacro -%}

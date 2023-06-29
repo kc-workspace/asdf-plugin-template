@@ -1,0 +1,15 @@
+{%- macro name(org, name) -%}
+  {{ org }}/{{ name }}
+{%- endmacro -%}
+
+{%- macro url(org, name) -%}
+  https://github.com/{{ org }}/{{ name }}
+{%- endmacro -%}
+
+{%- macro https(org, name) -%}
+  https://github.com/{{ org }}/{{ name }}.git
+{%- endmacro -%}
+
+{%- macro ssh(org, name) -%}
+  git@github.com:{{ org }}/{{ name }}.git
+{%- endmacro -%}

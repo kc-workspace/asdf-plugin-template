@@ -1,3 +1,5 @@
+{%- from pathjoin('macros', 'github.jinja') import name, url, https -%}
+
 <h1 align="center">
   {{ plugin_name }}
 </h1>
@@ -9,20 +11,20 @@
 
 <!-- Badges section -->
 <p align="center">
-  <a href="https://github.com/{% include pathjoin('macros', 'github-name.jinja') %}/actions/workflows/main.yml">
+  <a href="{{ url(plugin_org, plugin_name) }}/actions/workflows/main.yml">
     <img
       alt="github-main"
-      src="https://img.shields.io/github/actions/workflow/status/{% include pathjoin('macros', 'github-name.jinja') %}/main.yml?style=flat-square&logo=github">
+      src="https://img.shields.io/github/actions/workflow/status/{{ name(plugin_org, plugin_name) }}/main.yml?style=flat-square&logo=github">
   </a>
-  <a href="https://github.com/{% include pathjoin('macros', 'github-name.jinja') %}/releases">
+  <a href="{{ url(plugin_org, plugin_name) }}/releases">
     <img
       alt="version"
-      src="https://img.shields.io/github/v/release/{% include pathjoin('macros', 'github-name.jinja') %}?style=flat-square&logo=github">
+      src="https://img.shields.io/github/v/release/{{ name(plugin_org, plugin_name) }}?style=flat-square&logo=github">
   </a>
-  <a href="https://github.com/{% include pathjoin('macros', 'github-name.jinja') %}/commits/main">
+  <a href="{{ url(plugin_org, plugin_name) }}/commits/main">
     <img
       alt="version"
-      src="https://img.shields.io/github/last-commit/{% include pathjoin('macros', 'github-name.jinja') %}/main?style=flat-square&logo=github">
+      src="https://img.shields.io/github/last-commit/{{ name(plugin_org, plugin_name) }}/main?style=flat-square&logo=github">
   </a>
 </p>
 
@@ -42,7 +44,7 @@
 There are several things template cannot generate for you,
 below are a list of thing we should do:
 
-1. make sure that your GitHub repository already exist at [{% include pathjoin('macros', 'github-name.jinja') %}][plugin-gh]
+1. make sure that your GitHub repository already exist at [{{ name(plugin_org, plugin_name) }}][plugin-gh]
 2. please read [plugins create section][asdf-create-plugin] for more information
 3. remove `before start` section once you completed
 
@@ -51,7 +53,7 @@ below are a list of thing we should do:
 Plugin:
 
 ```sh
-asdf plugin add "{{ app_name }}" "{% include pathjoin('macros', 'github-link.jinja') %}.git"
+asdf plugin add "{{ app_name }}" "{{ https(plugin_org, plugin_name) }}"
 ```
 
 App:
@@ -130,7 +132,7 @@ source "$KC_ASDF_PLUGIN_PATH/lib/commands.sh" "$@"
 <!-- LINKS SECTION -->
 
 
-[plugin-gh]: {% include pathjoin('macros', 'github-link.jinja') %}
+[plugin-gh]: {{ url(plugin_org, plugin_name) }}
 [template-gh]: https://github.com/kc-workspace/asdf-plugin-template
 [asdf-link]: https://github.com/asdf-vm/asdf
 [asdf-create-plugin]: https://asdf-vm.com/plugins/create.html

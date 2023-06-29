@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-## Download the source code or binary for a specific version of a tool
-## to a specified location.
-## https://asdf-vm.com/plugins/create.html#bin-download
+## Install a specific version of a tool to a specified location.
+## https://asdf-vm.com/plugins/create.html#bin-install
 
 ## -----------------------
 ## Customization functions
@@ -10,6 +9,16 @@
 # kc_asdf_main() {
 #   return 0
 # }
+
+{% if source_enabled -%}
+_kc_asdf_custom_install_source() {
+  local version="$1"
+  local download_path="$2" install_path="$3"
+  local concurrency="$4"
+  kc_asdf_error "install source hasn't been implemented"
+  return 1
+}
+{%- endif %}
 
 ## -----------------------
 

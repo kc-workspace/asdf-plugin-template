@@ -3,104 +3,137 @@
 ## variables:
 ##   - ASDF_INSECURE - disable checksum check
 __asdf_bin() {
+  # shellcheck disable=SC2034
+  local ns="$1"
+  shift
+
   local type="${ASDF_INSTALL_TYPE:?}"
   local version="${ASDF_INSTALL_VERSION:?}"
-  local outdir="${ASDF_DOWNLOAD_PATH:?}"
+  kc_asdf_debug "$ns" "downloading %s %s %s" \
+    "$KC_ASDF_APP_NAME" "$type" "$version"
 
-  local tmpl_variables
-  tmpl_variables=(
+  local vars
+  vars=(
     "os=$KC_ASDF_OS"
     "arch=$KC_ASDF_ARCH"
     "version=$version"
   )
 
-  local download_url
-  download_url="$(
-    kc_asdf_template "${KC_ASDF_DOWNLOAD_URL:?}" "${tmpl_variables[@]}"
-  )"
-
-  kc_asdf_step_start "download" "'%s' %s %s" \
-    "$KC_ASDF_APP_NAME" "$type" "$version"
-  kc_asdf_debug "using download '%s' type (url=%s)" \
-    "{{ download_type }}" "$download_url"
-
   if [[ "$type" == "ref" ]] &&
-    command -v _kc_asdf_download_source >/dev/null; then
-    if ! command -v _kc_asdf_install_source >/dev/null; then
-      kc_asdf_throw 4 "download source failed because no install logic define"
+    command -v _kc_asdf_custom_download_source >/dev/null; then
+    if ! command -v _kc_asdf_custom_install_source >/dev/null; then
+      kc_asdf_error "$ns" "_kc_asdf_custom_install_source() is required"
+      return 1
     fi
-
-    kc_asdf_debug "downloading using 'ref' mode"
-    if ! _kc_asdf_download_source "$version" "$outdir"; then
-      kc_asdf_throw 3 "download source failed"
-    fi
-  elif [[ "$type" == "version" ]]; then
-    kc_asdf_debug "downloading using 'version' mode"
-
-    local tmpdir tmpfile tmppath
-    tmpdir="$(kc_asdf_temp_dir)"
-    tmpfile="$(
-      kc_asdf_template "${KC_ASDF_DOWNLOAD_NAME:?}" "${tmpl_variables[@]}"
-    )"
-    tmppath="$tmpdir/$tmpfile"
-
-    kc_asdf_debug "download output: %s" "$tmppath"
-    kc_asdf_fetch_file "$download_url" "$tmppath"
-
-    {% if download_checksum_enabled -%}
-    if [ -z "${ASDF_INSECURE:-}" ]; then
-      local checksum_url
-      checksum_url="$(
-        kc_asdf_template "${KC_ASDF_CHECKSUM_URL:?}" "${tmpl_variables[@]}"
-      )"
-
-      kc_asdf_step_start "checksum" "verifying '%s'" "$tmpfile"
-      if ! kc_asdf_checksum "$tmppath" "$checksum_url"; then
-        kc_asdf_throw 5 "checksum function return error" \
-          "$tmpfile"
-      else
-        kc_asdf_step_success "checksum" "PASSED"
-      fi
-    else
-      kc_asdf_info "you are downloading with insecure mode"
-    fi
-    {% endif %}
-
-    local outdir="${ASDF_DOWNLOAD_PATH:?}"
-    local outpath
-
-    local download_type
-    download_type="$(kc_asdf_get_download_type "$tmpfile")"
-
-    if [[ "$download_type" == "single-file" ]]; then
-      local filename="$KC_ASDF_APP_NAME"
-      outpath="$outdir/$filename"
-      kc_asdf_step_start "copy" "single file '%s' to %s" \
-        "$tmpfile" "$outpath"
-      if ! cp "$tmppath" "$outpath"; then
-        kc_asdf_throw 8 "cannot move file from %s to %s" \
-          "$tmppath" "$outpath"
-      fi
-    elif [[ "$download_type" == "archive-file" ]]; then
-      outpath="$outdir"
-      kc_asdf_step_start "extract" "archive file '%s' to %s" "$tmpfile" "$outpath"
-      if ! kc_asdf_extract "$tmppath" "$outpath"; then
-        kc_asdf_throw 8 "cannot extract download file from %s" \
-          "$tmppath"
-      fi
-      kc_asdf_debug "extracted '%s' successfully" "$tmpfile"
-    else
-      kc_asdf_throw 7 "invalid download type %s" \
-        "$download_type"
-    fi
-
-    # shellcheck disable=SC2011
-    kc_asdf_debug "download directory: [%s]" \
-      "$(ls "$outpath" | xargs echo)"
-    kc_asdf_when_not_debug rm -r "$tmpdir"
-  else
-    kc_asdf_throw 4 "install type (%s) not support" "$type"
+    local source_url
+    source_url="{{ source_url }}"
+    source_url="$(kc_asdf_template "$source_url" "${vars[@]}")"
+    kc_asdf_debug "$ns" "source link is %s" "$source_url"
+    [ -z "$source_url" ] &&
+      kc_asdf_error "invalid source link: %s" "$source_url" &&
+      return 1
+    _kc_asdf_custom_download_source "$version" "$source_url" "$outdir"
+    return $?
   fi
 
-  kc_asdf_step_success "download" "successfully"
+  local download_url
+  download_url="{{ download_url }}"
+  download_url="$(kc_asdf_template "$download_url" "${vars[@]}")"
+  command -v _kc_asdf_custom_download_url >/dev/null &&
+    kc_asdf_debug "$ns" "developer custom download link" &&
+    download_url="$(_kc_asdf_custom_download_url "$version" "$download_url")"
+  kc_asdf_debug "$ns" "download link is %s" "$download_url"
+    [ -z "$download_url" ] &&
+      kc_asdf_error "invalid download link: %s" "$download_url" &&
+      return 1
+
+  local tmpdir tmpfile tmppath
+  tmpdir="$(kc_asdf_temp_dir)"
+  tmpfile="${download_url##*/}"
+  tmppath="$tmpdir/$tmpfile"
+
+  kc_asdf_debug "$ns" "temporary location is %s" "$tmppath"
+
+  kc_asdf_step "download" "$download_url" \
+    kc_asdf_fetch_file "$download_url" "$tmppath" ||
+    return 1
+  command -v _kc_asdf_custom_post_download >/dev/null &&
+    kc_asdf_debug "$ns" "developer has post download function defined" &&
+    _kc_asdf_custom_post_download "$version" "$download_url" "$tmppath"
+  {% if checksum_enabled -%}
+  local checksum_url
+  checksum_url="{{ checksum_url }}"
+  checksum_url="$(kc_asdf_template "$checksum_url" "${vars[@]}")"
+  kc_asdf_step "checksum" "$tmpfile" \
+    kc_asdf_checksum "$tmppath" "$checksum_url" ||
+    return 1
+  {%- endif -%}
+  {% if gpg_enabled -%}
+  kc_asdf_step "gpg" "$tmpfile" \
+    kc_asdf_gpg "$tmppath" ||
+    return 1
+  {%- endif %}
+
+  local mode
+  mode="$(kc_asdf_download_mode "$tmpfile")"
+  kc_asdf_debug "$ns" "using '%s' as download mode" "$mode"
+
+  local outfile outdir="${ASDF_DOWNLOAD_PATH:?}" outpath
+
+  if [[ "$mode" == "file" ]]; then
+    outfile="$KC_ASDF_APP_NAME"
+    outpath="$outdir/$outfile"
+    kc_asdf_step "transfer" "$outpath" \
+      kc_asdf_transfer "copy" "$tmppath" "$outpath" ||
+      return 1
+  {% if archive_enabled -%}
+  elif [[ "$mode" == "archive" ]]; then
+    {% if archive_conf_path != '' -%}
+    outpath="$(kc_asdf_temp_dir)"
+    {%- else -%}
+    outpath="$outdir"
+    {%- endif %}
+
+    kc_asdf_debug "$ns" "extracting '%s' to '%s'" \
+      "$tmppath" "$outpath"
+    kc_asdf_step "extract" "$outpath" \
+      kc_asdf_extract "$tmppath" "$outpath" ||
+      return 1
+    {%- if archive_conf_path != '' %}
+    tmppath="$(kc_asdf_template "$outpath/{{ archive_conf_path }}" "${vars[@]}")"
+    outpath="$outdir"
+    kc_asdf_step "transfer" "$outpath" \
+      kc_asdf_transfer "move" "$tmppath" "$outpath" ||
+      return 1
+    {% endif %}
+  {%- endif %}{% if package_enabled %}
+  elif [[ "$mode" == "package" ]]; then
+    {% if package_conf_path != '' -%}
+    outpath="$(kc_asdf_temp_dir)"
+    {%- else -%}
+    outpath="$outdir"
+    {%- endif %}
+
+    kc_asdf_debug "$ns" "unpacking '%s' to '%s'" \
+      "$tmppath" "$outpath"
+    kc_asdf_step "unpack" "$outpath" \
+      kc_asdf_unpack "$tmppath" "$outpath" ||
+      return 1
+    {%- if package_conf_path != '' %}
+    tmppath="$(kc_asdf_template "$outpath/{{ package_conf_path }}" "${vars[@]}")"
+    outpath="$outdir"
+    kc_asdf_step "transfer" "$outpath" \
+      kc_asdf_transfer "move" "$tmppath" "$outpath" ||
+      return 1
+    {% endif %}
+  {%- endif %}
+  else
+    kc_asdf_error "$ns" "invalid download mode name '%s'" "$mode"
+    return 1
+  fi
+
+  __asdf_if_not_debug rm -r "$tmpdir"
+  # shellcheck disable=SC2011
+  kc_asdf_debug "$ns" "list '%s': [%s]" \
+    "$outdir" "$(ls "$outdir" | xargs echo)"
 }

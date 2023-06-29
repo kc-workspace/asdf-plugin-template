@@ -19,7 +19,6 @@ sha256sum
 sha384sum
 sha512sum
 strftime
-mulitline
 kamontat
 chantrachirathumrong
 kc

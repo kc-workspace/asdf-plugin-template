@@ -11,13 +11,13 @@
 1. To import macros
 
 ```jinja
-{% pathjoin('includes', 'slugify.jinja') import slugify %}{{ slugify(name) }}
+{% pathjoin('macros', 'example.jinja') import example %}{{ example(name) }}
 ```
 
 ## How to define macros
 
 ```jinja
-{% macro slugify(value) -%}
+{% macro example(value) -%}
 {{ value|lower|replace(' ', '-') }}
 {%- endmacro %}
 ```

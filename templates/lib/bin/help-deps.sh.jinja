@@ -1,13 +1,28 @@
 #!/usr/bin/env bash
 
-__asdf_bin() {
-  kcs_asdf_help_header "Dependencies"
-  local deps=(git curl sed grep mktemp xargs)
-  {% if download_checksum_enabled -%}
-  deps+=(sha{{ download_checksum_bit }}sum)
-  {%- endif %}
-  for dep in "${deps[@]}"; do
-    kc_asdf_printf "$dep"
+__asdf_bin_help_deps_add() {
+  for dep in "$@"; do
+    echo "$dep"
   done
-  echo
+}
+
+__asdf_bin() {
+  # shellcheck disable=SC2034
+  local ns="$1"
+  shift
+
+  kc_asdf_help_header "Dependencies"
+  local deps=(git curl sed grep mktemp xargs tr)
+
+  {% if checksum_enabled -%}
+  deps+=(sha{{ checksum_conf_algorithm }}sum shasum)
+  {%- endif %}
+
+  for dep in "${deps[@]}"; do
+    echo "$dep"
+  done
+
+  if command -v _kc_asdf_custom_help >/dev/null; then
+    _kc_asdf_custom_help __asdf_bin_help_deps_add
+  fi
 }

@@ -48,10 +48,10 @@ _kc_asdf_custom_arch() {
 
 ## List all callback
 
-1. To filter value from list, use `_kc_asdf_list_filter()`.
+1. To filter value from list, use `_kc_asdf_custom_filter()`.
 
 ```bash
-_kc_asdf_list_filter() {
+_kc_asdf_custom_filter() {
   local tmpfile="$1"
   ## Select only version prefix 1
   kc_asdf_tags_only "$tmpfile" "1"
@@ -60,10 +60,10 @@ _kc_asdf_list_filter() {
 
 ## Latest stable callback
 
-1. To filter value from list, use `_kc_asdf_list_filter()`.
+1. To filter value from list, use `_kc_asdf_custom_filter()`.
 
 ```bash
-_kc_asdf_latest_filter() {
+_kc_asdf_custom_filter() {
   local tmpfile="$1" query="$2"
   ## Filter based on user input query
   ## You don't need to as it implemented on default
@@ -86,27 +86,100 @@ _kc_asdf_custom_checksum() {
 }
 ```
 
-2. To support download source code, use `_kc_asdf_download_source()`
+2. To support custom download URL, use `_kc_asdf_custom_download_url()`
+
+```bash
+## printf empty string will indicate there are a problem
+_kc_asdf_custom_download_url() {
+  local version="$1" old_url="$2"
+  printf "%s" "$old_url"
+}
+```
+
+3. To support download source code, use `_kc_asdf_custom_download_source()`
 
 ```bash
 ## This will required _kc_asdf_install_source to defined too
 ## when `asdf install plugin ref:main`
-_kc_asdf_download_source() {
-  local version="$1"
-  local download_path="$2"
+_kc_asdf_custom_download_source() {
+  local version="$1" download_url="$2"
+  local download_path="$3"
+}
+```
+
+4. To support action after downloaded, use `_kc_asdf_custom_post_download()`
+
+```bash
+## This won't run on download source code (ref mode)
+_kc_asdf_custom_post_download() {
+  local version="$1" download_url="$2"
+  local tmppath="$3"
 }
 ```
 
 ## Install callback
 
-1. To support install from source code, use `_kc_asdf_install_source()`
+1. To support install from source code, use `_kc_asdf_custom_install_source()`
 
 ```bash
 ## This will required _kc_asdf_download_source to defined too
 ## when `asdf install plugin ref:main`
-_kc_asdf_install_source() {
+_kc_asdf_custom_install_source() {
   local version="$1"
   local download_path="$2" install_path="$3"
   local concurrency="$4"
+}
+```
+
+## Parse legacy file callback
+
+1. To support parsing legacy version, use `_kc_asdf_custom_parse_version_file()`
+
+```bash
+_kc_asdf_custom_parse_version_file() {
+  local filepath="$1"
+  cat "$filepath"
+}
+```
+
+## Help overview
+
+1. To override overview message, use `_kc_asdf_custom_help()`
+
+```bash
+_kc_asdf_custom_help() {
+  printf "this is a override overview help"
+}
+```
+
+## Help config
+
+1. To override config message, use `_kc_asdf_custom_help()`
+
+```bash
+_kc_asdf_custom_help() {
+  printf "this is a override config help"
+}
+```
+
+## Help dependencies
+
+1. To override dependencies message, use `_kc_asdf_custom_help()`
+
+```bash
+_kc_asdf_custom_help() {
+  local add_deps="$1"
+  add_deps "asdf" "curl" "echo"
+}
+```
+
+## Help links
+
+1. To override links message, use `_kc_asdf_custom_help()`
+
+```bash
+_kc_asdf_custom_help() {
+  local new_link="$1"
+  new_link "Name" "https://example.com"
 }
 ```

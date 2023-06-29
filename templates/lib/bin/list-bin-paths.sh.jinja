@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
 __asdf_bin() {
-  echo "bin"
+  # shellcheck disable=SC2034
+  local ns="$1"
+  shift
+
+  local bins=({{ custom_bin_paths }})
+  printf "%s" "${bins[*]}"
 }

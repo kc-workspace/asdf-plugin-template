@@ -5,218 +5,259 @@ _skip_if_exists:
   - bin
   - "!bin/README.md"
   - lib/utils.sh
+  - lib/commands/*.bash
+  - "!lib/commands/command-test.bash"
   - "!lib/bin"
   - .github/linters/cspell-custom.dict.txt
 
 _tasks:
   - "git init"
+  - "git remote remove origin || exit 0"
   - "git remote add origin {{ plugin_repo }} || exit 0"
 
 app_name:
   type: str
-  help: "[AP] What is your application name?"
+  help: "[APP] What is your application name?"
   placeholder: xxxx
-  validator: >-
-    {% if (app_name | length == 0) %}
-    Application must have name
-    {% elif (app_name | regex_search('^asdf')) %}
-    Application name must not start with 'asdf'
-    {% endif %}
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_name %}{{ valid_name(app_name) }}"
 
-app_description:
+app_desc:
   type: str
-  help: "[AP] What is your application do?"
-  mulitline: true
+  help: "[APP] What is your application description?"
+  multiline: true
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_desc %}{{ valid_desc(app_desc) }}"
 
 app_website:
   type: str
-  help: "[AP] What is your application website?"
+  help: "[APP] What is your application main website?"
   placeholder: https://example.com
-  validator: >-
-    {% if not (app_website | regex_search('^https://.+')) %}
-    Application website must start with https://
-    {% endif %}
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(app_website) }}"
 
 app_repo:
   type: str
-  help: "[AP] Where is your application repo?"
+  help: "[APP] Where is your application repo?"
   placeholder: https://github.com/octocat/Hello-World
-  validator: >-
-    {% if not (app_repo | regex_search('^https://.+')) %}
-    Application repository must start with https://
-    {% endif %}
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(app_repo) }}"
 
-app_version_prefix:
+download_url:
   type: str
-  help: "[AP] What is your application version prefix?"
-  default: v
-
-download_link:
-  type: str
-  help: "[DL] Where is your download link (support '{arch}', '{os}', '{version}')?"
+  help: "[DLD] Where is your download link (support '{arch}', '{os}', '{version}')?"
   placeholder: https://example.com/{version}/{arch}/{os}/download
-  validator: >-
-    {% if not (download_link | regex_search('^https://.+')) %}
-    Download link must start with https://
-    {% endif %}
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(download_url) }}"
 
-download_checksum_enabled:
+source_enabled:
   type: bool
-  help: "[DL] Is your download url provide checksum file?"
+  help: "[SUR] Is your application provided build from source?"
   default: false
 
-download_checksum_bit:
+source_url:
+  type: str
+  help: "[SUR] Where is your application source link (support '{arch}', '{os}', '{version}')?"
+  placeholder: https://github.com/org/repo/source.tar.gz
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(source_url) }}"
+  when: "{{ source_enabled }}"
+
+archive_enabled:
+  type: bool
+  help: "[ARC] Is your download result contains archived file?"
+  default: false
+
+archive_regex:
+  type: str
+  help: "[ARC] When the downloaded result will perform extracting?"
+  default: "(\\.tar\\.gz|\\.tgz|\\.zip)$"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_require_str %}{{ valid_require_str(archive_regex) }}"
+  when: "{{ archive_enabled }}"
+
+archive_conf_strip:
   type: int
-  help: "[DL] What is checksum command?"
+  help: "[ARC] How many times we should strip directory when extract result?"
+  default: 0
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_uint %}{{ valid_uint(archive_conf_strip) }}"
+  when: "{{ archive_enabled }}"
+
+archive_conf_path:
+  type: str
+  help: "[ARC] Where is your application located inside extracted directory?"
+  placeholder: dist/path
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_path %}{{ valid_path(archive_conf_path) }}"
+  when: "{{ archive_enabled }}"
+
+package_enabled:
+  type: bool
+  help: "[PKG] Is your download result contains packaged file?"
+  default: false
+
+package_regex:
+  type: str
+  help: "[PKG] When the downloaded result will perform extracting?"
+  default: "(\\.pkg)$"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_require_str %}{{ valid_require_str(package_regex) }}"
+  when: "{{ package_enabled }}"
+
+package_conf_path:
+  type: str
+  help: "[PKG] Where is your application located inside unpacked directory?"
+  placeholder: dist/path
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_path %}{{ valid_path(package_conf_path) }}"
+  when: "{{ package_enabled }}"
+
+checksum_enabled:
+  type: bool
+  help: "[CKS] Is your application provided checksum file?"
+  default: false
+
+checksum_url:
+  type: str
+  help: "[CKS] Where is your checksum link (support '{arch}', '{os}', '{version}')?"
+  placeholder: https://example.com/{version}/{arch}/{os}/checksum.shasum
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(checksum_url) }}"
+  when: "{{ checksum_enabled }}"
+
+checksum_conf_algorithm:
+  type: int
+  help: "[CKS] What is your shasum algorithm?"
   default: 256
-  when: "{{ download_checksum_enabled }}"
   choices:
     sha1sum: 1
     sha224sum: 224
     sha256sum: 256
     sha384sum: 384
     sha512sum: 512
+  when: "{{ checksum_enabled }}"
 
-download_checksum_link:
-  type: str
-  help: "[DL] Where is your download checksum link (support '{arch}', '{os}', '{version}')?"
-  placeholder: https://example.com/{version}/{arch}/{os}/checksum.txt
-  when: "{{ download_checksum_enabled }}"
-  validator: >-
-    {% if not (download_checksum_link | regex_search('^https://.+')) %}
-    Checksum link must start with https://
-    {% endif %}
-
-download_type:
-  type: str
-  help: "[DL] What is your download type?"
-  default: |
-    {%- if
-      (download_link | regex_search('\\.tar\\.gz$')) or
-      (download_link | regex_search('\\.tgz$')) or
-      (download_link | regex_search('\\.zip$'))
-    -%}
-    archive-file
-    {%- else -%}
-    single-file
-    {%- endif -%}
-  choices:
-    Single file: single-file
-    Archive file: archive-file
-    Multiple types: multiple-types
-
-download_type_archive_regex:
-  type: str
-  help: "[DL] What is your file extension is archive file?"
-  when: "{{ download_type == 'multiple-types' }}"
-  default: "(\\.tar\\.gz|\\.tgz|\\.zip)$"
-
-download_strip:
-  type: int
-  help: "[DL] How many times we should strip directory when extract download?"
-  when: "{{ download_type == 'archive-file' }}"
-  default: 0
-  validator: "{% if download_strip < 0 %}Zero for not strip or >0 for strip times{% endif %}"
-
-download_location:
-  type: str
-  help: "[DL] Where is your path from download directory to install (support '{arch}', '{os}', '{version}')?"
-  when: "{{ download_type == 'archive-file' }}"
-  default: "{{ app_name }}"
-
-source_enabled:
+gpg_enabled:
   type: bool
-  help: "[SR] Is your application support build from source?"
+  help: "[GPG] Is your application provided gpg signature?"
   default: false
 
-source_link:
+gpg_public_key:
   type: str
-  help: "[DL] Where is your source link (support '{arch}', '{os}', '{version}')?"
-  when: "{{ source_enabled }}"
-  placeholder: https://example.com/{version}/{arch}/{os}.git
-  validator: >-
-    {% if not (source_link | regex_search('^https://.+')) %}
-    Download link must start with https://
-    {% endif %}
+  help: "[GPG] What is your GPG public key"
+  multiline: true
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_pub %}{{ valid_pub(gpg_public_key) }}"
+  when: "{{ gpg_enabled }}"
 
-install_type:
+gpg_sig_url:
   type: str
-  help: "[IT] How to install app (directory mean copy whole directory to install path)?"
-  when: "{{ download_type == 'archive-file' }}"
-  default: single-file
+  help: "[GPG] Where is your gpg signature link (support '{arch}', '{os}', '{version}')?"
+  placeholder: https://example.com/{version}.sig
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(gpg_sig_url) }}"
+  when: "{{ gpg_enabled }}"
+
+install_map_enabled:
+  type: bool
+  help: "[IST] Would you like to mapping scripts on install directory?"
+  default: true
+
+install_map_yaml:
+  type: yaml
+  help: "[IST] What is your scripts mapping (support '{arch}', '{os}', '{version}')?"
+  multiline: true
+  default: |
+    {{ app_name }}: bin/{{ app_name }}
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_yaml_only_str %}{{ valid_yaml_only_str(install_map_yaml) }}"
+  when: "{{ install_map_enabled }}"
+
+install_map_method:
+  type: str
+  help: "[IST] How to mapping scripts?"
+  default: move
   choices:
-    Single file: single-file
-    Directory: directory
+    - move
+    - link
+    - copy
+  when: "{{ install_map_enabled }}"
+
+version_prefix:
+  type: str
+  help: "[VER] What is your application version prefix?"
+  default: v
+
+version_file_enabled:
+  type: bool
+  help: "[VER] Do your application has own version file?"
+  default: false
+
+version_file_names:
+  type: str
+  help: "[VER] What is your version filename list (separated by space)?"
+  when: "{{ version_file_enabled }}"
+
+test_cmd_args:
+  type: str
+  help: "[TST] What is command arguments for testing?"
 
 custom_os_enabled:
   type: bool
-  help: "[OS] If you would like to custom OS name?"
+  help: "[CST] If you would like to custom OS name?"
   default: false
 
 custom_os_yaml:
   type: yaml
-  help: "[OS] What is OS mapper on yaml (single level key-value)?"
-  when: "{{ custom_os_enabled }}"
+  help: "[CST] What is OS mapper on yaml?"
   multiline: true
   default: |
     linux: Linux
     darwin: MacOS
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_yaml_only_str %}{{ valid_yaml_only_str(custom_os_yaml) }}"
+  when: "{{ custom_os_enabled }}"
 
 custom_arch_enabled:
   type: bool
-  help: "[AR] If you would like to custom Arch name?"
+  help: "[CST] If you would like to custom ARCH name?"
   default: true
 
 custom_arch_yaml:
   type: yaml
-  help: "[AR] What is Arch mapper on yaml (single level key-value)?"
-  when: "{{ custom_arch_enabled }}"
+  help: "[CST] What is Arch mapper on yaml?"
   multiline: true
   default: |
     x86_64: amd64
-    x86: 386
-    i686: 386
-    i386: 386
+    x86: '386'
+    i686: '386'
+    i386: '386'
     powerpc64le: ppc64le
     ppc64le: ppc64le
     armv5*: armv5
     armv6*: armv6
     armv7*: armv7
     aarch64*: arm64
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_yaml_only_str %}{{ valid_yaml_only_str(custom_arch_yaml) }}"
+  when: "{{ custom_arch_enabled }}"
 
 custom_non_stable_version:
   type: str
-  help: "[VR] What is your application non-stable version look like?"
+  help: "[CST] What is your application non-stable version look like?"
   default: "(-src|-dev|-latest|-stm|[-\\.]rc|-alpha|-beta|[-\\.]pre|-next|snapshot|master)"
 
-test_cmd_args:
+custom_bin_paths:
   type: str
-  help: "[TS] What is command arguments for testing?"
-  default: ""
+  help: "[CST] What is your application bin scripts (separated by space)?"
+  default: bin
 
 plugin_org:
   type: str
-  help: "[PI] What is your plugin organization on GitHub?"
+  help: "[PGI] What is your plugin organization on GitHub?"
   default: kc-workspace
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_require_str %}{{ valid_require_str(plugin_org) }}"
 
 plugin_name:
   type: str
-  help: "[PI] What is your plugin name on GitHub?"
+  help: "[PGI] What is your plugin name on GitHub?"
   default: asdf-{{ app_name }}
-  validator: >-
-    {% if not (plugin_name | regex_search('^asdf')) %}
-    Plugin name must start with 'asdf'
-    {% endif %}
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_plugin_name %}{{ valid_plugin_name(plugin_name) }}"
 
 plugin_author:
   type: str
-  help: "[PI] What is your name (prefer fullname)?"
+  help: "[PGI] What is your name (prefer fullname)?"
   default: Kamontat Chantrachirathumrong
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_require_str %}{{ valid_require_str(plugin_author) }}"
 
 plugin_repo:
   type: str
-  help: "[PI] What is your plugin repo type?"
-  default: "{% include pathjoin('macros', 'github-link.jinja') %}"
+  help: "[PGI] What is your plugin repo type?"
+  default: "{% from pathjoin('macros', 'github.jinja') import https %}{{ https(plugin_org, plugin_name) }}"
   choices:
-    https: "{% include pathjoin('macros', 'github-link.jinja') %}"
-    ssh: "{% include pathjoin('macros', 'github-ssh.jinja') %}"
+    https: "{% from pathjoin('macros', 'github.jinja') import https %}{{ https(plugin_org, plugin_name) }}"
+    ssh: "{% from pathjoin('macros', 'github.jinja') import ssh %}{{ ssh(plugin_org, plugin_name) }}"
