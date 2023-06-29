@@ -94,7 +94,7 @@ __asdf_bin() {
     kc_asdf_step "transfer" "$outpath" \
       kc_asdf_transfer "copy" "$tmppath" "$outpath" ||
       return 1
-    {% if archive_enabled -%}
+  {% if archive_enabled -%}
   elif [[ "$mode" == "archive" ]]; then
     {% if archive_conf_path != '' -%}
     outpath="$(kc_asdf_temp_dir)"
@@ -113,7 +113,7 @@ __asdf_bin() {
     kc_asdf_step "transfer" "$outpath" \
       kc_asdf_transfer "move" "$tmppath" "$outpath" ||
       return 1
-    {% endif %}
+    {%- endif %}
     {%- endif %}{% if package_enabled %}
   elif [[ "$mode" == "package" ]]; then
     {% if package_conf_path != '' -%}
@@ -133,7 +133,7 @@ __asdf_bin() {
     kc_asdf_step "transfer" "$outpath" \
       kc_asdf_transfer "move" "$tmppath" "$outpath" ||
       return 1
-    {% endif %}
+    {%- endif %}
     {%- endif %}
   else
     kc_asdf_error "$ns" "invalid download mode name '%s'" "$mode"
