@@ -11,16 +11,6 @@
 #   return 0
 # }
 
-{%- if source_enabled %}
-
-_kc_asdf_custom_download_source() {
-  local version="$1" download_url="$2"
-  local download_path="$3"
-  kc_asdf_error "download source hasn't been implemented"
-  return 1
-}
-{%- endif %}
-
 ## -----------------------
 
 set -euo pipefail

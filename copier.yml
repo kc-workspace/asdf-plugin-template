@@ -11,13 +11,13 @@ _skip_if_exists:
   - "!lib/bin"
   - .github/linters/cspell-custom.dict.txt
 
-_tasks:
-  - "git init"
-  - "git remote remove origin || exit 0"
-  - "git remote add origin {{ plugin_repo }} || exit 0"
-  - "git add --all || exit 0"
-  - "git commit -m 'feat(core): applied template' || exit 0"
-  - "git push origin main || exit 0"
+# _tasks:
+#   - "git init"
+#   - "git remote remove origin || exit 0"
+#   - "git remote add origin {{ plugin_repo }} || exit 0"
+#   - "git add --all || exit 0"
+#   - "git commit -m 'feat(core): applied template' || exit 0"
+#   - "git push origin main || exit 0"
 
 app_name:
   type: str
@@ -54,10 +54,23 @@ source_enabled:
   help: "[SUR] Is your application provided build from source?"
   default: false
 
+source_type:
+  type: str
+  help: "[SUR] What is your application source code type?"
+  default: git
+  choices:
+    - git
+    - archive
+
 source_url:
   type: str
   help: "[SUR] Where is your application source link (support '{arch}', '{os}', '{version}')?"
-  placeholder: https://github.com/org/repo/source.tar.gz
+  placeholder: |
+    {%- if source_type == 'git' -%}
+      https://github.com/org/repo.git
+    {%- elif source_type == 'archive' -%}
+      https://example.com/repo/{version}.tar.gz
+    {%- endif -%}
   validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(source_url) }}"
   when: "{{ source_enabled }}"
 
