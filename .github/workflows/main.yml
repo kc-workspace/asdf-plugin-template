@@ -43,12 +43,11 @@ jobs:
         with:
           fetch-depth: 0
       - name: Linting
-        # https://github.com/github/super-linter#slim-image
-        uses: github/super-linter/slim@v5
+        # https://github.com/super-linter/super-linter#slim-image
+        uses: super-linter/super-linter/slim@v5
         env:
           DEFAULT_BRANCH: ${{ env.DEFAULT_BRANCH }}
           VALIDATE_ALL_CODEBASE: false
           IGNORE_GITIGNORED_FILES: true
           IGNORE_GENERATED_FILES: true
           FILTER_REGEX_EXCLUDE: "*.jinja"
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
