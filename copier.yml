@@ -142,6 +142,13 @@ gpg_public_key:
   validator: "{% from pathjoin('macros', 'validators.jinja') import valid_pub %}{{ valid_pub(gpg_public_key) }}"
   when: "{{ gpg_enabled }}"
 
+gpg_fingerprint:
+  type: str
+  help: "[GPG] What is your GPG fingerprint"
+  placeholder: ABCD0123EFGH4567IJKL8910MNOP1112QRST1314
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_fingerprint %}{{ valid_fingerprint(gpg_fingerprint) }}"
+  when: "{{ gpg_enabled }}"
+
 gpg_sig_url:
   type: str
   help: "[GPG] Where is your gpg signature link (support '{arch}', '{os}', '{version}')?"

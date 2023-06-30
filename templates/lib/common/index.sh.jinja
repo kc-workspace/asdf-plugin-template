@@ -12,6 +12,8 @@ source "${KC_ASDF_PLUGIN_PATH:?}/lib/common/defaults.sh"
 # shellcheck source-path=SCRIPTDIR/main.sh
 source "${KC_ASDF_PLUGIN_PATH:?}/lib/common/main.sh"
 
+## Paths
+KC_ASDF_RES_PATH="${KC_ASDF_PLUGIN_PATH:?}/res"
 ## System information
 KC_ASDF_OS="$(kc_asdf_get_os)"
 KC_ASDF_ARCH="$(kc_asdf_get_arch)"
@@ -28,6 +30,7 @@ KC_ASDF_APP_REPO="{{ app_repo }}"
 # export KC_ASDF_PLUGIN_ENTRY_PATH
 # export KC_ASDF_PLUGIN_ENTRY_NAME
 # export KC_ASDF_PLUGIN_PATH
+export KC_ASDF_RES_PATH
 export KC_ASDF_OS KC_ASDF_ARCH
 export KC_ASDF_ORG KC_ASDF_NAME KC_ASDF_REPO
 export KC_ASDF_APP_NAME KC_ASDF_APP_DESC KC_ASDF_APP_REPO
