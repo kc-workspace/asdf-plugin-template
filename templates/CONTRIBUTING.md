@@ -84,6 +84,29 @@ _kc_asdf_custom_arch() {
 }
 ```
 
+3. To custom environment variables, use `_kc_asdf_custom_env()`
+
+```bash
+## If this return error, it will only log warning message
+## and continue program
+_kc_asdf_custom_env() {
+  kc_asdf_is_darwin &&
+    export ASDF_INSECURE=true
+  return 0
+}
+```
+
+4. To custom enable-disable features, use `_kc_asdf_custom_enabled_features()`
+
+```bash
+## If this return error, mean that feature is disabled
+_kc_asdf_custom_enabled_features() {
+  ## feature name: checksum, gpg
+  local feature="$1"
+  return 0
+}
+```
+
 ## List all callback
 
 1. To filter value from list, use `_kc_asdf_custom_filter()`.
