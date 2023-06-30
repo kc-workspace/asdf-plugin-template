@@ -86,7 +86,7 @@ kc_asdf_get_arch() {
 
 ## Get download mode based on input filename
 ## usage: `kc_asdf_download_mode 'test.tar.gz'`
-## output: file|archive|package
+## output: git|file|archive|package
 kc_asdf_download_mode() {
   local ns="download-mode.main"
   local filename="$1"
@@ -101,6 +101,9 @@ kc_asdf_download_mode() {
   echo "$filename" | grep -qiE "{{ package_regex }}" &&
     mode="package"
   {%- endif %}
+
+  echo "$filename" | grep -qiE "\.git$" &&
+    mode="git"
 
   kc_asdf_debug "$ns" "download mode of %s is %s" \
     "$filename" "$mode"
