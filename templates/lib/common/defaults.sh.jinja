@@ -31,12 +31,6 @@ kc_asdf_debug() {
     __asdf_log "DBG" "$@"
 }
 
-## Print help message header
-## usage: `kc_asdf_help_header 'Environment'`
-kc_asdf_help_header() {
-  printf "# %s\n" "$1"
-}
-
 ## Create start action to client
 ## usage: `kc_asdf_step '<action_verb>' '<message>' $cmd`
 kc_asdf_step() {
@@ -117,13 +111,6 @@ kc_asdf_fetch_file() {
     return 1
   fi
   unset CURL_OPTIONS WGET_OPTIONS
-}
-
-## Parse version to major, minor and patch version
-## e.g. `read -r major minor patch <<< "$(kc_asdf_parse_version "$version")"`
-kc_asdf_parse_version() {
-  local version="$1"
-  echo "${version//./ }"
 }
 
 ## Fetch data from url

@@ -12,12 +12,14 @@ _skip_if_exists:
   - .github/linters/cspell-custom.dict.txt
 
 _tasks:
-  - "git init"
-  - "git remote remove origin || exit 0"
-  - "git remote add origin {{ plugin_repo }} || exit 0"
-  - "git add --all || exit 0"
-  - "git commit -m 'feat(core): applied template' || exit 0"
-  - "git push origin main || exit 0"
+    - "rm lib/common/main.sh || exit 0"
+    - "rm -r lib/features || exit 0"
+#   - "git init"
+#   - "git remote remove origin || exit 0"
+#   - "git remote add origin {{ plugin_repo }} || exit 0"
+#   - "git add --all || exit 0"
+#   - "git commit -m 'feat(core): applied template' || exit 0"
+#   - "git push origin main || exit 0"
 
 app_name:
   type: str
@@ -43,11 +45,26 @@ app_repo:
   placeholder: https://github.com/octocat/Hello-World
   validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(app_repo) }}"
 
+app_type:
+  type: str
+  help: "[APP] What is your application type?"
+  default: git
+  choices:
+    - git
+    - python
+
+python_name:
+  type: str
+  help: "[PYN] What is your python package name?"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_require_str %}{{ valid_require_str(python_name) }}"
+  when: "{{ app_type == 'python' }}"
+
 download_url:
   type: str
   help: "[DLD] Where is your download link (support '{arch}', '{os}', '{version}')?"
   placeholder: https://example.com/{version}/{arch}/{os}/download
   validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(download_url) }}"
+  when: "{{ app_type == 'git' }}"
 
 source_enabled:
   type: bool
@@ -179,14 +196,23 @@ install_map_yaml:
   help: "[IST] What is your scripts mapping (support '{arch}', '{os}', '{version}')?"
   multiline: true
   default: |
-    {{ app_name }}: bin/{{ app_name }}
+    {%- if app_type == 'git' -%}
+      venv/bin/{{ app_name }}: bin/{{ app_name }}
+    {%- else -%}
+      {{ app_name }}: bin/{{ app_name }}
+    {%- endif -%}
   validator: "{% from pathjoin('macros', 'validators.jinja') import valid_yaml_only_str %}{{ valid_yaml_only_str(install_map_yaml) }}"
   when: "{{ install_map_enabled }}"
 
 install_map_method:
   type: str
   help: "[IST] How to mapping scripts?"
-  default: move
+  default: |
+    {%- if app_type == 'git' -%}
+      move
+    {%- elif app_type == 'python' -%}
+      link
+    {%- endif -%}
   choices:
     - move
     - link
@@ -226,7 +252,7 @@ custom_os_yaml:
 custom_arch_enabled:
   type: bool
   help: "[CST] If you would like to custom ARCH name?"
-  default: true
+  default: "{% if app_type == 'git' %}true{% else %}false{% endif %}"
 
 custom_arch_yaml:
   type: yaml
@@ -256,9 +282,26 @@ custom_bin_paths:
   help: "[CST] What is your application bin scripts (separated by space)?"
   default: bin
 
+custom_addon_yaml:
+  type: yaml
+  help: "[CST] What is your application addon requirement?"
+  multiline: true
+  default: |
+    checksum: true
+    download: true
+    github: true
+    gpg: true
+    help: true
+    install: true
+    system: true
+    tags: true
+    version: true
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_yaml_only_bool %}{{ valid_yaml_only_bool(custom_addon_yaml) }}"
+
 custom_require_commands:
   type: str
   help: "[CST] What is your application command requirement (separated by space)?"
+  default: "{% if app_type == 'python' %}python{% endif %}"
 
 test_cmd_args:
   type: str
