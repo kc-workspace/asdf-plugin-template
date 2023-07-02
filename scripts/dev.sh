@@ -14,7 +14,9 @@ export COMPONENTS=(
   gh git-chglog golang golangci-lint gradle
   helm hub
   kind kubectl
+  mkcert
   terragrunt
+  yamllint
 )
 
 export GREEN_COLOR="\e[32m"
@@ -52,12 +54,28 @@ main() {
       fi
     fi
     if [ -d "$temp" ]; then
+      ## Manually delete addon before copy template
+      if [ -d "$temp/lib/addon" ]; then
+        step exec_default check_noop \
+          rm -r "$temp/lib/addon" || {
+          ((failed_count++))
+          continue
+        }
+      fi
+      ## Manually delete lib/bin before copy template
+      if [ -d "$temp/lib/bin" ]; then
+        step exec_default check_noop \
+          rm -r "$temp/lib/bin" || {
+          ((failed_count++))
+          continue
+        }
+      fi
       step exec_default check_noop \
         copier copy \
         --vcs-ref HEAD \
         --UNSAFE \
         "$template" "$temp" \
-        --defaults --overwrite || {
+        --overwrite --defaults || {
         ((failed_count++))
         continue
       }
@@ -87,12 +105,16 @@ main() {
       echo &&
       continue
 
+    print_header "asdf" "latest" "$name"
     latest_logs="$(mktemp -t latest)"
     latest="$(asdf latest "$name" 2>"$latest_logs")"
-    [ -z "$latest" ] &&
-      print_status "$FAILED" "latest is required [cat $latest_logs]" &&
-      ((failed_count++)) &&
+    if [ -n "$latest" ]; then
+      print_status "$PASSED" "(latest=$latest)"
+    else
+      print_status "$FAILED" "latest is required [cat $latest_logs]"
+      ((failed_count++))
       continue
+    fi
 
     step exec_sep_logs check_asdf_list \
       asdf list all "$name" || {
@@ -129,7 +151,7 @@ main() {
       ((failed_count++))
       continue
     }
-    step exec_default check_noop \
+    step exec_sep_logs check_test \
       asdf "$name" test || {
       ((failed_count++))
       continue
@@ -144,6 +166,7 @@ main() {
 
   if [ "$failed_count" -gt 0 ]; then
     printf "task has been failed %d times\n" "$failed_count" >&2
+    echo
     return 1
   fi
 }
@@ -157,7 +180,7 @@ step() {
   logs="$(mktemp -t "$cmd-$arg")"
   errs="$logs.err"
 
-  printf '$ %-40s\n' "$cmd $arg $*"
+  print_header "$cmd" "$arg" "$*"
   if "$exec" "$logs" "$errs" "$cmd" "$arg" "$@"; then
     if "$check" "$logs" "$errs"; then
       return 0
@@ -174,6 +197,7 @@ exec_default() {
 
   if ! "$@" >"$logs" 2>&1; then
     print_status "$FAILED" "[cat $logs]"
+    echo
     return 1
   fi
 }
@@ -184,6 +208,7 @@ exec_prompt() {
 
   if ! "$@"; then
     print_status "$FAILED" "[cat $logs]"
+    echo
     return 1
   fi
 }
@@ -194,6 +219,7 @@ exec_sep_logs() {
 
   if ! "$@" >"$logs" 2>"$errs"; then
     print_status "$FAILED" "[cat $errs]"
+    echo
     return 1
   fi
 }
@@ -215,6 +241,7 @@ check_asdf_list() {
   fi
 
   print_status "$FAILED" "(size=$line<$size) [cat $errs]"
+  echo
   return 1
 }
 
@@ -223,6 +250,15 @@ check_ls() {
   print_status "$PASSED" "[$(xargs echo <"$logs")]"
   rm "$logs" "$errs" >/dev/null 2>&1
   return 0
+}
+
+check_test() {
+  local logs="$1" errs="$2"
+  print_status "$PASSED" "($(cat "$logs"))"
+}
+
+print_header() {
+  printf '$ %s\n' "$*"
 }
 
 print_status() {
