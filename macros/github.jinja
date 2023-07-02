@@ -13,3 +13,11 @@
 {%- macro ssh(org, name) -%}
   git@github.com:{{ org }}/{{ name }}.git
 {%- endmacro -%}
+
+{%- macro is_gh(link) -%}
+  {%- if (link | regex_search('^https://github.com')) -%}
+    true
+  {%- else -%}
+    false
+  {%- endif -%}
+{%- endmacro -%}

@@ -1,0 +1,7 @@
+
+  command -v _kc_asdf_custom_post_download >/dev/null &&
+    kc_asdf_debug "$ns" "developer has post download source function defined" &&
+    _kc_asdf_custom_post_download "$type" "$version" "$outdir"
+  # shellcheck disable=SC2011
+  kc_asdf_debug "$ns" "list '%s': [%s]" \
+    "$outdir" "$(ls "$outdir" | xargs echo)"

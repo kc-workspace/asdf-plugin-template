@@ -1,5 +1,0 @@
-{%- macro create(name, yaml) -%}
-  {%- if name in yaml and yaml[name] -%}
-    {{ name }}.sh
-  {%- endif -%}
-{%- endmacro -%}

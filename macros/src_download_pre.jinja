@@ -1,0 +1,11 @@
+  # shellcheck disable=SC2034
+  local ns="$1"
+  shift
+
+  local type="${ASDF_INSTALL_TYPE:?}"
+  local version="${ASDF_INSTALL_VERSION:?}"
+  kc_asdf_debug "$ns" "downloading %s %s %s" \
+    "$KC_ASDF_APP_NAME" "$type" "$version"
+  command -v _kc_asdf_custom_version >/dev/null &&
+    kc_asdf_debug "$ns" "developer defined custom version function" &&
+    version="$(_kc_asdf_custom_version "$version")"

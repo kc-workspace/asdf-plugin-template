@@ -1,0 +1,32 @@
+
+  ## Chmod all bin files
+  local bin bins=({{ custom_bin_paths }})
+  local file outpath
+  for bin in "${bins[@]}"; do
+    outpath="$outdir/$bin"
+    [ -d "$outpath" ] ||
+      continue
+
+    kc_asdf_debug "$ns" "running chmod all files in %s" \
+      "$outpath"
+    for file in "$outpath"/*; do
+      [ -f "$file" ] &&
+        kc_asdf_exec chmod +x "$file"
+    done
+  done
+
+  # shellcheck disable=SC2011
+  kc_asdf_debug "$ns" "list '%s': [%s]" \
+    "$outdir" "$(ls "$outdir" | xargs echo)"
+  for bin in "${bins[@]}"; do
+      outpath="$outdir/$bin"
+    if kc_asdf_present_dir "$outpath"; then
+      # shellcheck disable=SC2011
+      kc_asdf_debug "$ns" "list '%s': [%s]" \
+        "$bin" "$(ls "$outpath" | xargs echo)"
+    else
+      kc_asdf_error "$ns" "%s contains no executable file" \
+        "$outpath"
+      return 1
+    fi
+  done

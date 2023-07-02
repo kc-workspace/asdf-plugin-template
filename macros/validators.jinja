@@ -52,10 +52,10 @@
   {%- endfor -%}
 {%- endmacro -%}
 
-{%- macro valid_yaml_only_bool(yaml) -%}
+{%- macro valid_addon_yaml(yaml) -%}
   {%- for key, value in yaml.items() -%}
     {%- if value is not boolean -%}
-      Input YAML (key={{ key }}, value={{ value }}) is not boolean
+      YAML (key={{ key }}, value={{ value }}) is not boolean
     {%- endif -%}
   {%- endfor -%}
 {%- endmacro -%}

@@ -1,0 +1,14 @@
+
+  # shellcheck disable=SC2034
+  local ns="$1"
+  shift
+
+  local type="${ASDF_INSTALL_TYPE:?}"
+  local version="${ASDF_INSTALL_VERSION:?}"
+  local indir="${ASDF_DOWNLOAD_PATH:?}"
+  local outdir="${ASDF_INSTALL_PATH:?}"
+  local concurrency="${ASDF_CONCURRENCY:-1}"
+  kc_asdf_debug "$ns" "installing %s %s %s" \
+    "$KC_ASDF_APP_NAME" "$type" "$version"
+  kc_asdf_debug "$ns" "download location is %s" "$indir"
+  kc_asdf_debug "$ns" "install location is %s" "$outdir"
