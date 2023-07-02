@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+kc_asdf_load_addon "install"
+{%- if addon_yaml.system %}
+kc_asdf_load_addon "system"
+{%- endif %}
+
+__asdf_bin() {
+  {%- include pathjoin('macros', 'src_install_pre.jinja') %}
+
+  if kc_asdf_is_ref; then
+    {% if source_enabled -%}
+    if command -v _kc_asdf_custom_source_build >/dev/null; then
+      local tmp="$PWD"
+      cd "$indir" || return 1
+      kc_asdf_step "build" "$outdir" \
+        _kc_asdf_custom_source_build \
+        "$version" "$outdir" "$concurrency" ||
+        return 1
+      cd "$tmp" || return 1
+    else
+      kc_asdf_error "$ns" "%s missing, please create issue on repository" \
+        "_kc_asdf_custom_source_build()"
+      return 1
+    fi
+    {%- else -%}
+    kc_asdf_error "$ns" "reference mode is not support by current plugin"
+    return 1
+    {%- endif %}
+  elif kc_asdf_is_ver; then
+    kc_asdf_step "install" "$outdir" \
+      kc_asdf_transfer 'copy' "$indir" "$outdir" ||
+      return 1
+    {%- include pathjoin('macros', 'src_install_map.jinja') %}
+  fi
+
+  {%- include pathjoin('macros', 'src_install_post.jinja') %}
+}

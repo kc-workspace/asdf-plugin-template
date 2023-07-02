@@ -157,7 +157,16 @@ _kc_asdf_custom_download_url() {
 }
 ```
 
-3. To support custom source URL, use `_kc_asdf_custom_source_url()`
+3. To support custom version before download, use `_kc_asdf_custom_version()`
+
+```bash
+_kc_asdf_custom_version() {
+  local version="$1"
+  printf "%s" "$version"
+}
+```
+
+4. To support custom source URL, use `_kc_asdf_custom_source_url()`
 
 ```bash
 ## printf empty string will indicate there are a problem
@@ -167,7 +176,7 @@ _kc_asdf_custom_source_url() {
 }
 ```
 
-4. To support download source code, use `_kc_asdf_custom_download_source()`
+5. To support download source code, use `_kc_asdf_custom_download_source()`
 
 ```bash
 ## This will required _kc_asdf_install_source to defined too
@@ -178,7 +187,7 @@ _kc_asdf_custom_download_source() {
 }
 ```
 
-5. To support action after downloaded, use `_kc_asdf_custom_post_download()`
+6. To support action after downloaded, use `_kc_asdf_custom_post_download()`
 
 ```bash
 ## type can be either 'version' or 'ref'

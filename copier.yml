@@ -14,12 +14,16 @@ _skip_if_exists:
 _tasks:
     - "rm lib/common/main.sh || exit 0"
     - "rm -r lib/features || exit 0"
-#   - "git init"
-#   - "git remote remove origin || exit 0"
-#   - "git remote add origin {{ plugin_repo }} || exit 0"
+    - "git init"
+    - "git remote remove origin || exit 0"
+    - "git remote add origin {{ plugin_repo }} || exit 0"
 #   - "git add --all || exit 0"
 #   - "git commit -m 'feat(core): applied template' || exit 0"
 #   - "git push origin main || exit 0"
+
+_envops:
+    comment_end_string: "=}"
+    comment_start_string: "{="
 
 app_name:
   type: str
@@ -48,9 +52,9 @@ app_repo:
 app_type:
   type: str
   help: "[APP] What is your application type?"
-  default: git
+  default: standalone
   choices:
-    - git
+    - standalone
     - python
 
 python_name:
@@ -64,7 +68,7 @@ download_url:
   help: "[DLD] Where is your download link (support '{arch}', '{os}', '{version}')?"
   placeholder: https://example.com/{version}/{arch}/{os}/download
   validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(download_url) }}"
-  when: "{{ app_type == 'git' }}"
+  when: "{{ app_type == 'standalone' }}"
 
 source_enabled:
   type: bool
@@ -78,6 +82,7 @@ source_type:
   choices:
     - git
     - archive
+  when: "{{ source_enabled }}"
 
 source_url:
   type: str
@@ -196,9 +201,9 @@ install_map_yaml:
   help: "[IST] What is your scripts mapping (support '{arch}', '{os}', '{version}')?"
   multiline: true
   default: |
-    {%- if app_type == 'git' -%}
+    {%- if app_type == 'python' -%}
       venv/bin/{{ app_name }}: bin/{{ app_name }}
-    {%- else -%}
+    {%- elif app_type == 'standalone' -%}
       {{ app_name }}: bin/{{ app_name }}
     {%- endif -%}
   validator: "{% from pathjoin('macros', 'validators.jinja') import valid_yaml_only_str %}{{ valid_yaml_only_str(install_map_yaml) }}"
@@ -208,7 +213,7 @@ install_map_method:
   type: str
   help: "[IST] How to mapping scripts?"
   default: |
-    {%- if app_type == 'git' -%}
+    {%- if app_type == 'standalone' -%}
       move
     {%- elif app_type == 'python' -%}
       link
@@ -234,10 +239,28 @@ version_file_names:
   help: "[VER] What is your version filename list (separated by space)?"
   when: "{{ version_file_enabled }}"
 
+addon_yaml:
+  type: yaml
+  help: "[CST] What is your application addon requirement?"
+  multiline: true
+  default: |
+    checksum: {{ checksum_enabled }}
+    download: {% if app_type == 'standalone' %}true{% else %}false{% endif %}
+    github: {% from pathjoin('macros', 'github.jinja') import is_gh %}{{ is_gh(app_repo) }}
+    gpg: {{ gpg_enabled }}
+    help: true
+    install: true
+    system: {% if app_type == 'standalone' %}true{% else %}false{% endif %}
+    tags: true
+    version: true
+    python: {% if app_type == 'python' %}true{% else %}false{% endif %}
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_addon_yaml %}{{ valid_addon_yaml(addon_yaml) }}"
+
 custom_os_enabled:
   type: bool
   help: "[CST] If you would like to custom OS name?"
   default: false
+  when: "{{ addon_yaml.system }}"
 
 custom_os_yaml:
   type: yaml
@@ -252,7 +275,13 @@ custom_os_yaml:
 custom_arch_enabled:
   type: bool
   help: "[CST] If you would like to custom ARCH name?"
-  default: "{% if app_type == 'git' %}true{% else %}false{% endif %}"
+  default: |
+    {%- if app_type == 'git' -%}
+      true
+    {%- elif app_type == 'standalone' -%}
+      false
+    {%- endif -%}
+  when: "{{ addon_yaml.system }}"
 
 custom_arch_yaml:
   type: yaml
@@ -281,22 +310,6 @@ custom_bin_paths:
   type: str
   help: "[CST] What is your application bin scripts (separated by space)?"
   default: bin
-
-custom_addon_yaml:
-  type: yaml
-  help: "[CST] What is your application addon requirement?"
-  multiline: true
-  default: |
-    checksum: true
-    download: true
-    github: true
-    gpg: true
-    help: true
-    install: true
-    system: true
-    tags: true
-    version: true
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_yaml_only_bool %}{{ valid_yaml_only_bool(custom_addon_yaml) }}"
 
 custom_require_commands:
   type: str

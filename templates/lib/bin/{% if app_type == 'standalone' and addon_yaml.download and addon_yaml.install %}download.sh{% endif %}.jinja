@@ -1,18 +1,20 @@
 #!/usr/bin/env bash
 
-kc_asdf_load_addon "install"
+kc_asdf_load_addon "download" "install"
+{%- if addon_yaml.system %}
+kc_asdf_load_addon "system"
+{%- endif %}
+{%- if addon_yaml.gpg %}
+kc_asdf_load_addon "gpg"
+{%- endif %}
+{%- if addon_yaml.checksum %}
+kc_asdf_load_addon "checksum"
+{%- endif %}
 
 ## variables:
 ##   - ASDF_INSECURE - disable checksum check
 __asdf_bin() {
-  # shellcheck disable=SC2034
-  local ns="$1"
-  shift
-
-  local type="${ASDF_INSTALL_TYPE:?}"
-  local version="${ASDF_INSTALL_VERSION:?}"
-  kc_asdf_debug "$ns" "downloading %s %s %s" \
-    "$KC_ASDF_APP_NAME" "$type" "$version"
+  {%- include pathjoin('macros', 'src_download_pre.jinja') %}
 
   {% if custom_require_commands != '' -%}
   [ -z "${ASDF_NO_CHECK:-}" ] &&
@@ -24,7 +26,8 @@ __asdf_bin() {
   local tmpdir tmpfile tmppath
   tmpdir="$(kc_asdf_temp_dir)"
   local vars
-  vars=("os=$KC_ASDF_OS" "arch=$KC_ASDF_ARCH" "version=$version")
+  vars=("os=${KC_ASDF_OS:-}" "arch=${KC_ASDF_ARCH:-}" "version=$version")
+  kc_asdf_debug "$ns" "template variables are '%s'" "${vars[*]}"
   local url mode
 
   ## If output directory is not empty, mean it cached
@@ -113,7 +116,7 @@ __asdf_bin() {
       local internal_path
       outpath="$outdir"
       internal_path="{{ archive_conf_path }}"
-      [ -n "$$internal_path" ] &&
+      [ -n "$internal_path" ] &&
         internal_path="$(kc_asdf_template "$internal_path" "${vars[@]}")"
       kc_asdf_debug "$ns" "extracting '%s' to '%s'" \
         "$tmppath" "$outpath"
@@ -140,10 +143,5 @@ __asdf_bin() {
   fi
 
   __asdf_if_not_debug rm -r "$tmpdir"
-  command -v _kc_asdf_custom_post_download >/dev/null &&
-    kc_asdf_debug "$ns" "developer has post download source function defined" &&
-    _kc_asdf_custom_post_download "$type" "$version" "$outdir"
-  # shellcheck disable=SC2011
-  kc_asdf_debug "$ns" "list '%s': [%s]" \
-    "$outdir" "$(ls "$outdir" | xargs echo)"
+  {%- include pathjoin('macros', 'src_download_post.jinja') %}
 }

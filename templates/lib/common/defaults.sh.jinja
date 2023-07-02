@@ -53,6 +53,17 @@ kc_asdf_exec() {
   "$@"
 }
 
+## Execute input command if exist, or ignore
+## usage: `kc_asdf_optional echo 'run'`
+kc_asdf_optional() {
+  if ! command -v "$1" >/dev/null; then
+    kc_asdf_debug "optional.defaults" "command %s missing, silently ignored" \
+      "$1"
+  fi
+
+  kc_asdf_exec "$@"
+}
+
 ## Run input command with dry-run support
 ## usage: `kc_asdf_run echo 'run'`
 ## variables:
@@ -65,6 +76,25 @@ kc_asdf_run() {
     return 0
   fi
   "$@"
+}
+
+## Loading input addon
+## usage: `kc_asdf_load_addon 'system'`
+kc_asdf_load_addon() {
+  local ns="load-addon.defaults"
+  local name loaded=()
+  for name in "$@"; do
+    if [[ "$KC_ASDF_ADDON_LIST" =~ $name ]]; then
+      kc_asdf_debug "$ns" "'%s' addon has been loaded, SKIPPED" \
+        "$name"
+    else
+      __asdf_load "addon" "$name"
+      loaded+=("$name")
+    fi
+  done
+  if [ "${#loaded[@]}" -gt 0 ]; then
+    KC_ASDF_ADDON_LIST="$KC_ASDF_ADDON_LIST ${loaded[*]}"
+  fi
 }
 
 ## Fetch redirected location from url
@@ -209,7 +239,7 @@ kc_asdf_extract() {
   fi
 
   if [ -n "$internal" ]; then
-    kc_asdf_transfer "move" "$tmppath" "$output"
+    kc_asdf_transfer "move" "$tmppath/$internal" "$output"
     return $?
   fi
 }
@@ -229,7 +259,7 @@ kc_asdf_unpack() {
     kc_asdf_error "$ns" "cannot package because 'pkgutil' is missing" &&
     return 1
 
-  if [ -z "$ASDF_INSECURE" ]; then
+  if [ -z "${ASDF_INSECURE:-}" ]; then
     kc_asdf_debug "$ns" "verifying package signature of %s" "$input"
     local expected="signed by a developer certificate issued by Apple for distribution"
     local signature actual
@@ -251,7 +281,7 @@ kc_asdf_unpack() {
     return 1
 
   if [ -n "$internal" ]; then
-    kc_asdf_transfer "move" "$tmppath" "$output"
+    kc_asdf_transfer "move" "$tmppath/$internal" "$output"
     return $?
   fi
 }

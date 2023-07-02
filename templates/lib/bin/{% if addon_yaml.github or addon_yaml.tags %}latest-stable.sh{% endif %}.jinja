@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 
-kc_asdf_load_addon "tags" "github"
+{%- if addon_yaml.github %}
+
+kc_asdf_load_addon "github"
+{%- endif %}
+{%- if addon_yaml.tags %}
+
+kc_asdf_load_addon "tags"
+{%- endif %}
 
 __asdf_bin() {
   # shellcheck disable=SC2034
@@ -9,10 +16,13 @@ __asdf_bin() {
 
   local query="$1" def_query="[0-9]"
   if [[ "$query" == "$def_query" ]]; then
-    kc_asdf_debug "$ns" "try get latest version from github"
-    kc_asdf_gh_latest &&
+    command -v kc_asdf_github_latest >/dev/null &&
+      kc_asdf_debug "$ns" "try get latest version from github" &&
+      kc_asdf_github_latest &&
       return 0
   fi
+
+  {%- if addon_yaml.tags %}
 
   kc_asdf_debug "$ns" "fallback '%s' mode to resolve latest" "tail"
 
@@ -28,4 +38,5 @@ __asdf_bin() {
   kc_asdf_debug "$ns" "final tags read from %s" "$tmpfile" &&
     tail -n1 "$tmpfile" &&
     __asdf_if_not_debug rm "$tmpfile"
+  {%- endif %}
 }

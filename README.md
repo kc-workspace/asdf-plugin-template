@@ -5,8 +5,17 @@ This is an [asdf-vm plugin][asdf-plugins] template with CI support.
 ## Usage
 
 1. Install [copier](copier)
-2. Run `copier gh:kc-workspace/asdf-plugin-template.git /tmp/asdf-xxxxx`
+2. Run `copier copy gh:kc-workspace/asdf-plugin-template.git ~/.asdf/plugins/xxxx`
 3. To develop your plugin further, please read [plugins create section][asdf-create-plugin]
+
+## Update
+
+Once plugin has been created using this template.
+later when this template updated, you can update your plugin using below command.
+
+```bash
+copier update ~/.asdf/plugins/xxxx
+```
 
 ## Development
 

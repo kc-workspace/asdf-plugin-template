@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+kc_asdf_load_addon "install" "python"
+
+__asdf_bin() {
+  {%- include pathjoin('macros', 'src_download_pre.jinja') %}
+
+  local outdir="${ASDF_DOWNLOAD_PATH:?}"
+  local install_path="${ASDF_INSTALL_PATH:?}"
+
+  local venv="$install_path/venv"
+  kc_asdf_step "init-python" "$venv" \
+    kc_asdf_python_init "$venv"
+
+  if kc_asdf_is_ver; then
+    kc_asdf_step "download" "$outdir" \
+      kc_asdf_python_download "$venv" "$version" "$outdir"
+  elif kc_asdf_is_ref; then
+    ## TODO: implement reference install type
+    kc_asdf_error "$ns" "reference type hasn't been implemented yet"
+    return 1
+  else
+    kc_asdf_error "$ns" "unknown install type (%s)" "$type"
+    return 1
+  fi
+
+  {%- include pathjoin('macros', 'src_download_post.jinja') %}
+}

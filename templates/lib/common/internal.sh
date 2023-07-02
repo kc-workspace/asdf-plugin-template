@@ -7,7 +7,7 @@
 ## e.g. `__asdf_load 'common' 'defaults'`
 __asdf_load() {
   local ns="load.internal"
-  local type="$1" name path error
+  local type="$1" name path code=0
   local basepath="${KC_ASDF_PLUGIN_PATH:?}/lib/$type"
   shift
 
@@ -19,13 +19,13 @@ __asdf_load() {
       # shellcheck source=/dev/null
       source "$path"
     else
-      error=true
+      code=1
       kc_asdf_error "$ns" "file '%s' is missing" "$path"
       continue
     fi
   done
 
-  [ -z "$error" ]
+  return "$code"
 }
 
 ## Print log to stderr

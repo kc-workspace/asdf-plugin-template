@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
+{%- if addon_yaml.help %}
+
 kc_asdf_load_addon "help"
+{%- endif %}
 
 __asdf_bin_help_deps_add() {
   for dep in "$@"; do
@@ -13,18 +16,23 @@ __asdf_bin() {
   local ns="$1"
   shift
 
-  kc_asdf_help_header "Dependencies"
+  kc_asdf_optional \
+    kc_asdf_help_header "Dependencies"
   local deps=(git curl sed grep mktemp xargs tr)
 
   {% if checksum_enabled -%}
   deps+=(sha{{ checksum_conf_algorithm }}sum shasum)
+  {%- endif %}
+  {% if app_type == 'python' -%}
+  deps+=(python python3)
   {%- endif %}
 
   for dep in "${deps[@]}"; do
     echo "$dep"
   done
 
-  if command -v _kc_asdf_custom_help >/dev/null; then
+  kc_asdf_optional \
     _kc_asdf_custom_help __asdf_bin_help_deps_add
-  fi
+
+  echo
 }

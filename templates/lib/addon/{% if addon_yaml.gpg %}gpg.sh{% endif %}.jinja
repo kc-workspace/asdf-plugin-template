@@ -3,7 +3,7 @@
 ## Check GPG value from input path
 ## usage: `kc_asdf_gpg '/tmp/hello.tar.gz' 'https://example.com'`
 kc_asdf_gpg() {
-  local ns="gpg.main"
+  local ns="gpg.addon"
   local fingerprint="{{ gpg_fingerprint }}"
   local public_key="${KC_ASDF_RES_PATH:?}/public-key.asc"
 

@@ -4,7 +4,7 @@
 ## usage: `kc_asdf_download_mode 'test.tar.gz'`
 ## output: git|file|archive|package
 kc_asdf_download_mode() {
-  local ns="download-mode.main"
+  local ns="download-mode.addon"
   local filename="$1"
   local mode="file"
 
@@ -12,7 +12,8 @@ kc_asdf_download_mode() {
 
   echo "$filename" | grep -qiE "{{ archive_regex }}" &&
     mode="archive"
-  {%- endif %}{% if package_enabled -%}
+  {%- endif %}
+  {% if package_enabled -%}
   echo "$filename" | grep -qiE "{{ package_regex }}" &&
     mode="package"
   {% endif -%}

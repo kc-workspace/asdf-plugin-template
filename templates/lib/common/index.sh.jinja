@@ -7,7 +7,8 @@
 
 ## General information
 KC_ASDF_RES_PATH="${KC_ASDF_PLUGIN_PATH:?}/res"
-export KC_ASDF_RES_PATH
+KC_ASDF_ADDON_LIST=""
+export KC_ASDF_RES_PATH KC_ASDF_ADDON_LIST
 
 ## Plugin information
 KC_ASDF_ORG="{{ plugin_org }}"
@@ -16,23 +17,14 @@ KC_ASDF_REPO="{{ url(plugin_org, plugin_name) }}"
 export KC_ASDF_ORG KC_ASDF_NAME KC_ASDF_REPO
 
 ## Application information
+KC_ASDF_APP_TYPE="{{ app_type }}"
 KC_ASDF_APP_NAME="{{ app_name }}"
-KC_ASDF_APP_DESC="{{ app_description }}"
+KC_ASDF_APP_DESC="{{ app_desc }}"
 KC_ASDF_APP_REPO="{{ app_repo }}"
-export KC_ASDF_APP_NAME KC_ASDF_APP_DESC KC_ASDF_APP_REPO
+export KC_ASDF_APP_TYPE KC_ASDF_APP_NAME
+export KC_ASDF_APP_DESC KC_ASDF_APP_REPO
 
 # shellcheck source-path=SCRIPTDIR/internal.sh
 source "${KC_ASDF_PLUGIN_PATH:?}/lib/common/internal.sh" || exit 1
 # shellcheck source-path=SCRIPTDIR/defaults.sh
 source "${KC_ASDF_PLUGIN_PATH:?}/lib/common/defaults.sh" || exit 1
-
-KC_ASDF_ADDON_LIST=(
-{%- for key, value in custom_addon_yaml.items() %}
-  {%- if value %}
-  "{{ key }}"
-  {%- endif %}
-{%- endfor %}
-)
-export KC_ASDF_ADDON_LIST
-
-__asdf_load "bin" "${KC_ASDF_ADDON_LIST[@]}"

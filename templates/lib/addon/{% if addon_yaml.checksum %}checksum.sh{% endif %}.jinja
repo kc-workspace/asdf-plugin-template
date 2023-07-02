@@ -5,7 +5,7 @@
 ## variables:
 ##   - ASDF_INSECURE for disable checksum verify
 kc_asdf_checksum() {
-  local ns="checksum.main"
+  local ns="checksum.addon"
   local filepath="$1" cs_url="$2"
 
   [ -n "${ASDF_INSECURE:-}" ] &&
