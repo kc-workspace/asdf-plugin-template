@@ -12,18 +12,13 @@ _skip_if_exists:
   - .github/linters/cspell-custom.dict.txt
 
 _tasks:
-    - "rm lib/common/main.sh || exit 0"
-    - "rm -r lib/features || exit 0"
-    - "git init"
-    - "git remote remove origin || exit 0"
-    - "git remote add origin {{ plugin_repo }} || exit 0"
-#   - "git add --all || exit 0"
-#   - "git commit -m 'feat(core): applied template' || exit 0"
-#   - "git push origin main || exit 0"
+  - "git init"
+  - "git remote remove origin || exit 0"
+  - "git remote add origin {{ plugin_repo }} || exit 0"
 
 _envops:
-    comment_end_string: "=}"
-    comment_start_string: "{="
+  comment_end_string: "=}"
+  comment_start_string: "{="
 
 app_name:
   type: str
