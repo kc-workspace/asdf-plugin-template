@@ -455,6 +455,7 @@ print_start_exec() {
   fi
 }
 print_start_verify() {
+  # shellcheck disable=SC2034
   local key="$1" name="$2" fn="$3"
   shift 3
 
