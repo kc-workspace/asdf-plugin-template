@@ -1,5 +1,88 @@
 # Changelog
 
+## [2.0.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.3.3...v2.0.0) (2023-07-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* initiate new major version
+
+### Features
+
+* **core:** add ablity to  disable some feature on some condition ([2db449a](https://github.com/kc-workspace/asdf-plugin-template/commit/2db449a923f3e0853de4d7c16e3346f2a66266b4))
+* **core:** implement kc_asdf_gpg for verify gpg signature ([0401c79](https://github.com/kc-workspace/asdf-plugin-template/commit/0401c79f43ee843bd95e44b09b15bc9ad12bad98))
+* implement new template ([dfc7062](https://github.com/kc-workspace/asdf-plugin-template/commit/dfc706224a7d99570b25e398127bbd6a79382891))
+* initiate new major version ([66a5927](https://github.com/kc-workspace/asdf-plugin-template/commit/66a5927eca93323045a394c5b5c8d7d1e2097d0a))
+* refined a lot of stuff ([6c9eab4](https://github.com/kc-workspace/asdf-plugin-template/commit/6c9eab48bcfe9667449da790483a3715ceb3d9eb))
+* separate common/main.sh to several addon instead ([31ed5ea](https://github.com/kc-workspace/asdf-plugin-template/commit/31ed5ea0fcfe0162a50601c08d7476444afd0357))
+* **source:** add function to support ref download type ([d7cc2fe](https://github.com/kc-workspace/asdf-plugin-template/commit/d7cc2fe9cfb607f54065a4f812c4be2ed3fae4d2))
+* support create python plugin ([47d79fd](https://github.com/kc-workspace/asdf-plugin-template/commit/47d79fd55aea82ff3248765d6b84dc4345053031))
+* support download from git repo ([3d91308](https://github.com/kc-workspace/asdf-plugin-template/commit/3d913086c008597b8a72fcf32bb8e6c9259286a3))
+* template new version to support customizable and more easier to debug ([cd0068d](https://github.com/kc-workspace/asdf-plugin-template/commit/cd0068d7a098b481addcf95d1fdd1873ddb226f6))
+
+
+### Improvements
+
+* add exec-env and list-bin-paths as default script inside template ([2f531a7](https://github.com/kc-workspace/asdf-plugin-template/commit/2f531a7e0fe441c48c0ce99547876f1fcb62631b))
+* add feature to custom version prefix filter ([98933b8](https://github.com/kc-workspace/asdf-plugin-template/commit/98933b8ecd46c3fb786b396d5ca4e18bb5f23dfb))
+* add hook to filter list version on latest and list-all command ([5582b76](https://github.com/kc-workspace/asdf-plugin-template/commit/5582b76572f6996b4554d4c5fec7aee8e66fe343))
+* add more default deps on help message ([6ba7fce](https://github.com/kc-workspace/asdf-plugin-template/commit/6ba7fce638f6cbd81f69ee6ef73e9e7f38cae414))
+* add source code link if build from source enabled ([381532b](https://github.com/kc-workspace/asdf-plugin-template/commit/381532b4d61ff98ab7821749cd9a7a1f528e3290))
+* add warning if custom function return error ([a717871](https://github.com/kc-workspace/asdf-plugin-template/commit/a717871b5b75585b7eae407041662050c9368f45))
+* **core:** add new _kc_asdf_custom_checksum hook to custom checksum logic ([d3fd8ba](https://github.com/kc-workspace/asdf-plugin-template/commit/d3fd8ba1ee0397383269346b47a7b421af7d84fe))
+* **core:** lib/bin is optional, even load failed it will continue script ([13e57df](https://github.com/kc-workspace/asdf-plugin-template/commit/13e57dfc34bb324fcc59f277e2ac64e2a4e8bc0a))
+* **core:** support extract zip using unzip ([7052f0e](https://github.com/kc-workspace/asdf-plugin-template/commit/7052f0edcf301d24b3045e94706d1192e923e63e))
+* **custom:** add custom os and arch for plugin ([cf9a90e](https://github.com/kc-workspace/asdf-plugin-template/commit/cf9a90e6a40a1016ba388163ae0134fca44634f5))
+* **download:** support multiple download types ([9abe61a](https://github.com/kc-workspace/asdf-plugin-template/commit/9abe61ae6c63cf3bf06452f639601ad1359e5737))
+* enabled arch custom by default ([e4f26a1](https://github.com/kc-workspace/asdf-plugin-template/commit/e4f26a15a9a0fe011eb36e46a118518c345c99ed))
+* improve readme ([436fecd](https://github.com/kc-workspace/asdf-plugin-template/commit/436fecd711c02f8b14119b30a7e91fca9d43fe34))
+* improve wording ([b0b9a35](https://github.com/kc-workspace/asdf-plugin-template/commit/b0b9a3588a80d8e5493a0110b9ce0c958339510e))
+* **lint:** separate cspell config to default and custom for easier to override ([5760cb8](https://github.com/kc-workspace/asdf-plugin-template/commit/5760cb8d5643dc76ee2ae19504a50fe2966d3da9))
+* move common down so template and use common function ([e307316](https://github.com/kc-workspace/asdf-plugin-template/commit/e307316d3b4d405650801128d6dc61d36619e807))
+* remove template from internal common script ([1996581](https://github.com/kc-workspace/asdf-plugin-template/commit/19965811049f8461eadc702ef2bf139e93cbe900))
+* **script:** improve dev.sh for local development ([79a68de](https://github.com/kc-workspace/asdf-plugin-template/commit/79a68de314ee6b51e8f1922bb519d27dd2e22c04))
+
+
+### Miscellaneous
+
+* add full gitignore set ([11aa38e](https://github.com/kc-workspace/asdf-plugin-template/commit/11aa38e65ad9bcef2a40cc119e782fc63e93b174))
+* add kind ([8ce1987](https://github.com/kc-workspace/asdf-plugin-template/commit/8ce198753e35ce1e9196794b3bb32fe72b4b1632))
+* add more debug log what transfer input is ([251dfcd](https://github.com/kc-workspace/asdf-plugin-template/commit/251dfcd953d7f0cf1fee0c10e48d0662c60d26af))
+* add more debug log when download cached found ([345b439](https://github.com/kc-workspace/asdf-plugin-template/commit/345b439c53d194709d3847ea0a445b79443e79c9))
+* add more macro for reuse some code ([25e5185](https://github.com/kc-workspace/asdf-plugin-template/commit/25e5185e231398b77ab8638350b0b4758bee43b5))
+* **ci:** update filter regex ([552176a](https://github.com/kc-workspace/asdf-plugin-template/commit/552176a0fa3808df7efcc52fb65bae216674e682))
+* clean code ([ff7528f](https://github.com/kc-workspace/asdf-plugin-template/commit/ff7528f32f1e2e7aaa39f1fb459d17092730e52a))
+* cleanup copier tasks ([4b91b16](https://github.com/kc-workspace/asdf-plugin-template/commit/4b91b162a1226c381171f780d51114e3aa0ffd11))
+* cleanup old template from v1 ([9edaaf1](https://github.com/kc-workspace/asdf-plugin-template/commit/9edaaf197114627cd57020267fd0869c7dceb196))
+* improve log message for readiability ([9f62e39](https://github.com/kc-workspace/asdf-plugin-template/commit/9f62e39c0a482e65652d7c6b7be6e393d8610835))
+* md cannot stay on bin directory ([fd1fa7b](https://github.com/kc-workspace/asdf-plugin-template/commit/fd1fa7b30e6c62707052f708b84559d53122f471))
+* re-enabled git commit and push ([9ab93d0](https://github.com/kc-workspace/asdf-plugin-template/commit/9ab93d00786752e1a80475e04b90a24e01da7136))
+* save progress ([f55eb93](https://github.com/kc-workspace/asdf-plugin-template/commit/f55eb93da7cfd4b3c28efd07c483fe7fada6e28e))
+* use asdf instead of ASDF ([8e6b202](https://github.com/kc-workspace/asdf-plugin-template/commit/8e6b20240433d88d8f3bede68d75f7a11ce74973))
+* use new super-linter repo instead ([da984a2](https://github.com/kc-workspace/asdf-plugin-template/commit/da984a27cab55569be85af4adc5920189dfca145))
+
+
+### Bugfixes
+
+* checksum failed and change info log format ([7992afb](https://github.com/kc-workspace/asdf-plugin-template/commit/7992afb77837e68d6f507f9a7cdef0d7bb9654b7))
+* copier invalid config ([03f81b8](https://github.com/kc-workspace/asdf-plugin-template/commit/03f81b8e7673572418d44b2c91d4b72973c64f8c))
+* downloading single file will failed to create shim ([ab8cbbe](https://github.com/kc-workspace/asdf-plugin-template/commit/ab8cbbef0165903fa7ae188095aef14595ff6191))
+* forget to load utils file ([3cda4d5](https://github.com/kc-workspace/asdf-plugin-template/commit/3cda4d5e97765fe9ab2f0b0b0f8fd8d7fbfa9014))
+* gh_latest didn't works ([8bdfced](https://github.com/kc-workspace/asdf-plugin-template/commit/8bdfcedca6777e1fb833c49725228ee4f433aabc))
+* install file didn't chmod correctly ([42600e6](https://github.com/kc-workspace/asdf-plugin-template/commit/42600e6335c6ee5df33c1bc7dd373098b772976a))
+* invalid comment code ([3e166a0](https://github.com/kc-workspace/asdf-plugin-template/commit/3e166a08327e0cf9e2135393eb88f8810dec11ef))
+* invalid function caller ([e29f990](https://github.com/kc-workspace/asdf-plugin-template/commit/e29f990dfa3dd47c221c5d655d95a37774a87b2c))
+* **lib:** custom function on download url didn't access to some config ([d4b276e](https://github.com/kc-workspace/asdf-plugin-template/commit/d4b276efb4aa7b0c6d8e6df8d4808cc49fc4bddc))
+* **lib:** when filter with query, we should prefix regex ([28d1415](https://github.com/kc-workspace/asdf-plugin-template/commit/28d1415506cfd23c6d5871e0b9efc2ab4d8ab364))
+* **lint:** add checksum and security words ([570c4e5](https://github.com/kc-workspace/asdf-plugin-template/commit/570c4e5a1ef87ce8c85129a1c7bf93a62e458141))
+* **lint:** add envops and venv to cspell check ([649c4e8](https://github.com/kc-workspace/asdf-plugin-template/commit/649c4e804b636b9424e351e5635e68f15d1170c0))
+* **lint:** adjuct spacebar and indent ([d56c40f](https://github.com/kc-workspace/asdf-plugin-template/commit/d56c40f1363648b58f8dd8fab29883bbbae2523f))
+* **lint:** superlinter complain ([eb500de](https://github.com/kc-workspace/asdf-plugin-template/commit/eb500dee4020f067437663b4ae7af6fadff1ca93))
+* **lint:** update linting of output generated project ([23c368d](https://github.com/kc-workspace/asdf-plugin-template/commit/23c368d8921083630add7475a1863c6dfc00d246))
+* **lint:** update terminology ([4e38462](https://github.com/kc-workspace/asdf-plugin-template/commit/4e384622cdf99f97fbef038f0e9bc3d8d55a9aec))
+* **list-all:** support disable version prefix ([67c1841](https://github.com/kc-workspace/asdf-plugin-template/commit/67c1841a41f5edcddb1b17c0789dd3e2fdf9ec43))
+* support shaXXXsum command not found on macOS by default ([3695eb1](https://github.com/kc-workspace/asdf-plugin-template/commit/3695eb17997a77e20cb2adc67b6c3ab112f3b2c9))
+
 ## [1.3.3](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.3.2...v1.3.3) (2023-06-13)
 
 
