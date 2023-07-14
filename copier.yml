@@ -60,7 +60,7 @@ python_name:
 
 download_url:
   type: str
-  help: "[DLD] Where is your download link (support '{arch}', '{os}', '{version}')?"
+  help: "[DLD] Where is your download link (support, {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os})?"
   placeholder: https://example.com/{version}/{arch}/{os}/download
   validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(download_url) }}"
   when: "{{ app_type == 'standalone' }}"
@@ -81,7 +81,7 @@ source_type:
 
 source_url:
   type: str
-  help: "[SUR] Where is your application source link (support '{arch}', '{os}', '{version}')?"
+  help: "[SUR] Where is your application source link (support, {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os})?"
   placeholder: |
     {%- if source_type == 'git' -%}
       https://github.com/org/repo.git
@@ -143,7 +143,7 @@ checksum_enabled:
 
 checksum_url:
   type: str
-  help: "[CKS] Where is your checksum link (support '{arch}', '{os}', '{version}')?"
+  help: "[CKS] Where is your checksum link (support, {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os})?"
   placeholder: https://example.com/{version}/{arch}/{os}/checksum.shasum
   validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(checksum_url) }}"
   when: "{{ checksum_enabled }}"
@@ -196,7 +196,7 @@ gpg_fingerprint:
 
 gpg_sig_url:
   type: str
-  help: "[GPG] Where is your gpg signature link (support '{arch}', '{os}', '{version}')?"
+  help: "[GPG] Where is your gpg signature link (support, {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os})?"
   placeholder: https://example.com/{version}.sig
   validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(gpg_sig_url) }}"
   when: "{{ gpg_enabled }}"
@@ -208,7 +208,7 @@ install_map_enabled:
 
 install_map_yaml:
   type: yaml
-  help: "[IST] What is your scripts mapping (support '{arch}', '{os}', '{version}')?"
+  help: "[IST] What is your scripts mapping (support, {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os})?"
   multiline: true
   default: |
     {%- if app_type == 'python' -%}
