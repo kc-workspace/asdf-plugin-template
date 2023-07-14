@@ -165,12 +165,27 @@ gpg_enabled:
   help: "[GPG] Is your application provided gpg signature?"
   default: false
 
-gpg_public_key:
+gpg_public_key_type:
+  type: str
+  help: "[GPG] How can we get public key from?"
+  default: link
+  choices:
+    - link
+    - text
+  when: "{{ gpg_enabled }}"
+
+gpg_public_key_link:
+  type: str
+  help: "[GPG] What is your GPG public key"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(gpg_public_key_link) }}"
+  when: "{{ gpg_enabled and gpg_public_key_type == 'link' }}"
+
+gpg_public_key_text:
   type: str
   help: "[GPG] What is your GPG public key"
   multiline: true
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_pub %}{{ valid_pub(gpg_public_key) }}"
-  when: "{{ gpg_enabled }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_pub %}{{ valid_pub(gpg_public_key_text) }}"
+  when: "{{ gpg_enabled and gpg_public_key_type == 'text' }}"
 
 gpg_fingerprint:
   type: str
@@ -247,7 +262,7 @@ addon_yaml:
     install: true
     system: {% if app_type == 'standalone' %}true{% else %}false{% endif %}
     tags: true
-    version: true
+    version: false
     python: {% if app_type == 'python' %}true{% else %}false{% endif %}
   validator: "{% from pathjoin('macros', 'validators.jinja') import valid_addon_yaml %}{{ valid_addon_yaml(addon_yaml) }}"
 
