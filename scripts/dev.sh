@@ -34,6 +34,7 @@ main() {
   is_debug &&
     log_info "enabled debug mode [cat $tmpdir/debug.log]"
   log_debug "start dev.sh '%s'" "$*"
+  db_set_components "$@"
   for name in "$@"; do
     plugin_name="asdf-$name"
     plugin_repo="kc-workspace/$plugin_name"
@@ -42,28 +43,28 @@ main() {
     plugin_path="$HOME/.asdf/plugins/$name"
     install_path="$HOME/.asdf/installs/$name"
 
-    before_start "$name"
-    start "$name" "create-gh-repo" \
+    start "$name"
+    step "$name" "create-gh-repo" \
       _if_no_gh_repo "$plugin_repo" \
       _exec_silent \
       gh repo create --disable-wiki --public "$plugin_repo" \
       _verify_noop
 
     addon_path="$local_path/lib/addon"
-    start "$name" "remove-addon" \
+    step "$name" "remove-addon" \
       _if_dir_exist "$addon_path" \
       _exec_silent \
       rm -r "$addon_path" \
       _verify_noop
 
     lib_bin_path="$local_path/lib/bin"
-    start "$name" "remove-lib-bin" \
+    step "$name" "remove-lib-bin" \
       _if_dir_exist "$lib_bin_path" \
       _exec_silent \
       rm -r "$lib_bin_path" \
       _verify_noop
 
-    start "$name" "copier-copy" \
+    step "$name" "copier-copy" \
       _if_copier_exist "$local_path" \
       _exec_copier \
       copier copy --UNSAFE \
@@ -71,23 +72,19 @@ main() {
       "$workdir" "$local_path" \
       _verify_noop
 
-    # git add --all
-    # git commit -m 'feat(core): applied template'
-    # git push origin main
-
-    start "$name" "remove-plugin" \
+    step "$name" "remove-plugin" \
       _if_dir_exist "$plugin_path" \
       _exec_silent \
       rm -fr "$plugin_path" \
       _verify_noop
 
-    start "$name" "deploy-plugin" \
+    step "$name" "deploy-plugin" \
       _if_no_fail \
       _exec_silent \
       cp -r "$local_path" "$plugin_path" \
       _verify_noop
 
-    start "$name" "get-latest" \
+    step "$name" "get-latest" \
       _if_no_fail \
       _exec_with_errfile \
       asdf latest "$name" \
@@ -96,68 +93,84 @@ main() {
     local latest
     latest="$(db_get_comp_latest "$name")"
 
-    start "$name" "list-all" \
+    step "$name" "list-all" \
       _if_no_fail \
       _exec_silent \
       asdf list all "$name" \
       _verify_asdf_list
 
-    DEBUG=1 start "$name" "install-latest" \
+    DEBUG=1 step "$name" "install-latest" \
       _if_no_fail \
       _exec_silent \
       asdf install "$name" latest \
       _verify_noop
 
-    start "$name" "list-path" \
+    step "$name" "list-path" \
       _if_no_fail \
       _exec_with_errfile \
       ls -A "$install_path/$latest" \
       _verify_ls "$install_path/$latest"
 
-    start "$name" "list-bin-path" \
+    step "$name" "list-bin-path" \
       _if_no_fail \
       _exec_with_errfile \
       ls -A "$install_path/$latest/bin" \
       _verify_ls "$install_path/$latest/bin"
 
-    start "$name" "shell-latest" \
+    step "$name" "shell-latest" \
       _if_no_fail \
       _exec_silent \
       asdf shell "$name" "$latest" \
       _verify_noop
 
-    start "$name" "test-latest" \
+    step "$name" "test-latest" \
       _if_no_fail \
       _exec_silent \
       asdf "$name" test \
       _verify_output
 
-    DEBUG=1 start "$name" "uninstall-latest" \
+    DEBUG=1 step "$name" "uninstall-latest" \
       _if_no_fail \
       _exec_silent \
       asdf uninstall "$name" "$latest" \
       _verify_noop
 
+    step "$name" "git-add-all" \
+      _if_git_dirty "DISABLE_GIT" "$local_path" \
+      _exec_silent \
+      git add --all \
+      _verify_noop
+
+    step "$name" "git-commit" \
+      _if_git_dirty "DISABLE_GIT" "$local_path" \
+      _exec_silent \
+      git commit -m 'feat(core): applied template [autocommit]' \
+      _verify_noop
+
+    step "$name" "git-commit" \
+      _if_git_dirty "DISABLE_GIT" "$local_path" \
+      _exec_silent \
+      git commit -m 'feat(core): applied template [autocommit]' \
+      _verify_noop
+
+    #
+    # git push origin main
+
     stop "$name" "$tmpdir"
   done
 }
 
-before_start() {
+start() {
   local key="$1"
   ((COMPONENT_COUNT++))
 
-  if is_format_default; then
-    echo
-    printf "# $CYAN_COLOR%s$RESET_COLOR\n" "$key"
-  elif is_format_mini; then
-    printf "%-15s: " "$key"
-  fi
+  print_start "$key"
 }
-start() {
+step() {
   local key="$1" name="$2"
   shift
 
-  print_start "$key" "$name"
+  print_step "$key" "$name"
 
   local disabled
   disabled="$(db_get_disabled "$key" "$name")"
@@ -190,10 +203,11 @@ start() {
 
   log_debug "checker '%s[%s]' starting: %s %s" \
     "$key" "$name" "$checker" "${checker_args[*]}"
-  print_start_check \
+  print_step_check \
     "$key" "$name" "$checker" "${checker_args[@]}"
   if ! "$checker" "$key" "$name" "${checker_args[@]}"; then
     log_debug "checker '%s' result: skipped" "$key"
+    db_set_comp_status "$key" "$name" "skipped"
     print_checker_failed "$key" "$name"
     return 0
   fi
@@ -206,12 +220,13 @@ start() {
 
   log_debug "executor '%s[%s]' starting: %s %s" \
     "$key" "$name" "$executor" "${executor_args[*]}"
-  print_start_exec \
+  print_step_exec \
     "$key" "$name" "$executor" "${executor_args[@]}"
   if ! is_dryrun; then
     if ! "$executor" "$key" "$name" "${executor_args[@]}"; then
       log_debug "executor '%s' result: failed" \
         "$key"
+      db_set_comp_status "$key" "$name" "failed"
       print_executor_failed "$key" "$name"
       return 0
     fi
@@ -219,24 +234,30 @@ start() {
 
   log_debug "validator '%s[%s]' starting: %s %s" \
     "$key" "$name" "$validator" "${validator_args[*]}"
-  print_start_verify \
+  print_step_verify \
     "$key" "$name" "$validator" "${validator_args[@]}"
   if ! is_dryrun; then
     if ! "$validator" "$key" "$name" "${validator_args[@]}"; then
       log_debug "validator '%s[%s]' result: failed" \
         "$key" "$name"
+      db_set_comp_status "$key" "$name" "failed"
       print_validator_failed "$key" "$name"
       return 0
     fi
   fi
 
   print_success "$key" "$name"
+  if ! is_dryrun; then
+    db_set_comp_status "$key" "$name" "success"
+  fi
   return 0
 }
 stop() {
   local key="$1" tmpdir="$2"
   shift 2
+
   db_set_comp_status "$key" "success"
+  print_stop "$key" "$tmpdir"
 }
 disabled() {
   local _start="$1" key="$2" name="$3"
@@ -287,7 +308,10 @@ _if_dir_exist() {
   local key="$1" name="$2"
   shift 2
 
-  [ -d "${1:?}" ]
+  if ! [ -d "${1:?}" ]; then
+    db_set_check_msg "$key" "$name" "$1 is missing"
+    return 1
+  fi
 }
 _if_copier_exist() {
   local key="$1" name="$2"
@@ -297,6 +321,44 @@ _if_copier_exist() {
     db_set_exec_args "$key" "$name" --overwrite --defaults
   else
     db_set_exec_args "$key" "$name" --overwrite
+  fi
+}
+_if_var_exist() {
+  local key="$1" name="$2"
+  shift 2
+
+  local var
+  eval "var=\"\$${1// /}\""
+  if [ -z "${var:-}" ]; then
+    db_set_check_msg "$key" "$name" "\$$1 must be set"
+    return 1
+  fi
+}
+_if_git_dirty() {
+  local key="$1" name="$2"
+  shift 2
+
+  local var
+  eval "var=\"\$${1// /}\""
+  if [ -n "${var:-}" ]; then
+    db_set_check_msg "$key" "$name" "\$$1 was set"
+    return 1
+  fi
+
+  if [ -d "$2" ]; then
+    log_debug "checking how dirty git are on %s" "$2"
+    local tmp="$PWD"
+    cd "$2" || return 1
+
+    if git update-index -q --really-refresh --ignore-submodules &&
+      git diff-index --quiet --exit-code --ignore-submodules HEAD; then
+      db_set_check_msg "$key" "$name" "git was cleaned"
+      return 1
+    fi
+
+    cd "$tmp" || return 1
+  else
+    log_debug "skipped checking git dirty because directory(%s) missing" "$2"
   fi
 }
 
@@ -434,27 +496,50 @@ _verify_output() {
 }
 
 print_start() {
+  local key="$1"
+
+  if is_format_short; then
+    printf "%-15s: " "$key"
+  elif is_format_normal; then
+    echo
+    printf "# $CYAN_COLOR%s$RESET_COLOR\n" "$key"
+  fi
+}
+print_stop() {
+  local key="$1" tmpdir="$2"
+  shift 2
+
+  if is_format_short; then
+    logln
+  fi
+}
+print_step() {
   local key="$1" name="$2"
   shift 2
 
-  if is_format_default; then
+  if is_format_normal; then
+    logf '=> %-15s' "$name"
+  elif is_format_long; then
     logf '$ %s' "$name"
   fi
 }
-print_start_check() {
-  local key="$1" name="$2" fn="$3"
-  shift 3
-  return 0
-}
-print_start_exec() {
+print_step_check() {
   local key="$1" name="$2" fn="$3"
   shift 3
 
-  if is_format_default; then
+  if is_format_normal; then
+    logf ': '
+  fi
+}
+print_step_exec() {
+  local key="$1" name="$2" fn="$3"
+  shift 3
+
+  if is_format_long; then
     logf ' [%s]' "$*"
   fi
 }
-print_start_verify() {
+print_step_verify() {
   # shellcheck disable=SC2034
   local key="$1" name="$2" fn="$3"
   shift 3
@@ -463,18 +548,18 @@ print_start_verify() {
 }
 print_checker_failed() {
   local key="$1" name="$2"
-  _print_result "$BLUE_COLOR" "SKIPPED" "$key" "$name" \
+  __print_result "$BLUE_COLOR" "SKIPPED" "$key" "$name" \
     "db_get_check_msg" "db_get_check_log"
 }
 print_executor_failed() {
   local key="$1" name="$2"
-  _print_result "$RED_COLOR" "FAILED" "$key" "$name" \
+  __print_result "$RED_COLOR" "FAILED" "$key" "$name" \
     "db_get_exec_msg" "db_get_exec_log" "db_get_exec_err"
   db_set_comp_status "$key" "failed"
 }
 print_validator_failed() {
   local key="$1" name="$2"
-  _print_result "$RED_COLOR" "FAILED" "$key" "$name" \
+  __print_result "$RED_COLOR" "FAILED" "$key" "$name" \
     "db_get_verify_msg" "db_get_verify_log"
   db_set_comp_status "$key" "failed"
 }
@@ -485,16 +570,16 @@ print_success() {
     color="$PINK_COLOR" &&
     word="DRYRUN"
 
-  _print_result "$color" "$word" "$key" "$name" \
+  __print_result "$color" "$word" "$key" "$name" \
     db_get_success_msg db_get_success_log
 }
 print_disabled() {
   local key="$1" name="$2"
-  _print_result "$BLUE_COLOR" "DISABLED" \
+  __print_result "$BLUE_COLOR" "DISABLED" \
     "$key" "$name" "" ""
   db_set_comp_status "$key" "disabled"
 }
-_print_result() {
+__print_result() {
   local color="$1" status="$2"
   local key="$3" name="$4"
   local get_msg="$5" get_log="$6" get_err="$7"
@@ -527,22 +612,31 @@ _print_result() {
   [ -n "$outpath" ] &&
     suffix="$suffix [cat $outpath]"
 
-  if is_format_default; then
-    logln "\n  >>> $color%s$RESET_COLOR%s" "$status" \
-      "$suffix"
-  elif is_format_mini; then
+  if is_format_short; then
     logf "$color%s$RESET_COLOR" "${status:0:1}"
+  elif is_format_normal; then
+    logln "$color%s$RESET_COLOR%s" \
+      "$status" "$suffix"
+  elif is_format_long; then
+    logln "\n  >>> $color%s$RESET_COLOR%s" \
+      "$status" "$suffix"
   fi
 }
 
-is_format_mini() {
-  [[ "$FORMAT" == "mini" ]]
+is_format_short() {
+  [[ "$FORMAT" == "short" ]] ||
+    [[ "$FORMAT" == "mini" ]] ||
+    [[ "$FORMAT" == "compack" ]] ||
+    [[ "$FORMAT" == "minimize" ]]
 }
-is_format_default() {
-  [ -z "$FORMAT" ] || [[ "$FORMAT" == "default" ]]
+is_format_normal() {
+  [ -z "$FORMAT" ] ||
+    [[ "$FORMAT" == "normal" ]] ||
+    [[ "$FORMAT" == "default" ]]
 }
-is_format_verbose() {
-  [[ "$FORMAT" == "verbose" ]]
+is_format_long() {
+  [[ "$FORMAT" == "long" ]] ||
+    [[ "$FORMAT" == "verbose" ]]
 }
 is_dryrun() {
   [ -n "$DRYRUN" ]
@@ -555,28 +649,43 @@ log_debug() {
   if is_debug; then
     local output
     output="$(tmp_basepath)"
-    __log "DBG" $'\n' "$@" >>"$output/debug.log"
+    __log "DBG" "" "" $'\n' "$@" >>"$output/debug.log"
   fi
 }
 log_info() {
-  __log "INF" $'\n' "$@"
+  if is_format_normal || is_format_long; then
+    __log "INF" "" "" $'\n' "$@"
+  fi
 }
 logln() {
-  __log "" $'\n' "$@"
+  __log "" "" "" $'\n' "$@"
 }
 logf() {
-  __log "" "" "$@"
+  __log "" "" "" "" "$@"
 }
 __log() {
-  local level="$1" suffix="$2" format="$3"
-  shift 3
+  local _level="$1" _prefix="$2" _suffix="$3" _newline="$4"
+  shift 4
 
-  if [ -n "$level" ]; then
-    printf "[%s] $format$suffix" "$level" "$@"
-  else
-    # shellcheck disable=2059
-    printf "$format$suffix" "$@"
+  local messages=()
+  local args=()
+
+  # local date
+  # date="$(date +"%H:%M:%S")"
+  # [ -n "$date" ] && messages+=("$date")
+  [ -n "$_level" ] && messages+=("[$_level]")
+  [ -n "$_prefix" ] && messages+=("$_prefix")
+  if [ "$#" -gt 0 ]; then
+    messages+=("$1")
+    shift
+    args+=("$@")
   fi
+  [ -n "$_suffix" ] && messages+=("$_suffix")
+
+  # HH:MM:SS [DBG] $_prefix $_format $_suffix
+
+  # shellcheck disable=2059
+  printf "${messages[*]}$_newline" "${args[@]}"
 }
 
 ## get current session directory
@@ -605,6 +714,36 @@ tmp_create_file() {
   [ -z "$name" ] && filename="tmp-XXXXXXXX"
 
   mktemp -q "$dir/$filename"
+}
+tmp_auto_clean() {
+  local tmp="$_TMPPATH"
+  local clean_time=.clean.time
+  local timestamp="$tmp/$clean_time"
+
+  log_debug "checking last clean"
+  ## Initiate last clean time
+  ! [ -f "$timestamp" ] &&
+    log_debug "no last clean time found, create new one" &&
+    date +"%Y%m%d%H%M%S" >"$timestamp"
+  ## Remove full-path file
+  [ -f "$tmp/.fullpath" ] &&
+    log_debug "removing fullpath cache" &&
+    rm "$tmp/.fullpath"
+
+  local previous current diff
+  previous="$(cat "$timestamp")"
+  current="$(date +"%Y%m%d%H%M%S")"
+  diff="$((current - previous))"
+  log_debug "last cleaning was at %s (diff %d sec)" \
+    "$previous" "$diff"
+  if [ -d "$tmp" ] && [ "$diff" -gt 3600 ]; then
+    log_info "removing temporary directory: %s" "$tmp"
+    rm -r "$tmp"
+  fi
+
+  ## Create tmp directory if not found
+  ! [ -d "$tmp" ] &&
+    mkdir -p "$tmp"
 }
 
 db_set_check_msg() {
@@ -679,6 +818,12 @@ db_set_comp_latest() {
 db_get_comp_latest() {
   __db_get "latest" "$@"
 }
+db_set_components() {
+  __db_set "name" "global" "component" "$@"
+}
+db_get_components() {
+  __db_get "name" "global" "component" "$@"
+}
 db_set_disabled() {
   __db_set "disabled" "$@"
 }
@@ -729,7 +874,7 @@ __db_get() {
         "$key" "$storage"
     fi
   else
-    log_debug "storage file is missing"
+    log_debug "storage file is missing (cannot get '%s')" "$key"
   fi
 }
 
@@ -740,12 +885,7 @@ __internal() {
   # shellcheck source=/dev/null
   [ -f "$HOME/.asdf/asdf.sh" ] &&
     source "$HOME/.asdf/asdf.sh"
-  ## Create tmp directory if not found
-  ! [ -d "$_TMPPATH" ] &&
-    mkdir -p "$_TMPPATH"
-  ## Clean fullpath cache
-  [ -f "$_TMPPATH/.fullpath" ] &&
-    rm "$_TMPPATH/.fullpath"
+  tmp_auto_clean
 
   local cb="$1"
   shift
@@ -760,28 +900,11 @@ __internal() {
 __exit() {
   local code="$_EXIT_CODE"
 
-  local tmp="$_TMPPATH"
   local tmpdir
   tmpdir="$(tmp_basepath)"
 
-  local timestamp="$tmp/.cleanup-ts"
-  ! [ -f "$timestamp" ] &&
-    date +"%Y%m%d%H%M%S" >"$timestamp"
-
-  local previous current diff
-  previous="$(cat "$timestamp")"
-  current="$(date +"%Y%m%d%H%M%S")"
-  diff="$((current - previous))"
-
-  echo
   log_info "session directory: %s" "$tmpdir"
   log_info "data storage: cat %s" "$tmpdir/data.txt"
-  if [ -d "$tmp" ] && [ "$diff" -gt 3600 ]; then
-    log_info "cleaning temporary directory at %s" "$tmp"
-    mv "$tmpdir" "$tmp/.cache-$current" &&
-      rm -r "$tmp" &&
-      mv "$tmp/.cache-$current" "$tmpdir"
-  fi
 
   unset _ROOT _SCRIPTS _TMPPATH
   unset _EXIT_CODE
