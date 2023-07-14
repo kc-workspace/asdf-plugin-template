@@ -15,7 +15,7 @@ export COMPONENTS=(
   gh git-chglog golang golangci-lint gradle
   helm hub hyperfine
   kind kubectl
-  mkcert
+  maven mkcert
   terragrunt
   yamllint
 )
@@ -317,14 +317,18 @@ _if_copier_exist() {
   local key="$1" name="$2"
   shift 2
 
+  local args=()
+
   if [ -z "$TMPL_PROD" ]; then
-    db_set_exec_args "$key" "$name" --vcs-ref HEAD
+    args+=(--vcs-ref HEAD)
   fi
+
+  args+=(--overwrite)
   if [ -d "${1:?}" ]; then
-    db_set_exec_args "$key" "$name" --overwrite --defaults
-  else
-    db_set_exec_args "$key" "$name" --overwrite
+    args+=(--defaults)
   fi
+
+  db_set_exec_args "$key" "$name" "${args[@]}"
 }
 _if_var_exist() {
   local key="$1" name="$2"
