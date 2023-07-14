@@ -2,9 +2,10 @@
 
 ## example: ./scripts/dev.sh argocd
 ## variables:
-##   - $DEV_DEBUG=1                   to enabled debug mode
-##   - $DRYRUN=1                      to enabled dryrun mode
-##   - $FORMAT=[mini|default|verbose] to custom output format
+##   - $DEV_DEBUG=1                to enabled debug mode
+##   - $DRYRUN=1                   to enabled dryrun mode
+##   - $FORMAT=[short|normal|long] to custom output format
+##   - $TMPL_PROD=1                to use production template
 
 export COMPONENTS=(
   argocd aws
@@ -67,9 +68,7 @@ main() {
     step "$name" "copier-copy" \
       _if_copier_exist "$local_path" \
       _exec_copier \
-      copier copy --UNSAFE \
-      --vcs-ref HEAD \
-      "$workdir" "$local_path" \
+      copier copy --UNSAFE "$workdir" "$local_path" \
       _verify_noop
 
     step "$name" "remove-plugin" \
@@ -138,23 +137,20 @@ main() {
     step "$name" "git-add-all" \
       _if_git_dirty "DISABLE_GIT" "$local_path" \
       _exec_silent \
-      git add --all \
+      git -C "$local_path" add --all \
       _verify_noop
 
     step "$name" "git-commit" \
       _if_git_dirty "DISABLE_GIT" "$local_path" \
       _exec_silent \
-      git commit -m 'feat(core): applied template [autocommit]' \
+      git -C "$local_path" commit -m 'feat(core): applied template [autocommit]' \
       _verify_noop
 
-    step "$name" "git-commit" \
-      _if_git_dirty "DISABLE_GIT" "$local_path" \
+    step "$name" "git-push" \
+      _if_git_outdate "DISABLE_GIT" "$local_path" \
       _exec_silent \
-      git commit -m 'feat(core): applied template [autocommit]' \
+      git -C "$local_path" push origin main \
       _verify_noop
-
-    #
-    # git push origin main
 
     stop "$name" "$tmpdir"
   done
@@ -256,7 +252,10 @@ stop() {
   local key="$1" tmpdir="$2"
   shift 2
 
-  db_set_comp_status "$key" "success"
+  local status
+  status="$(db_get_comp_status "$key")"
+  [ -z "$status" ] &&
+    db_set_comp_status "$key" "success"
   print_stop "$key" "$tmpdir"
 }
 disabled() {
@@ -317,6 +316,9 @@ _if_copier_exist() {
   local key="$1" name="$2"
   shift 2
 
+  if [ -z "$TMPL_PROD" ]; then
+    db_set_exec_args "$key" "$name" --vcs-ref HEAD
+  fi
   if [ -d "${1:?}" ]; then
     db_set_exec_args "$key" "$name" --overwrite --defaults
   else
@@ -345,20 +347,39 @@ _if_git_dirty() {
     return 1
   fi
 
-  if [ -d "$2" ]; then
-    log_debug "checking how dirty git are on %s" "$2"
-    local tmp="$PWD"
-    cd "$2" || return 1
-
-    if git update-index -q --really-refresh --ignore-submodules &&
-      git diff-index --quiet --exit-code --ignore-submodules HEAD; then
+  local dir="$2"
+  if [ -d "$dir" ]; then
+    log_debug "checking how dirty git are on %s" "$dir"
+    if git -C "$dir" update-index -q --really-refresh --ignore-submodules &&
+      git -C "$dir" diff-index --quiet --exit-code --ignore-submodules HEAD; then
       db_set_check_msg "$key" "$name" "git was cleaned"
       return 1
     fi
-
-    cd "$tmp" || return 1
   else
-    log_debug "skipped checking git dirty because directory(%s) missing" "$2"
+    log_debug "skipped checking git repository because directory(%s) missing" "$dir"
+  fi
+}
+_if_git_outdate() {
+  local key="$1" name="$2"
+  shift 2
+
+  local var
+  eval "var=\"\$${1// /}\""
+  if [ -n "${var:-}" ]; then
+    db_set_check_msg "$key" "$name" "\$$1 was set"
+    return 1
+  fi
+
+  local dir="$2"
+  if [ -d "$dir" ]; then
+    log_debug "checking remote git outdated at %s" "$dir"
+    if git -C "$dir" push --dry-run origin main --porcelain |
+      grep -q 'up to date'; then
+      db_set_check_msg "$key" "$name" "git was up-to-date"
+      return 1
+    fi
+  else
+    log_debug "skipped checking git repository because directory(%s) missing" "$dir"
   fi
 }
 
@@ -518,7 +539,7 @@ print_step() {
   shift 2
 
   if is_format_normal; then
-    logf '=> %-15s' "$name"
+    logf '=> %-20s' "$name"
   elif is_format_long; then
     logf '$ %s' "$name"
   fi
