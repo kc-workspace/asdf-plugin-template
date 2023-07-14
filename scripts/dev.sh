@@ -6,6 +6,7 @@
 ##   - $DRYRUN=1                   to enabled dryrun mode
 ##   - $FORMAT=[short|normal|long] to custom output format
 ##   - $TMPL_PROD=1                to use production template
+##   - $GIT_ENABLED=1              to enabled git commit and push
 
 export COMPONENTS=(
   argocd aws
@@ -135,19 +136,19 @@ main() {
       _verify_noop
 
     step "$name" "git-add-all" \
-      _if_git_dirty "DISABLE_GIT" "$local_path" \
+      _if_git_dirty "GIT_ENABLED" "$local_path" \
       _exec_silent \
       git -C "$local_path" add --all \
       _verify_noop
 
     step "$name" "git-commit" \
-      _if_git_dirty "DISABLE_GIT" "$local_path" \
+      _if_git_dirty "GIT_ENABLED" "$local_path" \
       _exec_silent \
       git -C "$local_path" commit -m 'perf: update plugin from template [autocommit]' \
       _verify_noop
 
     step "$name" "git-push" \
-      _if_git_outdate "DISABLE_GIT" "$local_path" \
+      _if_git_outdate "GIT_ENABLED" "$local_path" \
       _exec_silent \
       git -C "$local_path" push origin main \
       _verify_noop
@@ -340,12 +341,7 @@ _if_git_dirty() {
   local key="$1" name="$2"
   shift 2
 
-  local var
-  eval "var=\"\$${1// /}\""
-  if [ -n "${var:-}" ]; then
-    db_set_check_msg "$key" "$name" "\$$1 was set"
-    return 1
-  fi
+  _if_var_exist "$key" "$name" "$1" || return 1
 
   local dir="$2"
   if [ -d "$dir" ]; then
@@ -363,12 +359,7 @@ _if_git_outdate() {
   local key="$1" name="$2"
   shift 2
 
-  local var
-  eval "var=\"\$${1// /}\""
-  if [ -n "${var:-}" ]; then
-    db_set_check_msg "$key" "$name" "\$$1 was set"
-    return 1
-  fi
+  _if_var_exist "$key" "$name" "$1" || return 1
 
   local dir="$2"
   if [ -d "$dir" ]; then
