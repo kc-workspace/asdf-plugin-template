@@ -143,7 +143,7 @@ main() {
     step "$name" "git-commit" \
       _if_git_dirty "DISABLE_GIT" "$local_path" \
       _exec_silent \
-      git -C "$local_path" commit -m 'feat(core): applied template [autocommit]' \
+      git -C "$local_path" commit -m 'perf: update plugin from template [autocommit]' \
       _verify_noop
 
     step "$name" "git-push" \
