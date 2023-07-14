@@ -5,7 +5,6 @@
 kc_asdf_gpg() {
   local ns="gpg.addon"
   local fingerprint="{{ gpg_fingerprint }}"
-  local public_key="${KC_ASDF_RES_PATH:?}/public-key.asc"
 
   [ -n "${ASDF_INSECURE:-}" ] &&
     kc_asdf_warn "$ns" "Skipped checksum because user disable security" &&
@@ -16,7 +15,17 @@ kc_asdf_gpg() {
   dirpath="$(dirname "$filepath")"
   filename="$(basename "$filepath")"
 
-  local sig_filepath="$dirpath/$filename.sig"
+  local signature="$dirpath/$filename.sig"
+
+  {% if gpg_public_key_type == 'text' -%}
+  local public_key="${KC_ASDF_RES_PATH:?}/public-key.asc"
+  {%- else -%}
+  local public_key
+  public_key="$(kc_asdf_temp_file)"
+  kc_asdf_fetch_file \
+    "{{ gpg_public_key_link }}" \
+    "$public_key"
+  {%- endif %}
 
   ! command -v gpg >/dev/null &&
     kc_asdf_error "$ns" "gpg command is missing" &&
@@ -33,7 +42,7 @@ kc_asdf_gpg() {
 
   kc_asdf_debug "$ns" "downloading gpg signature of %s from '%s'" \
     "$filename" "$gpg_url"
-  if ! kc_asdf_fetch_file "$gpg_url" "$sig_filepath"; then
+  if ! kc_asdf_fetch_file "$gpg_url" "$signature"; then
     return 1
   fi
 
@@ -44,7 +53,7 @@ kc_asdf_gpg() {
   fi
 
   kc_asdf_debug "$ns" "verifying signature of %s" "$filepath"
-  if ! gpg --quiet --verify "$sig_filepath" "$filepath"; then
+  if ! gpg --quiet --verify "$signature" "$filepath"; then
     return 1
   fi
 
