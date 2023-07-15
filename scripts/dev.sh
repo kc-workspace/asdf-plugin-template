@@ -646,18 +646,25 @@ __print_result() {
 }
 
 is_format_short() {
-  [[ "$FORMAT" == "short" ]] ||
+  [[ "$FORMAT" == "s" ]] ||
+    [[ "$FORMAT" == "m" ]] ||
+    [[ "$FORMAT" == "c" ]] ||
+    [[ "$FORMAT" == "short" ]] ||
     [[ "$FORMAT" == "mini" ]] ||
     [[ "$FORMAT" == "compack" ]] ||
     [[ "$FORMAT" == "minimize" ]]
 }
 is_format_normal() {
   [ -z "$FORMAT" ] ||
+    [[ "$FORMAT" == "n" ]] ||
+    [[ "$FORMAT" == "d" ]] ||
     [[ "$FORMAT" == "normal" ]] ||
     [[ "$FORMAT" == "default" ]]
 }
 is_format_long() {
-  [[ "$FORMAT" == "long" ]] ||
+  [[ "$FORMAT" == "l" ]] ||
+    [[ "$FORMAT" == "v" ]] ||
+    [[ "$FORMAT" == "long" ]] ||
     [[ "$FORMAT" == "verbose" ]]
 }
 is_dryrun() {
