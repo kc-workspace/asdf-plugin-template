@@ -55,6 +55,7 @@ app_type:
 python_name:
   type: str
   help: "[PYN] What is your python package name?"
+  default: "{{ app_name }}"
   validator: "{% from pathjoin('macros', 'validators.jinja') import valid_require_str %}{{ valid_require_str(python_name) }}"
   when: "{{ app_type == 'python' }}"
 
@@ -94,7 +95,13 @@ source_url:
 archive_enabled:
   type: bool
   help: "[ARC] Is your download result contains archived file?"
-  default: false
+  default: |
+    {%- if source_type == 'archive' -%}
+      true
+    {%- else -%}
+      false
+    {%- endif -%}
+  when: "{{ app_type == 'standalone' or (app_type == 'python' and source_type == 'archive') }}"
 
 archive_regex:
   type: str

@@ -16,8 +16,10 @@ export COMPONENTS=(
   helm hub hyperfine
   kind kubectl
   maven mkcert
+  pipx
   terragrunt
   yamllint
+  yq
 )
 
 main() {
