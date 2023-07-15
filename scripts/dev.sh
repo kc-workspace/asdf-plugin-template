@@ -72,7 +72,7 @@ main() {
     step "$name" "copier-copy" \
       _if_copier_exist "$local_path" \
       _exec_copier \
-      copier copy --UNSAFE "$workdir" "$local_path" \
+      copier copy --trust "$workdir" "$local_path" \
       _verify_noop
 
     step "$name" "remove-plugin" \
