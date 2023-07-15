@@ -154,6 +154,12 @@ main() {
       git -C "$local_path" commit -m 'perf: update plugin from template [autocommit]' \
       _verify_noop
 
+    step "$name" "git-pull" \
+      _if_git_outdate "GIT_ENABLED" "$local_path" \
+      _exec_silent \
+      git -C "$local_path" pull origin main \
+      _verify_noop
+
     step "$name" "git-push" \
       _if_git_outdate "GIT_ENABLED" "$local_path" \
       _exec_silent \
