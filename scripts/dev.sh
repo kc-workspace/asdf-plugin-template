@@ -14,6 +14,7 @@ export COMPONENTS=(
   flux2
   gh git-chglog golang golangci-lint gradle
   helm hub hyperfine
+  jq
   kind kubectl
   maven mkcert
   pipx
@@ -476,7 +477,7 @@ _verify_asdf_list() {
 
   local line=0
   line="$(wc -l <"$logfile" | bc)"
-  if [[ "$line" -le $size ]]; then
+  if [[ "$line" -lt $size ]]; then
     db_set_verify_msg "$key" "$name" "size=$line<$size"
     return 1
   fi
