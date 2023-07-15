@@ -130,6 +130,7 @@ package_enabled:
   type: bool
   help: "[PKG] Is your download result contains packaged file?"
   default: false
+  when: "{{ app_type == 'standalone' }}"
 
 package_regex:
   type: str
@@ -149,6 +150,7 @@ checksum_enabled:
   type: bool
   help: "[CKS] Is your application provided checksum file?"
   default: false
+  when: "{{ app_type == 'standalone' or source_enabled }}"
 
 checksum_url:
   type: str
@@ -173,6 +175,7 @@ gpg_enabled:
   type: bool
   help: "[GPG] Is your application provided gpg signature?"
   default: false
+  when: "{{ app_type == 'standalone' or source_enabled }}"
 
 gpg_public_key_type:
   type: str
@@ -265,7 +268,7 @@ addon_yaml:
   default: |
     archive: {{ archive_enabled }}
     checksum: {{ checksum_enabled }}
-    fetch: {% if app_type == 'standalone' %}true{% else %}false{% endif %}
+    fetch: true
     download: {% if app_type == 'standalone' %}true{% else %}false{% endif %}
     git: {{ source_enabled }}
     github: {% from pathjoin('macros', 'github.jinja') import is_gh %}{{ is_gh(app_repo) }}
