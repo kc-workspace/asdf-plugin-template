@@ -58,7 +58,8 @@ kc_asdf_fetch() {
   local cmd="" options=()
 
   local token=""
-  if [[ "$url" =~ ^https://github.com ]]; then
+  if [[ "$url" =~ ^https://github.com ]] ||
+    [[ "$url" =~ ^https://api.github.com ]]; then
     token="${GITHUB_API_TOKEN:-}"
     [ -z "$token" ] && token="${GITHUB_TOKEN:-}"
     [ -z "$token" ] && token="${GH_TOKEN:-}"
