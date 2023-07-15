@@ -10,7 +10,7 @@
 
 export COMPONENTS=(
   argocd aws
-  cloudflared cmctl cookiecutter
+  cloudflared cmctl consul cookiecutter copier
   flux2
   gh git-chglog golang golangci-lint gradle
   helm hub hyperfine
@@ -18,7 +18,7 @@ export COMPONENTS=(
   kind kubectl
   maven mkcert
   pipx
-  terragrunt
+  terraform terragrunt
   yamllint
   yq
 )
@@ -72,7 +72,7 @@ main() {
     step "$name" "copier-copy" \
       _if_copier_exist "$local_path" \
       _exec_copier \
-      copier copy --trust "$workdir" "$local_path" \
+      python -m copier copy --trust "$workdir" "$local_path" \
       _verify_noop
 
     step "$name" "remove-plugin" \
@@ -156,7 +156,12 @@ main() {
       git -C "$local_path" push origin main \
       _verify_noop
 
-    stop "$name" "$tmpdir"
+    local status
+    status="$(db_get_comp_status "$name")"
+    stop "$name" "$tmpdir" "$status"
+    if [ "$status" == "failed" ]; then
+      ((_EXIT_CODE++))
+    fi
   done
 }
 
@@ -253,11 +258,8 @@ step() {
   return 0
 }
 stop() {
-  local key="$1" tmpdir="$2"
-  shift 2
+  local key="$1" tmpdir="$2" status="$3"
 
-  local status
-  status="$(db_get_comp_status "$key")"
   [ -z "$status" ] &&
     db_set_comp_status "$key" "success"
   print_stop "$key" "$tmpdir"
