@@ -23,8 +23,17 @@ __asdf_bin() {
   {% if checksum_enabled -%}
   deps+=(sha{{ checksum_conf_algorithm }}sum shasum)
   {%- endif %}
+  {% if gpg_enabled -%}
+  deps+=(gpg)
+  {%- endif %}
   {% if app_type == 'python' -%}
   deps+=(python python3)
+  {%- endif %}
+  {% if archive_enabled -%}
+  deps+=(tar unzip)
+  {%- endif %}
+  {% if package_enabled -%}
+  deps+=(pkgutil)
   {%- endif %}
 
   for dep in "${deps[@]}"; do
