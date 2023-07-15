@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.0.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.0.0...v2.0.1) (2023-07-15)
+
+
+### Bugfixes
+
+* **docs:** update changelog words ([74fc5dd](https://github.com/kc-workspace/asdf-plugin-template/commit/74fc5dd9da5605b1c0b737fc844b36a892736a83))
+* invalid variable ([4b0de94](https://github.com/kc-workspace/asdf-plugin-template/commit/4b0de94a2a85fbfd0c6e681fbd463eaaf86b46a4))
+* **script:** dev.sh didn't use github template and all steps will depends on previous steps ([29d3825](https://github.com/kc-workspace/asdf-plugin-template/commit/29d3825156667d24d8c5decde3930ac87863d1da))
+* **template:** output cause linter issues ([649bf26](https://github.com/kc-workspace/asdf-plugin-template/commit/649bf261c4322e2d7991a47f0938e3ef5acfa33b))
+* **template:** update template to avoid lint error on output ([d2e4e2f](https://github.com/kc-workspace/asdf-plugin-template/commit/d2e4e2f00f488961bdd8ad9011189d19b0e956c4))
+* **template:** update template to avoid lint error on output ([4cf56eb](https://github.com/kc-workspace/asdf-plugin-template/commit/4cf56eb1dfb037514c77541682fc153676d85871))
+
+
+### Improvements
+
+* **github:** support github token on github api call ([06afbcd](https://github.com/kc-workspace/asdf-plugin-template/commit/06afbcd41b8b98a6d83d99853030813f8137a42f))
+* **script:** support disable test when run dev.sh ([58996a8](https://github.com/kc-workspace/asdf-plugin-template/commit/58996a80ba4b6baba185af8ecc6db12f9008f3b7))
+
 ## [2.0.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v1.3.3...v2.0.0) (2023-07-15)
 
 
