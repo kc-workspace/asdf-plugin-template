@@ -1,29 +1,27 @@
 #!/usr/bin/env bash
 
 kc_asdf_load_addon "download" "install"
-{%- if addon_yaml.system %}
-kc_asdf_load_addon "system"
-{%- endif %}
-{%- if addon_yaml.gpg %}
-kc_asdf_load_addon "gpg"
-{%- endif %}
-{%- if addon_yaml.checksum %}
-kc_asdf_load_addon "checksum"
-{%- endif %}
-{%- if addon_yaml.version %}
-kc_asdf_load_addon "version"
-{%- endif %}
+  {%- if addon_yaml.fetch %} \
+  "fetch"{% endif %}
+  {%- if addon_yaml.system %} \
+  "system"{% endif %}
+  {%- if addon_yaml.checksum %} \
+  "checksum"{% endif %}
+  {%- if addon_yaml.gpg %} \
+  "gpg"{% endif %}
+  {%- if addon_yaml.version %} \
+  "version"{% endif %}
+  {%- if addon_yaml.git %} \
+  "git"{% endif %}
+  {%- if addon_yaml.archive %} \
+  "archive"{% endif %}
+  {%- if addon_yaml.package %} \
+  "package"{% endif %}
 
 ## variables:
 ##   - ASDF_INSECURE - disable checksum check
 __asdf_bin() {
   {%- include pathjoin('macros', 'src_download_pre.jinja') %}
-
-  {% if custom_require_commands != '' -%}
-  [ -z "${ASDF_NO_CHECK:-}" ] &&
-    kc_asdf_require_commands \
-      {{ custom_require_commands }}
-  {% endif -%}
 
   local outdir="${ASDF_DOWNLOAD_PATH:?}" outfile outpath
   local tmpdir tmpfile tmppath
@@ -131,7 +129,7 @@ __asdf_bin() {
       kc_asdf_debug "$ns" "extracting '%s' to '%s'" \
         "$tmppath" "$outpath"
       kc_asdf_step "extract" "$outpath" \
-        kc_asdf_extract "$tmppath" "$outpath" "$internal_path" ||
+        kc_asdf_archive_extract "$tmppath" "$outpath" "$internal_path" ||
         return 1
       {%- endif %}{% if package_enabled %}
     elif [[ "$mode" == "package" ]]; then
@@ -143,7 +141,7 @@ __asdf_bin() {
       kc_asdf_debug "$ns" "unpacking '%s' to '%s'" \
         "$tmppath" "$outpath"
       kc_asdf_step "unpack" "$outpath" \
-        kc_asdf_unpack "$tmppath" "$outpath" "$internal_path" ||
+        kc_asdf_package_extract "$tmppath" "$outpath" "$internal_path" ||
         return 1
       {%- endif %}
     else

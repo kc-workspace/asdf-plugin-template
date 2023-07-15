@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
 
 kc_asdf_load_addon "install" "python"
-{%- if addon_yaml.system %}
-kc_asdf_load_addon "system"
-{%- endif %}
-{%- if addon_yaml.version %}
-kc_asdf_load_addon "version"
-{%- endif %}
+  {%- if addon_yaml.system %} \
+  "system"{% endif %}
+  {%- if addon_yaml.version %} \
+  "version"{% endif %}
 
 __asdf_bin() {
   {%- include pathjoin('macros', 'src_install_pre.jinja') %}
