@@ -69,7 +69,7 @@
 {%- macro valid_fingerprint(value) -%}
   {%- if (value | regex_search('[^A-F0-9]')) -%}
     ID must hex number without space
-  {%- elif value | length != 40 or value | length != 16 -%}
+  {%- elif value | length != 40 and value | length != 16 -%}
     ID must be either 16 (key id) or 40 (fingerprint) characters
   {%- endif -%}
 {%- endmacro -%}
