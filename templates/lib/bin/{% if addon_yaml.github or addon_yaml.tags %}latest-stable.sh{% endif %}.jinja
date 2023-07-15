@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
+{% if addon_yaml.fetch %}
+kc_asdf_load_addon "fetch"
+{%- endif %}
 {%- if addon_yaml.github %}
-
 kc_asdf_load_addon "github"
 {%- endif %}
 {%- if addon_yaml.tags %}
-
 kc_asdf_load_addon "tags"
 {%- endif %}
 

@@ -263,8 +263,11 @@ addon_yaml:
   help: "[CST] What is your application addon requirement?"
   multiline: true
   default: |
+    archive: {{ archive_enabled }}
     checksum: {{ checksum_enabled }}
+    fetch: {% if app_type == 'standalone' %}true{% else %}false{% endif %}
     download: {% if app_type == 'standalone' %}true{% else %}false{% endif %}
+    git: {{ source_enabled }}
     github: {% from pathjoin('macros', 'github.jinja') import is_gh %}{{ is_gh(app_repo) }}
     gpg: {{ gpg_enabled }}
     help: true
@@ -273,6 +276,7 @@ addon_yaml:
     tags: true
     version: false
     python: {% if app_type == 'python' %}true{% else %}false{% endif %}
+    package: {{ package_enabled }}
   validator: "{% from pathjoin('macros', 'validators.jinja') import valid_addon_yaml %}{{ valid_addon_yaml(addon_yaml) }}"
 
 custom_os_enabled:

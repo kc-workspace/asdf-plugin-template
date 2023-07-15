@@ -50,4 +50,4 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           IGNORE_GITIGNORED_FILES: true
           IGNORE_GENERATED_FILES: true
-          FILTER_REGEX_EXCLUDE: "*.jinja"
+          FILTER_REGEX_EXCLUDE: ".*.jinja"

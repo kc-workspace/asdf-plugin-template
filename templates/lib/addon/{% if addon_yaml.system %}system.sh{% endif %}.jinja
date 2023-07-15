@@ -16,7 +16,7 @@ kc_asdf_get_os() {
   os="$(uname | tr '[:upper:]' '[:lower:]')"
   {%- if custom_os_enabled %}
   case "$os" in
-  {% for key, value in custom_os_yaml.items() -%}
+  {% for key, value in custom_os_yaml.items() if custom_os_enabled -%}
   {{ key }})
     os="{{ value }}"
     ;;
@@ -36,7 +36,7 @@ kc_asdf_get_os() {
 ## Is current OS is macOS
 ## usage: `kc_asdf_is_darwin`
 kc_asdf_is_darwin() {
-  local os="${KC_ASDF_OS}" custom="{{ custom_os_yaml.darwin if 'darwin' in custom_os_yaml }}"
+  local os="${KC_ASDF_OS}" custom="{{ custom_os_yaml.darwin if 'darwin' in custom_os_yaml and custom_os_enabled }}"
   local darwin="${custom:-darwin}"
   [[ "$os" == "$darwin" ]]
 }
@@ -44,7 +44,7 @@ kc_asdf_is_darwin() {
 ## Is current OS is LinuxOS
 ## usage: `kc_asdf_is_linux`
 kc_asdf_is_linux() {
-  local os="${KC_ASDF_OS}" custom="{{ custom_os_yaml.linux if 'linux' in custom_os_yaml }}"
+  local os="${KC_ASDF_OS}" custom="{{ custom_os_yaml.linux if 'linux' in custom_os_yaml and custom_os_enabled }}"
   local linux="${custom:-linux}"
   [[ "$os" == "$linux" ]]
 }
@@ -65,7 +65,7 @@ kc_asdf_get_arch() {
   arch="$(uname -m)"
   {%- if custom_arch_enabled %}
   case "$arch" in
-  {% for key, value in custom_arch_yaml.items() -%}
+  {% for key, value in custom_arch_yaml.items() if custom_arch_enabled -%}
   {{ key }})
     arch="{{ value }}"
     ;;
