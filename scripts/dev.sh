@@ -7,6 +7,7 @@
 ##   - $FORMAT=[short|normal|long] to custom output format
 ##   - $TMPL_PROD=1                to use production template
 ##   - $GIT_ENABLED=1              to enabled git commit and push
+##   - $TEST_DISABLED=1            to disable testing output
 
 export COMPONENTS=(
   argocd aws
@@ -91,7 +92,7 @@ main() {
       _verify_noop
 
     step "$name" "get-latest" \
-      _if_no_fail \
+      _if_var_miss TEST_DISABLED \
       _exec_with_errfile \
       asdf latest "$name" \
       _verify_asdf_latest
@@ -100,43 +101,43 @@ main() {
     latest="$(db_get_comp_latest "$name")"
 
     step "$name" "list-all" \
-      _if_no_fail \
+      _if_var_miss TEST_DISABLED \
       _exec_silent \
       asdf list all "$name" \
       _verify_asdf_list
 
     DEBUG=1 step "$name" "install-latest" \
-      _if_no_fail \
+      _if_var_miss TEST_DISABLED \
       _exec_silent \
       asdf install "$name" latest \
       _verify_noop
 
     step "$name" "list-path" \
-      _if_no_fail \
+      _if_var_miss TEST_DISABLED \
       _exec_with_errfile \
       ls -A "$install_path/$latest" \
       _verify_ls "$install_path/$latest"
 
     step "$name" "list-bin-path" \
-      _if_no_fail \
+      _if_var_miss TEST_DISABLED \
       _exec_with_errfile \
       ls -A "$install_path/$latest/bin" \
       _verify_ls "$install_path/$latest/bin"
 
     step "$name" "shell-latest" \
-      _if_no_fail \
+      _if_var_miss TEST_DISABLED \
       _exec_silent \
       asdf shell "$name" "$latest" \
       _verify_noop
 
     step "$name" "test-latest" \
-      _if_no_fail \
+      _if_var_miss TEST_DISABLED \
       _exec_silent \
       asdf "$name" test \
       _verify_output
 
     DEBUG=1 step "$name" "uninstall-latest" \
-      _if_no_fail \
+      _if_var_miss TEST_DISABLED \
       _exec_silent \
       asdf uninstall "$name" "$latest" \
       _verify_noop
@@ -344,14 +345,24 @@ _if_copier_exist() {
 _if_var_exist() {
   local key="$1" name="$2"
   shift 2
-
   local var
   eval "var=\"\$${1// /}\""
   if [ -z "${var:-}" ]; then
     db_set_check_msg "$key" "$name" "\$$1 must be set"
     return 1
   fi
-
+  _if_no_fail "$key" "$name" || return 1
+  return 0
+}
+_if_var_miss() {
+  local key="$1" name="$2"
+  shift 2
+  local var
+  eval "var=\"\$${1// /}\""
+  if [ -n "${var:-}" ]; then
+    db_set_check_msg "$key" "$name" "\$$1 is set"
+    return 1
+  fi
   _if_no_fail "$key" "$name" || return 1
   return 0
 }
