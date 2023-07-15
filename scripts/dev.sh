@@ -69,10 +69,13 @@ main() {
       rm -r "$lib_bin_path" \
       _verify_noop
 
+    local template="$workdir"
+    [ -n "$TMPL_PROD" ] &&
+      template="gh:kc-workspace/asdf-plugin-template.git"
     step "$name" "copier-copy" \
       _if_copier_exist "$local_path" \
       _exec_copier \
-      python -m copier copy --trust "$workdir" "$local_path" \
+      python -m copier copy --trust "$template" "$local_path" \
       _verify_noop
 
     step "$name" "remove-plugin" \
@@ -317,17 +320,20 @@ _if_dir_exist() {
     db_set_check_msg "$key" "$name" "$1 is missing"
     return 1
   fi
+
+  _if_no_fail "$key" "$name" || return 1
+  return 0
 }
 _if_copier_exist() {
   local key="$1" name="$2"
   shift 2
 
-  local args=()
+  _if_no_fail "$key" "$name" || return 1
 
+  local args=()
   if [ -z "$TMPL_PROD" ]; then
     args+=(--vcs-ref HEAD)
   fi
-
   args+=(--overwrite)
   if [ -d "${1:?}" ]; then
     args+=(--defaults)
@@ -345,12 +351,16 @@ _if_var_exist() {
     db_set_check_msg "$key" "$name" "\$$1 must be set"
     return 1
   fi
+
+  _if_no_fail "$key" "$name" || return 1
+  return 0
 }
 _if_git_dirty() {
   local key="$1" name="$2"
   shift 2
 
   _if_var_exist "$key" "$name" "$1" || return 1
+  _if_no_fail "$key" "$name" || return 1
 
   local dir="$2"
   if [ -d "$dir" ]; then
@@ -369,6 +379,7 @@ _if_git_outdate() {
   shift 2
 
   _if_var_exist "$key" "$name" "$1" || return 1
+  _if_no_fail "$key" "$name" || return 1
 
   local dir="$2"
   if [ -d "$dir" ]; then
