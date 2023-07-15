@@ -522,6 +522,9 @@ print_start() {
   elif is_format_normal; then
     echo
     printf "# $CYAN_COLOR%s$RESET_COLOR\n" "$key"
+  elif is_format_long; then
+    echo
+    printf "# $CYAN_COLOR%s$RESET_COLOR\n" "$key"
   fi
 }
 print_stop() {
