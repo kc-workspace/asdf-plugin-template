@@ -20,19 +20,19 @@ __asdf_bin() {
     kc_asdf_help_header "Dependencies"
   local deps=(git curl sed grep mktemp xargs tr)
 
-  {% if checksum_enabled -%}
+  {%- if checksum_enabled %}
   deps+=(sha{{ checksum_conf_algorithm }}sum shasum)
   {%- endif %}
-  {% if gpg_enabled -%}
+  {%- if gpg_enabled %}
   deps+=(gpg)
   {%- endif %}
-  {% if app_type == 'python' -%}
+  {%- if app_type == 'python' %}
   deps+=(python python3)
   {%- endif %}
-  {% if archive_enabled -%}
+  {%- if archive_enabled %}
   deps+=(tar unzip)
   {%- endif %}
-  {% if package_enabled -%}
+  {%- if package_enabled %}
   deps+=(pkgutil)
   {%- endif %}
 
