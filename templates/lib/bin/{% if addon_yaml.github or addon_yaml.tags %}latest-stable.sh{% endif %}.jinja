@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-{% if addon_yaml.fetch %}
+{%- if addon_yaml.fetch %}
+
 kc_asdf_load_addon "fetch"
 {%- endif %}
 {%- if addon_yaml.github %}

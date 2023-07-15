@@ -19,7 +19,7 @@
   kc_asdf_debug "$ns" "list '%s': [%s]" \
     "$outdir" "$(ls "$outdir" | xargs echo)"
   for bin in "${bins[@]}"; do
-      outpath="$outdir/$bin"
+    outpath="$outdir/$bin"
     if kc_asdf_present_dir "$outpath"; then
       # shellcheck disable=SC2011
       kc_asdf_debug "$ns" "list '%s': [%s]" \
