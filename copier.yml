@@ -1,6 +1,8 @@
 ---
 _subdirectory: templates
 
+_min_copier_version: "8.1.0"
+
 _skip_if_exists:
   - README.plugin.md
   - bin
