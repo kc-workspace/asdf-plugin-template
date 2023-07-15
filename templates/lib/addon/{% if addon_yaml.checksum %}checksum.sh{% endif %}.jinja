@@ -42,7 +42,7 @@ kc_asdf_checksum() {
     _kc_asdf_custom_checksum __kc_asdf_checksum_create \
       "$filename" "$cs_tmppath" >"$cs_path"
   else
-    if ! grep -E "$filename\\s+" "$cs_tmppath" >"$cs_path"; then
+    if ! grep -E "$filename$" "$cs_tmppath" >"$cs_path"; then
       kc_asdf_error "$ns" "missing %s on checksum file (%s)" \
         "$filename" "$cs_tmppath"
       return 1
