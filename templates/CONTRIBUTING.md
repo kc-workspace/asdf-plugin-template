@@ -168,7 +168,16 @@ _kc_asdf_custom_version() {
 }
 ```
 
-4. To support custom source URL, use `_kc_asdf_custom_source_url()`
+4. To support custom gpg verifying path, use `_kc_asdf_custom_gpg_filepath()`
+
+```bash
+_kc_asdf_custom_gpg_filepath() {
+  local filepath="$1"
+  printf "%s" "$filepath"
+}
+```
+
+5. To support custom source URL, use `_kc_asdf_custom_source_url()`
 
 ```bash
 ## printf empty string will indicate there are a problem
@@ -178,7 +187,7 @@ _kc_asdf_custom_source_url() {
 }
 ```
 
-5. To support download source code, use `_kc_asdf_custom_download_source()`
+6. To support download source code, use `_kc_asdf_custom_download_source()`
 
 ```bash
 ## This will required _kc_asdf_install_source to defined too
@@ -189,7 +198,7 @@ _kc_asdf_custom_download_source() {
 }
 ```
 
-6. To support action after downloaded, use `_kc_asdf_custom_post_download()`
+7. To support action after downloaded, use `_kc_asdf_custom_post_download()`
 
 ```bash
 ## type can be either 'version' or 'ref'
