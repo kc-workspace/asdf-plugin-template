@@ -1,5 +1,22 @@
 # Changelog
 
+## [2.0.2](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.0.1...v2.0.2) (2023-07-16)
+
+
+### Improvements
+
+* add gitignore on template output ([fc3688d](https://github.com/kc-workspace/asdf-plugin-template/commit/fc3688da1c2c8d6b49f1b801b1b69fb26a16d7b9))
+
+
+### Miscellaneous
+
+* **script:** support pulling change before git push ([8b88531](https://github.com/kc-workspace/asdf-plugin-template/commit/8b8853153991fd97df0c7cfbd8067793ee245728))
+
+
+### Bugfixes
+
+* **lint:** copy-paste detection errors ([f77f346](https://github.com/kc-workspace/asdf-plugin-template/commit/f77f3466ca70de52aa510021cab988b8a792d741))
+
 ## [2.0.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.0.0...v2.0.1) (2023-07-15)
 
 
