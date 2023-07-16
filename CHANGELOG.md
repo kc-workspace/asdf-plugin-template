@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.3](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.0.2...v2.0.3) (2023-07-16)
+
+
+### Bugfixes
+
+* **linter:** ignore same headings content on CHANGELOG file ([2a15816](https://github.com/kc-workspace/asdf-plugin-template/commit/2a158168a596fa41d6d4892955cc7d735ce077a3))
+
 ## [2.0.2](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.0.1...v2.0.2) (2023-07-16)
 
 
