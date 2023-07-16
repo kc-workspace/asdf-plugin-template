@@ -373,13 +373,10 @@ _if_var_miss() {
   return 0
 }
 _if_git_dirty() {
-  local key="$1" name="$2"
-  shift 2
+  _if_var_exist "$@" || return 1
+  shift 3
 
-  _if_var_exist "$key" "$name" "$1" || return 1
-  _if_no_fail "$key" "$name" || return 1
-
-  local dir="$2"
+  local dir="$1"
   if [ -d "$dir" ]; then
     log_debug "checking how dirty git are on %s" "$dir"
     if git -C "$dir" update-index -q --really-refresh --ignore-submodules &&
@@ -392,13 +389,10 @@ _if_git_dirty() {
   fi
 }
 _if_git_outdate() {
-  local key="$1" name="$2"
-  shift 2
+  _if_var_exist "$@" || return 1
+  shift 3
 
-  _if_var_exist "$key" "$name" "$1" || return 1
-  _if_no_fail "$key" "$name" || return 1
-
-  local dir="$2"
+  local dir="$1"
   if [ -d "$dir" ]; then
     log_debug "checking remote git outdated at %s" "$dir"
     if git -C "$dir" push --dry-run origin main --porcelain |
