@@ -292,7 +292,7 @@ _if_cb() {
   shift 2
   local cb="$1"
   if ! "$cb"; then
-    db_set_check_msg "$key" "$name" "$cb failed"
+    db_set_check_msg "$key" "$name" "$cb"
     return 1
   fi
   _if_no_fail "$key" "$name" || return 1
