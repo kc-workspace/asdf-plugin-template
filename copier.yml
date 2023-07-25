@@ -123,11 +123,8 @@ archive_regex:
 archive_conf_strip:
   type: int
   help: "[ARC] How many times we should strip directory when extract result (not support by unzip)?"
-  default: |
-    {%- if archive_enabled -%}
-      0
-    {%- endif -%}
-  validator: "{% from pathjoin('macros', 'validators.jinja') import v_uint %}{{ v_uint(archive_conf_strip) }}"
+  placeholder: 0
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_uint %}{{ v_uint(archive_conf_strip, required=false) }}"
   when: "{{ archive_enabled }}"
 
 archive_conf_path:
@@ -222,18 +219,21 @@ gpg_public_key_email:
   help: "[GPG] What is your GPG email (leave empty if not applied)?"
   placeholder: codesign@example.com
   validator: "{% from pathjoin('macros', 'validators.jinja') import v_email %}{{ v_email(gpg_public_key_email, gpg_public_key_type == 'email') }}"
+  when: "{{ gpg_enabled }}"
 
 gpg_public_key_keyid:
   type: str
   help: "[GPG] What is your GPG keyid (leave empty if not applied)?"
   placeholder: ABCD0123ABCD4567
   validator: "{% from pathjoin('macros', 'validators.jinja') import v_keyid %}{{ v_keyid(gpg_public_key_keyid, gpg_public_key_type == 'keyid') }}"
+  when: "{{ gpg_enabled }}"
 
 gpg_public_key_fingerprint:
   type: str
   help: "[GPG] What is your GPG fingerprint (leave empty if not applied)?"
   placeholder: ABCD0123ABCD4567ABCD8910ABCD1112ABCD1314
   validator: "{% from pathjoin('macros', 'validators.jinja') import v_fingerprint %}{{ v_fingerprint(gpg_public_key_fingerprint, gpg_public_key_type == 'fingerprint') }}"
+  when: "{{ gpg_enabled }}"
 
 gpg_sig_url:
   type: str
