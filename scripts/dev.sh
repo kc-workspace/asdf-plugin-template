@@ -9,6 +9,7 @@
 ##   - $DEV_DISABLED=test              to disabled several features
 
 export COMPONENTS=(
+  '1password'
   argocd aws
   cloudflared cmctl consul cookiecutter copier
   flux2
@@ -19,8 +20,7 @@ export COMPONENTS=(
   maven mkcert
   pipx
   terraform terragrunt
-  yamllint
-  yq
+  yamllint yq
 )
 
 main() {
