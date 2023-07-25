@@ -26,25 +26,24 @@ app_name:
   type: str
   help: "[APP] What is your application name?"
   placeholder: xxxx
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_name %}{{ valid_name(app_name) }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_app_name %}{{ v_app_name(app_name) }}"
 
 app_desc:
   type: str
   help: "[APP] What is your application description?"
-  multiline: true
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_desc %}{{ valid_desc(app_desc) }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_desc %}{{ v_desc(app_desc) }}"
 
 app_website:
   type: str
   help: "[APP] What is your application main website?"
   placeholder: https://example.com
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(app_website) }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_https %}{{ v_https(app_website) }}"
 
 app_repo:
   type: str
   help: "[APP] Where is your application repo?"
   placeholder: https://github.com/octocat/Hello-World
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(app_repo) }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_https %}{{ v_https(app_repo, required=false) }}"
 
 app_type:
   type: str
@@ -57,15 +56,18 @@ app_type:
 python_name:
   type: str
   help: "[PYN] What is your python package name?"
-  default: "{{ app_name }}"
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_require_str %}{{ valid_require_str(python_name) }}"
+  default: |
+    {%- if archive_enabled -%}
+      {{ app_name }}
+    {%- endif -%}
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_str %}{{ v_str(python_name) }}"
   when: "{{ app_type == 'python' }}"
 
 download_url:
   type: str
-  help: "[DLD] Where is your download link (support, {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os})?"
+  help: "[DLD] Where is your download link (variables: {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os}, {ext})?"
   placeholder: https://example.com/{version}/{arch}/{os}/download
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(download_url) }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_https %}{{ v_https(download_url) }}"
   when: "{{ app_type == 'standalone' }}"
 
 source_enabled:
@@ -76,7 +78,10 @@ source_enabled:
 source_type:
   type: str
   help: "[SUR] What is your application source code type?"
-  default: git
+  default: |
+    {%- if source_enabled -%}
+      git
+    {%- endif -%}
   choices:
     - git
     - archive
@@ -84,14 +89,14 @@ source_type:
 
 source_url:
   type: str
-  help: "[SUR] Where is your application source link (support, {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os})?"
+  help: "[SUR] Where is your application source link (variables: {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os}, {ext})?"
   placeholder: |
-    {%- if source_type == 'git' -%}
+    {%- if source_enabled and source_type == 'git' -%}
       https://github.com/org/repo.git
-    {%- elif source_type == 'archive' -%}
+    {%- elif source_enabled and source_type == 'archive' -%}
       https://example.com/repo/{version}.tar.gz
     {%- endif -%}
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(source_url) }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_https %}{{ v_https(source_url) }}"
   when: "{{ source_enabled }}"
 
 archive_enabled:
@@ -108,22 +113,28 @@ archive_enabled:
 archive_regex:
   type: str
   help: "[ARC] When the downloaded result will perform extracting?"
-  default: "(\\.tar\\.gz|\\.tgz|\\.zip)$"
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_require_str %}{{ valid_require_str(archive_regex) }}"
+  default: |
+    {%- if archive_enabled -%}
+      (\\.tar\\.gz|\\.tgz|\\.zip)$
+    {%- endif -%}
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_str %}{{ v_str(archive_regex) }}"
   when: "{{ archive_enabled }}"
 
 archive_conf_strip:
   type: int
   help: "[ARC] How many times we should strip directory when extract result (not support by unzip)?"
-  default: 0
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_uint %}{{ valid_uint(archive_conf_strip) }}"
+  default: |
+    {%- if archive_enabled -%}
+      0
+    {%- endif -%}
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_uint %}{{ v_uint(archive_conf_strip) }}"
   when: "{{ archive_enabled }}"
 
 archive_conf_path:
   type: str
   help: "[ARC] Where is your application located inside extracted directory?"
   placeholder: dist/path
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_path %}{{ valid_path(archive_conf_path) }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_rel_path %}{{ v_rel_path(archive_conf_path, required=false) }}"
   when: "{{ archive_enabled }}"
 
 package_enabled:
@@ -135,15 +146,18 @@ package_enabled:
 package_regex:
   type: str
   help: "[PKG] When the downloaded result will perform extracting?"
-  default: "(\\.pkg)$"
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_require_str %}{{ valid_require_str(package_regex) }}"
+  default: |
+    {%- if package_enabled -%}
+      (\\.pkg)$
+    {%- endif -%}
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_str %}{{ v_str(package_regex) }}"
   when: "{{ package_enabled }}"
 
 package_conf_path:
   type: str
   help: "[PKG] Where is your application located inside unpacked directory?"
   placeholder: dist/path
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_path %}{{ valid_path(package_conf_path) }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_rel_path %}{{ v_rel_path(package_conf_path, required=false) }}"
   when: "{{ package_enabled }}"
 
 checksum_enabled:
@@ -154,9 +168,9 @@ checksum_enabled:
 
 checksum_url:
   type: str
-  help: "[CKS] Where is your checksum link (support, {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os})?"
+  help: "[CKS] Where is your checksum link (variables: {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os}, {ext})?"
   placeholder: https://example.com/{version}/{arch}/{os}/checksum.shasum
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(checksum_url) }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_https %}{{ v_https(checksum_url) }}"
   when: "{{ checksum_enabled }}"
 
 checksum_conf_algorithm:
@@ -183,34 +197,49 @@ gpg_public_key_type:
   default: link
   choices:
     - link
-    - text
+    - raw
+    - email
+    - keyid
+    - fingerprint
   when: "{{ gpg_enabled }}"
 
 gpg_public_key_link:
   type: str
-  help: "[GPG] What is your GPG public key"
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(gpg_public_key_link) }}"
+  help: "[GPG] Where is your GPG public key?"
+  placeholder: https://keys.openpgp.org/vks/v1/by-fingerprint/ABCD0123EFGH4567IJKL8910MNOP1112QRST1314
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_https %}{{ v_https(gpg_public_key_link) }}"
   when: "{{ gpg_enabled and gpg_public_key_type == 'link' }}"
 
-gpg_public_key_text:
+gpg_public_key_raw:
   type: str
-  help: "[GPG] What is your GPG public key"
+  help: "[GPG] What is your GPG public key?"
   multiline: true
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_pub %}{{ valid_pub(gpg_public_key_text) }}"
-  when: "{{ gpg_enabled and gpg_public_key_type == 'text' }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_pubkey %}{{ v_pubkey(gpg_public_key_raw) }}"
+  when: "{{ gpg_enabled and gpg_public_key_type == 'raw' }}"
 
-gpg_fingerprint:
+gpg_public_key_email:
   type: str
-  help: "[GPG] What is your GPG fingerprint"
-  placeholder: ABCD0123EFGH4567IJKL8910MNOP1112QRST1314
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_fingerprint %}{{ valid_fingerprint(gpg_fingerprint) }}"
-  when: "{{ gpg_enabled }}"
+  help: "[GPG] What is your GPG email (leave empty if not applied)?"
+  placeholder: codesign@example.com
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_email %}{{ v_email(gpg_public_key_email, gpg_public_key_type == 'email') }}"
+
+gpg_public_key_keyid:
+  type: str
+  help: "[GPG] What is your GPG keyid (leave empty if not applied)?"
+  placeholder: ABCD0123ABCD4567
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_keyid %}{{ v_keyid(gpg_public_key_keyid, gpg_public_key_type == 'keyid') }}"
+
+gpg_public_key_fingerprint:
+  type: str
+  help: "[GPG] What is your GPG fingerprint (leave empty if not applied)?"
+  placeholder: ABCD0123ABCD4567ABCD8910ABCD1112ABCD1314
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_fingerprint %}{{ v_fingerprint(gpg_public_key_fingerprint, gpg_public_key_type == 'fingerprint') }}"
 
 gpg_sig_url:
   type: str
-  help: "[GPG] Where is your gpg signature link (support, {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os})?"
+  help: "[GPG] Where is your gpg signature link (variables: {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os}, {ext})?"
   placeholder: https://example.com/{version}.sig
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_link %}{{ valid_link(gpg_sig_url) }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_https %}{{ v_https(gpg_sig_url, required=false) }}"
   when: "{{ gpg_enabled }}"
 
 install_map_enabled:
@@ -220,7 +249,7 @@ install_map_enabled:
 
 install_map_yaml:
   type: yaml
-  help: "[IST] What is your scripts mapping (support, {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os})?"
+  help: "[IST] What is your scripts mapping (variables: {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os}, {ext})?"
   multiline: true
   default: |
     {%- if app_type == 'python' -%}
@@ -228,7 +257,7 @@ install_map_yaml:
     {%- elif app_type == 'standalone' -%}
       {{ app_name }}: bin/{{ app_name }}
     {%- endif -%}
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_yaml_only_str %}{{ valid_yaml_only_str(install_map_yaml) }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_yaml_str %}{{ v_yaml_str(install_map_yaml) }}"
   when: "{{ install_map_enabled }}"
 
 install_map_method:
@@ -250,6 +279,7 @@ version_prefix:
   type: str
   help: "[VER] What is your application version prefix?"
   default: v
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_str %}{{ v_str(version_prefix, required=false) }}"
 
 version_file_enabled:
   type: bool
@@ -259,6 +289,7 @@ version_file_enabled:
 version_file_names:
   type: str
   help: "[VER] What is your version filename list (separated by space)?"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_str %}{{ v_str(version_file_names, required=false) }}"
   when: "{{ version_file_enabled }}"
 
 addon_yaml:
@@ -280,38 +311,38 @@ addon_yaml:
     version: false
     python: {% if app_type == 'python' %}true{% else %}false{% endif %}
     package: {{ package_enabled }}
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_addon_yaml %}{{ valid_addon_yaml(addon_yaml) }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_yaml_bool %}{{ v_yaml_bool(addon_yaml) }}"
 
-custom_os_enabled:
+sys_os_enabled:
   type: bool
-  help: "[CST] If you would like to custom OS name?"
+  help: "[SYS] If you would like to custom OS name?"
   default: false
   when: "{{ addon_yaml.system }}"
 
-custom_os_yaml:
+sys_os_yaml:
   type: yaml
-  help: "[CST] What is OS mapper on yaml?"
+  help: "[SYS] What is OS mapper on yaml?"
   multiline: true
   default: |
     linux: Linux
     darwin: MacOS
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_yaml_only_str %}{{ valid_yaml_only_str(custom_os_yaml) }}"
-  when: "{{ custom_os_enabled }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_yaml_str %}{{ v_yaml_str(sys_os_yaml) }}"
+  when: "{{ sys_os_enabled }}"
 
-custom_arch_enabled:
+sys_arch_enabled:
   type: bool
-  help: "[CST] If you would like to custom ARCH name?"
+  help: "[SYS] If you would like to custom ARCH name?"
   default: |
-    {%- if app_type == 'git' -%}
+    {%- if app_type == 'standalone' -%}
       true
-    {%- elif app_type == 'standalone' -%}
+    {%- else -%}
       false
     {%- endif -%}
   when: "{{ addon_yaml.system }}"
 
-custom_arch_yaml:
+sys_arch_yaml:
   type: yaml
-  help: "[CST] What is Arch mapper on yaml?"
+  help: "[SYS] What is Arch mapper on yaml?"
   multiline: true
   default: |
     x86_64: amd64
@@ -324,45 +355,72 @@ custom_arch_yaml:
     armv6*: armv6
     armv7*: armv7
     aarch64*: arm64
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_yaml_only_str %}{{ valid_yaml_only_str(custom_arch_yaml) }}"
-  when: "{{ custom_arch_enabled }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_yaml_str %}{{ v_yaml_str(sys_arch_yaml) }}"
+  when: "{{ sys_arch_enabled }}"
+
+sys_ext_enabled:
+  type: bool
+  help: "[SYS] If you would like to custom download extension?"
+  default: false
+  when: "{{ addon_yaml.system }}"
+
+sys_ext_default:
+  type: str
+  help: "[SYS] What is default download extension?"
+  placeholder: zip
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_str %}{{ v_str(sys_ext_default) }}"
+  when: "{{ sys_ext_enabled }}"
+
+sys_ext_yaml:
+  type: yaml
+  help: "[SYS] What is download extension mapper on yaml?"
+  multiline: true
+  default: |
+    'darwin-*': pkg
+    'linux-*': zip
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_yaml_str %}{{ v_yaml_str(sys_ext_yaml) }}"
+  when: "{{ sys_ext_enabled }}"
 
 custom_non_stable_version:
   type: str
   help: "[CST] What is your application non-stable version look like?"
   default: "(-src|-dev|-latest|-stm|[-\\.]rc|-alpha|-beta|[-\\.]pre|-next|snapshot|master)"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_str %}{{ v_str(custom_non_stable_version, required=false) }}"
 
 custom_bin_paths:
   type: str
   help: "[CST] What is your application bin scripts (separated by space)?"
   default: bin
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_str %}{{ v_str(custom_bin_paths) }}"
 
 custom_require_commands:
   type: str
   help: "[CST] What is your application command requirement (separated by space)?"
   default: "{% if app_type == 'python' %}python{% endif %}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_str %}{{ v_str(custom_require_commands, required=false) }}"
 
 test_cmd_args:
   type: str
   help: "[TST] What is command arguments for testing?"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_str %}{{ v_str(test_cmd_args, required=false) }}"
 
 plugin_org:
   type: str
   help: "[PGI] What is your plugin organization on GitHub?"
   default: kc-workspace
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_require_str %}{{ valid_require_str(plugin_org) }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_str %}{{ v_str(plugin_org) }}"
 
 plugin_name:
   type: str
   help: "[PGI] What is your plugin name on GitHub?"
   default: asdf-{{ app_name }}
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_plugin_name %}{{ valid_plugin_name(plugin_name) }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_pg_name %}{{ v_pg_name(plugin_name) }}"
 
 plugin_author:
   type: str
   help: "[PGI] What is your name (prefer fullname)?"
   default: Kamontat Chantrachirathumrong
-  validator: "{% from pathjoin('macros', 'validators.jinja') import valid_require_str %}{{ valid_require_str(plugin_author) }}"
+  validator: "{% from pathjoin('macros', 'validators.jinja') import v_str %}{{ v_str(plugin_author) }}"
 
 plugin_repo:
   type: str

@@ -1,75 +1,117 @@
-{%- macro valid_link(link) -%}
-  {%- if not (link | regex_search('^https://.+')) -%}
-    Input should be valid https link
-  {%- endif -%}
-{%- endmacro -%}
-
-{%- macro valid_path(path) -%}
-  {%- if (path | regex_search('^/')) -%}
-    Input path should not begin with /
-  {%- endif -%}
-{%- endmacro -%}
-
-{%- macro valid_require_str(input) -%}
-  {%- if input | length == 0 -%}
-    Input is required
-  {%- endif -%}
-{%- endmacro -%}
-
-{%- macro valid_name(name) -%}
-  {%- if name | length == 0 -%}
-    Application name is required
-  {%- elif (name | regex_search('^asdf')) -%}
-    Application name must not start with 'asdf'
-  {%- endif -%}
-{%- endmacro -%}
-
-{%- macro valid_plugin_name(name) -%}
-  {%- if name | length == 0 -%}
-    Plugin name is required
-  {%- elif not (name | regex_search('^asdf-')) -%}
-    Plugin name must start with 'asdf-'
-  {%- endif -%}
-{%- endmacro -%}
-
-{%- macro valid_desc(desc) -%}
-  {%- if desc | length < 10 -%}
-    Description must be at least 10 characters
-  {%- endif -%}
-{%- endmacro -%}
-
-{%- macro valid_uint(num) -%}
-  {%- if num < 0 -%}
-    Input number must be positive number or zero
-  {%- endif -%}
-{%- endmacro -%}
-
-{%- macro valid_yaml_only_str(yaml) -%}
-  {%- for key, value in yaml.items() -%}
-    {%- if value is not string -%}
-      Input YAML (key={{ key }}, value={{ value }}) is not string
+{%- macro _validate(input, required, status) -%}
+  {%- if input | string | length <= 0 -%}
+    {%- if required -%}
+      Input is required
     {%- endif -%}
-  {%- endfor -%}
-{%- endmacro -%}
-
-{%- macro valid_addon_yaml(yaml) -%}
-  {%- for key, value in yaml.items() -%}
-    {%- if value is not boolean -%}
-      YAML (key={{ key }}, value={{ value }}) is not boolean
-    {%- endif -%}
-  {%- endfor -%}
-{%- endmacro -%}
-
-{%- macro valid_pub(value) -%}
-  {%- if not (value | regex_search('^-----BEGIN PGP PUBLIC KEY BLOCK-----')) -%}
-    Invalid public key syntax
+  {%- else -%}
+    {%- for key, value in kwargs.items() -%}
+      {%- if not key | regex_search('_msg$') and value -%}
+        {{ kwargs[key+'_msg'] }}
+      {%- endif -%}
+    {%- endfor -%}
   {%- endif -%}
 {%- endmacro -%}
 
-{%- macro valid_fingerprint(value) -%}
-  {%- if (value | regex_search('[^A-F0-9]')) -%}
-    ID must hex number without space
-  {%- elif value | length != 40 and value | length != 16 -%}
-    ID must be either 16 (key id) or 40 (fingerprint) characters
+{%- macro v_str(input, required=true) -%}
+  {{ _validate(input, required) }}
+{%- endmacro -%}
+
+{%- macro v_app_name(input, required=true) -%}
+  {{ _validate(input, required,
+      asdf=input | regex_search('^asdf'),
+      asdf_msg='Input must not prefix with "asdf"'
+  ) }}
+{%- endmacro -%}
+
+{%- macro v_desc(input, expected=10, required=true) -%}
+  {{ _validate(input, required,
+      len=input | length < expected,
+      len_msg="Input must has at least %d characters" % (expected)
+  ) }}
+{%- endmacro -%}
+
+{%- macro v_uint(input, required=true) -%}
+  {{ _validate(input, required,
+      number=input is not number,
+      number_msg='Input must be valid number',
+      negative=input | int < 0,
+      negative_msg='Input must be positive number or zero'
+  ) }}
+{%- endmacro -%}
+
+{%- macro v_pg_name(input, required=true) -%}
+  {{ _validate(input, required,
+      no_asdf=not input | regex_search('^asdf'),
+      no_asdf_msg="Input must prefix with 'asdf'"
+  ) }}
+{%- endmacro -%}
+
+{%- macro v_email(input, required=true) -%}
+  {{ _validate(input, required,
+      not_email=not input | regex_search('^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$'),
+      not_email_msg='Input must be valid email'
+  ) }}
+{%- endmacro -%}
+
+{%- macro v_https(input, required=true) -%}
+  {{ _validate(input, required,
+      not_link=not input | regex_search('^https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,4}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)'),
+      not_link_msg='Input must be valid https link'
+  ) }}
+{%- endmacro -%}
+
+{%- macro v_rel_path(input, required=true) -%}
+  {{ _validate(input, required,
+      not_path=input | regex_search('^/'),
+      not_path_msg='Input must not start with slash(/)'
+  ) }}
+{%- endmacro -%}
+
+{%- macro v_pubkey(input, required=true) -%}
+  {{ _validate(input, required,
+      not_pub=not input | regex_search('^-----BEGIN PGP PUBLIC KEY BLOCK-----'),
+      not_pub_msg='Input must start with public key block message'
+  ) }}
+{%- endmacro -%}
+
+{%- macro v_keyid(input, required=true) -%}
+  {{ _validate(input, required,
+      hex=input | regex_search('[^A-F0-9]'),
+      hex_msg='Input must contains only HEX number without space',
+      len=input | length != 16,
+      len_msg='Input must be exactly 16 characters'
+  ) }}
+{%- endmacro -%}
+
+{%- macro v_fingerprint(input, required=true) -%}
+  {{ _validate(input, required,
+      hex=input | regex_search('[^A-F0-9]'),
+      hex_msg='Input must contains only HEX number without space',
+      len=input | length != 40,
+      len_msg='Input must be exactly 40 characters'
+  ) }}
+{%- endmacro -%}
+
+{%- macro v_yaml_str(input, required=true) -%}
+  {%- if _validate(input, required) -%}
+    {{ _validate(input, required) }}
+  {%- else -%}
+    {%- for key, value in input.items() -%}
+      {%- if value is not string -%}
+        Input (key={{ key }}, value={{ value }}) is not string
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endmacro -%}
+
+{%- macro v_yaml_bool(input, required=true) -%}
+  {%- if _validate(input, required) -%}
+    {{ _validate(input, required) }}
+  {%- else -%}
+    {%- for key, value in input.items() -%}
+      {%- if value is not boolean -%}
+        Input (key={{ key }}, value={{ value }}) is not boolean
+      {%- endif -%}
+    {%- endfor -%}
   {%- endif -%}
 {%- endmacro -%}
