@@ -14,9 +14,9 @@ kc_asdf_get_os() {
   fi
 
   os="$(uname | tr '[:upper:]' '[:lower:]')"
-  {%- if custom_os_enabled %}
+  {%- if sys_os_enabled %}
   case "$os" in
-  {% for key, value in custom_os_yaml.items() if custom_os_enabled -%}
+  {% for key, value in sys_os_yaml.items() if sys_os_enabled -%}
   {{ key }})
     os="{{ value }}"
     ;;
@@ -26,7 +26,7 @@ kc_asdf_get_os() {
 
   if command -v _kc_asdf_custom_os >/dev/null; then
     local tmp="$os"
-    os="$(_kc_asdf_custom_os "$os")"
+    os="$(_kc_asdf_custom_os "$tmp")"
     kc_asdf_debug "$ns" "developer has custom OS name from %s to %s" "$tmp" "$os"
   fi
 
@@ -36,7 +36,7 @@ kc_asdf_get_os() {
 ## Is current OS is macOS
 ## usage: `kc_asdf_is_darwin`
 kc_asdf_is_darwin() {
-  local os="${KC_ASDF_OS}" custom="{{ custom_os_yaml.darwin if 'darwin' in custom_os_yaml and custom_os_enabled }}"
+  local os="${KC_ASDF_OS}" custom="{{ sys_os_yaml.darwin if 'darwin' in sys_os_yaml and sys_os_enabled }}"
   local darwin="${custom:-darwin}"
   [[ "$os" == "$darwin" ]]
 }
@@ -44,7 +44,7 @@ kc_asdf_is_darwin() {
 ## Is current OS is LinuxOS
 ## usage: `kc_asdf_is_linux`
 kc_asdf_is_linux() {
-  local os="${KC_ASDF_OS}" custom="{{ custom_os_yaml.linux if 'linux' in custom_os_yaml and custom_os_enabled }}"
+  local os="${KC_ASDF_OS}" custom="{{ sys_os_yaml.linux if 'linux' in sys_os_yaml and sys_os_enabled }}"
   local linux="${custom:-linux}"
   [[ "$os" == "$linux" ]]
 }
@@ -63,9 +63,9 @@ kc_asdf_get_arch() {
   fi
 
   arch="$(uname -m)"
-  {%- if custom_arch_enabled %}
+  {%- if sys_arch_enabled %}
   case "$arch" in
-  {% for key, value in custom_arch_yaml.items() if custom_arch_enabled -%}
+  {% for key, value in sys_arch_yaml.items() if sys_arch_enabled -%}
   {{ key }})
     arch="{{ value }}"
     ;;
@@ -75,14 +75,50 @@ kc_asdf_get_arch() {
 
   if command -v _kc_asdf_custom_arch >/dev/null; then
     local tmp="$arch"
-    arch="$(_kc_asdf_custom_arch "$arch")"
+    arch="$(_kc_asdf_custom_arch "$tmp")"
     kc_asdf_debug "$ns" "developer has custom ARCH name from %s to %s" "$tmp" "$arch"
   fi
 
   printf "%s" "$arch"
 }
 
+{%- if sys_ext_enabled %}
+
+kc_asdf_get_ext() {
+  local ns="arch.addon"
+  local ext="${ASDF_OVERRIDE_EXT:-}"
+  if [ -n "$ext" ]; then
+    kc_asdf_warn "$ns" "user overriding download extension to '%s'" "$ext"
+    printf "%s" "$ext"
+    return 0
+  fi
+
+  local key="$KC_ASDF_OS-$KC_ASDF_ARCH"
+  ext="{{ sys_ext_default }}"
+  case "$key" in
+  {% for key, value in sys_ext_yaml.items() -%}
+  {{ key }})
+    ext="{{ value }}"
+    ;;
+  {% endfor -%}
+  esac
+
+  if command -v _kc_asdf_custom_ext >/dev/null; then
+    local tmp="$ext"
+    ext="$(_kc_asdf_custom_ext "$tmp")"
+    kc_asdf_debug "$ns" "developer has custom DOWNLOAD_EXT from %s to %s" "$tmp" "$ext"
+  fi
+
+  printf "%s" "$ext"
+}
+{%- endif %}
+
 ## System information
 KC_ASDF_OS="$(kc_asdf_get_os)"
 KC_ASDF_ARCH="$(kc_asdf_get_arch)"
 export KC_ASDF_OS KC_ASDF_ARCH
+
+{%- if sys_ext_enabled %}
+KC_ASDF_EXT="$(kc_asdf_get_ext)"
+export KC_ASDF_EXT
+{%- endif %}
