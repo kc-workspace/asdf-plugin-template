@@ -5,9 +5,8 @@
 ##   - $DEV_DEBUG=1                to enabled debug mode
 ##   - $DRYRUN=1                   to enabled dryrun mode
 ##   - $FORMAT=[short|normal|long] to custom output format
-##   - $TMPL_PROD=1                to use production template
-##   - $GIT_ENABLED=1              to enabled git commit and push
-##   - $TEST_DISABLED=1            to disable testing output
+##   - $DEV_ENABLED=prod,prompt,git    to enabled several features
+##   - $DEV_DISABLED=test              to disabled several features
 
 export COMPONENTS=(
   argocd aws
@@ -71,7 +70,7 @@ main() {
       _verify_noop
 
     local template="$workdir"
-    [ -n "$TMPL_PROD" ] &&
+    feat_enabled_prod &&
       template="gh:kc-workspace/asdf-plugin-template.git"
     step "$name" "copier-copy" \
       _if_copier_exist "$local_path" \
@@ -92,7 +91,7 @@ main() {
       _verify_noop
 
     step "$name" "get-latest" \
-      _if_var_miss TEST_DISABLED \
+      _if_cb feat_disabled_test \
       _exec_with_errfile \
       asdf latest "$name" \
       _verify_asdf_latest
@@ -101,67 +100,67 @@ main() {
     latest="$(db_get_comp_latest "$name")"
 
     step "$name" "list-all" \
-      _if_var_miss TEST_DISABLED \
+      _if_cb feat_disabled_test \
       _exec_silent \
       asdf list all "$name" \
       _verify_asdf_list
 
     DEBUG=1 step "$name" "install-latest" \
-      _if_var_miss TEST_DISABLED \
+      _if_cb feat_disabled_test \
       _exec_silent \
       asdf install "$name" latest \
       _verify_noop
 
     step "$name" "list-path" \
-      _if_var_miss TEST_DISABLED \
+      _if_cb feat_disabled_test \
       _exec_with_errfile \
       ls -A "$install_path/$latest" \
       _verify_ls "$install_path/$latest"
 
     step "$name" "list-bin-path" \
-      _if_var_miss TEST_DISABLED \
+      _if_cb feat_disabled_test \
       _exec_with_errfile \
       ls -A "$install_path/$latest/bin" \
       _verify_ls "$install_path/$latest/bin"
 
     step "$name" "shell-latest" \
-      _if_var_miss TEST_DISABLED \
+      _if_cb feat_disabled_test \
       _exec_silent \
       asdf shell "$name" "$latest" \
       _verify_noop
 
     step "$name" "test-latest" \
-      _if_var_miss TEST_DISABLED \
+      _if_cb feat_disabled_test \
       _exec_silent \
       asdf "$name" test \
       _verify_output
 
     DEBUG=1 step "$name" "uninstall-latest" \
-      _if_var_miss TEST_DISABLED \
+      _if_cb feat_disabled_test \
       _exec_silent \
       asdf uninstall "$name" "$latest" \
       _verify_noop
 
     step "$name" "git-add-all" \
-      _if_git_dirty "GIT_ENABLED" "$local_path" \
+      _if_git_dirty feat_enabled_git "$local_path" \
       _exec_silent \
       git -C "$local_path" add --all \
       _verify_noop
 
     step "$name" "git-commit" \
-      _if_git_dirty "GIT_ENABLED" "$local_path" \
+      _if_git_dirty feat_enabled_git "$local_path" \
       _exec_silent \
       git -C "$local_path" commit -m 'perf: update plugin from template [autocommit]' \
       _verify_noop
 
     step "$name" "git-pull" \
-      _if_git_outdate "GIT_ENABLED" "$local_path" \
+      _if_git_outdate feat_enabled_git "$local_path" \
       _exec_silent \
       git -C "$local_path" pull origin main \
       _verify_noop
 
     step "$name" "git-push" \
-      _if_git_outdate "GIT_ENABLED" "$local_path" \
+      _if_git_outdate feat_enabled_git "$local_path" \
       _exec_silent \
       git -C "$local_path" push origin main \
       _verify_noop
@@ -288,6 +287,17 @@ _if_true() {
 
   return 0
 }
+_if_cb() {
+  local key="$1" name="$2"
+  shift 2
+  local cb="$1"
+  if ! "$cb"; then
+    db_set_check_msg "$key" "$name" "$cb failed"
+    return 1
+  fi
+  _if_no_fail "$key" "$name" || return 1
+  return 0
+}
 _if_no_fail() {
   local key="$1" name="$2"
   shift 2
@@ -338,11 +348,11 @@ _if_copier_exist() {
   _if_no_fail "$key" "$name" || return 1
 
   local args=()
-  if [ -z "$TMPL_PROD" ]; then
+  if ! feat_enabled_prod; then
     args+=(--vcs-ref HEAD)
   fi
   args+=(--overwrite)
-  if [ -d "${1:?}" ]; then
+  if [ -d "${1:?}" ] && ! feat_enabled_prompt; then
     args+=(--defaults)
   fi
 
@@ -373,7 +383,7 @@ _if_var_miss() {
   return 0
 }
 _if_git_dirty() {
-  _if_var_exist "$@" || return 1
+  _if_cb "$@" || return 1
   shift 3
 
   local dir="$1"
@@ -389,7 +399,7 @@ _if_git_dirty() {
   fi
 }
 _if_git_outdate() {
-  _if_var_exist "$@" || return 1
+  _if_cb "$@" || return 1
   shift 3
 
   local dir="$1"
@@ -771,17 +781,23 @@ tmp_create_file() {
 tmp_auto_clean() {
   local tmp="$_TMPPATH"
   local clean_time=.clean.time
+
   local timestamp="$tmp/$clean_time"
+  local fullpath="$tmp/.fullpath"
 
   log_debug "checking last clean"
+  ## Initiate temporary directory
+  ! [ -d "$tmp" ] &&
+    log_debug "no temporary directory found, create new one" &&
+    mkdir -p "$tmp"
   ## Initiate last clean time
   ! [ -f "$timestamp" ] &&
     log_debug "no last clean time found, create new one" &&
     date +"%Y%m%d%H%M%S" >"$timestamp"
   ## Remove full-path file
-  [ -f "$tmp/.fullpath" ] &&
+  [ -f "$fullpath" ] &&
     log_debug "removing fullpath cache" &&
-    rm "$tmp/.fullpath"
+    rm "$fullpath"
 
   local previous current diff
   previous="$(cat "$timestamp")"
@@ -797,6 +813,41 @@ tmp_auto_clean() {
   ## Create tmp directory if not found
   ! [ -d "$tmp" ] &&
     mkdir -p "$tmp"
+}
+
+feat_enabled_git() {
+  __feat_enabled git g
+}
+feat_enabled_prod() {
+  __feat_enabled prod pd
+}
+feat_enabled_prompt() {
+  __feat_enabled prompt p
+}
+feat_disabled_test() {
+  __feat_disabled test t
+}
+__feat_enabled() {
+  local enable key
+  for enable in ${DEV_ENABLED//,/ }; do
+    for key in "$@"; do
+      if [[ "$key" == "$enable" ]]; then
+        return 0
+      fi
+    done
+  done
+  return 1
+}
+__feat_disabled() {
+  local disable key
+  for disable in ${DEV_DISABLED//,/ }; do
+    for key in "$@"; do
+      if [[ "$key" == "$disable" ]]; then
+        return 1
+      fi
+    done
+  done
+  return 0
 }
 
 db_set_check_msg() {
