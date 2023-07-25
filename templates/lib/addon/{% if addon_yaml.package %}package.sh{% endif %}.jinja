@@ -4,8 +4,9 @@
 ## usage: `kc_asdf_package_extract /tmp/file.pkg /tmp/file [internal/path]`
 kc_asdf_package_extract() {
   local ns="extract.package"
-  local input="$1" output="$2" internal="$3" tmppath
+  local input="$1" output="$2" internal="${3:-}" tmppath
   if [ -n "$internal" ]; then
+    kc_asdf_debug "$ns" "found internal path, create temp to extract first"
     tmppath="$(kc_asdf_temp_dir)"
   else
     tmppath="$output"
