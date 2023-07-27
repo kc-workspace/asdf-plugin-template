@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.1.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.1.0...v2.1.1) (2023-07-27)
+
+
+### Improvements
+
+* **script:** add wait and single mode in dev.sh ([752101a](https://github.com/kc-workspace/asdf-plugin-template/commit/752101a2f9ae4e5db575f4eba9ee1956038aa15d))
+
+
+### Bugfixes
+
+* **template:** support ignore fingerprint on copier configs ([ebb1de2](https://github.com/kc-workspace/asdf-plugin-template/commit/ebb1de23a3fbbb74576de962cf70dac2683a33f1))
+
 ## [2.1.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.0.3...v2.1.0) (2023-07-27)
 
 
