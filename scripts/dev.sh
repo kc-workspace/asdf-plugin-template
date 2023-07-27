@@ -355,10 +355,10 @@ _if_gh_workflow_exist() {
   local json
   json="$(tmp_create_file 'gh-workflow-list')"
 
-  local i=0 workflow_status
+  local i=0 max=30 workflow_status
   while true; do
-    if [ $i -gt 5 ]; then
-      db_set_check_msg "$key" "$name" "cannot wait any longer for workflow to start"
+    if [ $i -gt $max ]; then
+      db_set_check_msg "$key" "$name" "cannot wait any longer (${max}s) for workflow to start"
       return 1
     fi
 
@@ -367,7 +367,7 @@ _if_gh_workflow_exist() {
       --limit 1 \
       --workflow 'main' \
       --json 'databaseId,status' >"$json"
-    workflow_status="$(jq '.[0].status' "$json")"
+    workflow_status="$(jq -Mr '.[0].status' "$json")"
     if [[ "$workflow_status" == "in_progress" ]]; then
       break
     fi
@@ -377,7 +377,7 @@ _if_gh_workflow_exist() {
   done
 
   local workflow_id
-  workflow_id="$(jq '.[0].databaseId' "$json")"
+  workflow_id="$(jq -Mr '.[0].databaseId' "$json")"
   db_set_exec_args "$key" "$name" \
     "$workflow_id"
 }
