@@ -1,5 +1,36 @@
 # Changelog
 
+## [2.1.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.0.3...v2.1.0) (2023-07-27)
+
+
+### Features
+
+* **template:** reimplement gpg function with public key registry support ([10a2a21](https://github.com/kc-workspace/asdf-plugin-template/commit/10a2a2142f0d57fef19830b0c8c2dddb0ec5648d))
+* **template:** support custom tags version instead of use git list ([76d2119](https://github.com/kc-workspace/asdf-plugin-template/commit/76d211900e9011200492fbfb641ad7b1e1c56d33))
+* **template:** support extension as variable template ([52f54ad](https://github.com/kc-workspace/asdf-plugin-template/commit/52f54ad429fe61d76e3f38f13732e883f0d2df33))
+
+
+### Improvements
+
+* always print session directory and data storage file ([b586bee](https://github.com/kc-workspace/asdf-plugin-template/commit/b586bee6eea8e279afdce06bf1eacd86d0a54884))
+* **script:** reuse enabled and disable variable instead in dev.sh ([0d476c0](https://github.com/kc-workspace/asdf-plugin-template/commit/0d476c049571b0b6e80e799d17372a93b358cf39))
+* **template:** add application website as help-links ([31c796f](https://github.com/kc-workspace/asdf-plugin-template/commit/31c796f41ee5c2dc5655bd5b354b0ef869f1d136))
+* **template:** add default strip components on tar command ([ca336cc](https://github.com/kc-workspace/asdf-plugin-template/commit/ca336cc59e81bbf5f06073d65c3578d799b71132))
+
+
+### Bugfixes
+
+* **template:** archive and package error if internal is missing ([2137a6c](https://github.com/kc-workspace/asdf-plugin-template/commit/2137a6ca00dcd567855568e602f2de93ffd4a526))
+* **template:** variables didn't define correctly ([f917265](https://github.com/kc-workspace/asdf-plugin-template/commit/f91726537ce67ad8c9b183a10f70461cb28ddacc))
+
+
+### Miscellaneous
+
+* add more spelling whitelist ([d905e36](https://github.com/kc-workspace/asdf-plugin-template/commit/d905e365cfc09d547a3a3dfb9b9340bf5985dea1))
+* parse namespace to kc_asdf_main function as first parameters ([425d92f](https://github.com/kc-workspace/asdf-plugin-template/commit/425d92f968c816aac4fd8b0f771db4bb25b922cc))
+* **script:** improve skip message ([daf2cc0](https://github.com/kc-workspace/asdf-plugin-template/commit/daf2cc0371b100206669ce1a1446fcafe3a54ea8))
+* **script:** update some indent ([0270fd5](https://github.com/kc-workspace/asdf-plugin-template/commit/0270fd5c04766b9dd9f69ff4f437b80a6597161a))
+
 ## [2.0.3](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.0.2...v2.0.3) (2023-07-16)
 
 
