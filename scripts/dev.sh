@@ -165,11 +165,21 @@ main() {
       git -C "$local_path" push origin main \
       _verify_noop
 
+    step "$name" "wait-workflow" \
+      _if_cb feat_enabled_wait \
+      _exec_silent \
+      gh run watch --exit-status --repo "$plugin_repo"
+
     local status
     status="$(db_get_comp_status "$name")"
     stop "$name" "$tmpdir" "$status"
     if [ "$status" == "failed" ]; then
       ((_EXIT_CODE++))
+    fi
+
+    if feat_enabled_single; then
+      logf '>> Waiting... [enter] to continue: '
+      read -r
     fi
   done
 }
@@ -823,6 +833,12 @@ feat_enabled_prod() {
 }
 feat_enabled_prompt() {
   __feat_enabled prompt p
+}
+feat_enabled_wait() {
+  __feat_enabled wait w
+}
+feat_enabled_single() {
+  __feat_enabled single s
 }
 feat_disabled_test() {
   __feat_disabled test t
