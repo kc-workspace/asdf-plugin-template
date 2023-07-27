@@ -2,11 +2,11 @@
 
 ## example: ./scripts/dev.sh argocd
 ## variables:
-##   - $DEV_DEBUG=1                to enabled debug mode
-##   - $DRYRUN=1                   to enabled dryrun mode
-##   - $FORMAT=[short|normal|long] to custom output format
-##   - $DEV_ENABLED=prod,prompt,git    to enabled several features
-##   - $DEV_DISABLED=test              to disabled several features
+##   - $DEV_DEBUG=1                  to enabled debug mode
+##   - $DRYRUN=1                     to enabled dryrun mode
+##   - $FORMAT=[short|normal|long]   to custom output format
+##   - $DEV_ENABLED=prod,prompt,git  to enabled several features
+##   - $DEV_DISABLED=test            to disabled several features
 
 export COMPONENTS=(
   '1password'
@@ -1007,8 +1007,9 @@ __exit() {
   local tmpdir
   tmpdir="$(tmp_basepath)"
 
-  log_info "session directory: %s" "$tmpdir"
-  log_info "data storage: cat %s" "$tmpdir/data.txt"
+  logln
+  logln "session directory: %s" "$tmpdir"
+  logln "data storage: cat %s" "$tmpdir/data.txt"
 
   unset _ROOT _SCRIPTS _TMPPATH
   unset _EXIT_CODE
