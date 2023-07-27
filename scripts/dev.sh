@@ -166,9 +166,10 @@ main() {
       _verify_noop
 
     step "$name" "wait-workflow" \
-      _if_cb feat_enabled_wait \
+      _if_gh_workflow_exist feat_enabled_wait "$plugin_repo" \
       _exec_silent \
-      gh run watch --exit-status --repo "$plugin_repo"
+      gh run watch --exit-status --repo "$plugin_repo" \
+      _verify_noop
 
     local status
     status="$(db_get_comp_status "$name")"
@@ -339,6 +340,47 @@ _if_no_gh_repo() {
   log_debug "no github repository on GitHub website"
   return 0
 }
+_if_gh_workflow_exist() {
+  local key="$1" name="$2"
+  _if_cb "$@" || return 1
+  shift 3
+
+  log_debug "checking 'gh' command"
+  if ! command -v gh >/dev/null; then
+    db_set_check_msg "$key" "$name" "'gh' command is missing"
+    return 1
+  fi
+
+  local repo="${1:?}"
+  local json
+  json="$(tmp_create_file 'gh-workflow-list')"
+
+  local i=0 workflow_status
+  while true; do
+    if [ $i -gt 5 ]; then
+      db_set_check_msg "$key" "$name" "cannot wait any longer for workflow to start"
+      return 1
+    fi
+
+    gh run list \
+      --repo "$repo" \
+      --limit 1 \
+      --workflow 'main' \
+      --json 'databaseId,status' >"$json"
+    workflow_status="$(jq '.[0].status' "$json")"
+    if [[ "$workflow_status" == "in_progress" ]]; then
+      break
+    fi
+
+    sleep 1
+    ((i++))
+  done
+
+  local workflow_id
+  workflow_id="$(jq '.[0].databaseId' "$json")"
+  db_set_exec_args "$key" "$name" \
+    "$workflow_id"
+}
 _if_dir_exist() {
   local key="$1" name="$2"
   shift 2
@@ -393,6 +435,7 @@ _if_var_miss() {
   return 0
 }
 _if_git_dirty() {
+  local key="$1" name="$2"
   _if_cb "$@" || return 1
   shift 3
 
@@ -409,6 +452,7 @@ _if_git_dirty() {
   fi
 }
 _if_git_outdate() {
+  local key="$1" name="$2"
   _if_cb "$@" || return 1
   shift 3
 
@@ -433,6 +477,7 @@ _exec_silent() {
   logfile="$(tmp_create_file "$name")"
 
   log_debug "executor logs: '$logfile'"
+  db_set_exec_cmd "$key" "$name" "$@"
   db_set_exec_log "$key" "$name" "$logfile"
   "$@" >"$logfile" 2>&1
 }
@@ -440,6 +485,7 @@ _exec_prompt() {
   local key="$1" name="$2" args=()
   shift 2
 
+  db_set_exec_cmd "$key" "$name" "$@"
   "$@"
 }
 _exec_default() {
@@ -450,6 +496,7 @@ _exec_default() {
   logfile="$(tmp_create_file "$name")"
 
   log_debug "executor logs: '$logfile'"
+  db_set_exec_cmd "$key" "$name" "$@"
   db_set_exec_log "$key" "$name" "$logfile"
   "$@" >"$logfile"
 }
@@ -462,6 +509,7 @@ _exec_with_errfile() {
   errfile="$(tmp_create_file "$name.err")"
 
   log_debug "executor logs: '$logfile'"
+  db_set_exec_cmd "$key" "$name" "$@"
   db_set_exec_log "$key" "$name" "$logfile"
   if ! "$@" >"$logfile" 2>"$errfile"; then
     log_debug "executor errors: '$errfile'"
@@ -470,11 +518,7 @@ _exec_with_errfile() {
   fi
 }
 _exec_copier() {
-  local no_prompt
-  [[ "$*" =~ --defaults ]] &&
-    no_prompt=true
-
-  if [ -n "$no_prompt" ]; then
+  if [[ "$*" =~ --defaults ]]; then
     _exec_silent "$@"
   else
     _exec_prompt "$@"
@@ -883,6 +927,12 @@ db_set_exec_msg() {
 }
 db_get_exec_msg() {
   __db_get "executor.msg" "$@"
+}
+db_set_exec_cmd() {
+  __db_set "executor.cmd" "$@"
+}
+db_get_exec_cmd() {
+  __db_get "executor.cmd" "$@"
 }
 db_set_exec_log() {
   __db_set "executor.logpath" "$@"
