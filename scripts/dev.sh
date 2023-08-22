@@ -2,11 +2,16 @@
 
 ## example: ./scripts/dev.sh argocd
 ## variables:
-##   - $DEV_DEBUG=1                  to enabled debug mode
-##   - $DRYRUN=1                     to enabled dryrun mode
-##   - $FORMAT=[short|normal|long]   to custom output format
-##   - $DEV_ENABLED=prod,prompt,git  to enabled several features
-##   - $DEV_DISABLED=test            to disabled several features
+##   - $DEV_DEBUG=1
+##         to enabled debug mode
+##   - $DRYRUN=1
+##         to enabled dryrun mode
+##   - $FORMAT=[short|normal|long]
+##         to custom output format
+##   - $DEV_ENABLED=prod,prompt,git,wait,single
+##         to enabled several features
+##   - $DEV_DISABLED=test
+##         to disabled several features
 
 export COMPONENTS=(
   '1password'
