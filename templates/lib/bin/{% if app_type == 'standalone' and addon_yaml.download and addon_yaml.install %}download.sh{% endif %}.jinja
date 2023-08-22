@@ -54,7 +54,7 @@ __asdf_bin() {
 
   if kc_asdf_is_ref; then
     {% if source_enabled -%}
-    url="{{ source_url }}"
+    url="${ASDF_OVERRIDE_REF_REPO:-{{ source_url }}}"
     url="$(kc_asdf_template "$url" "${vars[@]}")"
     command -v _kc_asdf_custom_source_url >/dev/null &&
       kc_asdf_debug "$ns" "developer custom source link" &&
