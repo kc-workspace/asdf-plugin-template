@@ -85,6 +85,7 @@ source_type:
   choices:
     - git
     - archive
+    - custom
   when: "{{ source_enabled }}"
 
 source_url:
@@ -97,7 +98,7 @@ source_url:
       https://example.com/repo/{version}.tar.gz
     {%- endif -%}
   validator: "{% from pathjoin('macros', 'validators.jinja') import v_https %}{{ v_https(source_url) }}"
-  when: "{{ source_enabled }}"
+  when: "{{ source_enabled and source_type != 'custom' }}"
 
 archive_enabled:
   type: bool
