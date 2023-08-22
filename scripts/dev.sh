@@ -146,6 +146,12 @@ main() {
       asdf uninstall "$name" "$latest" \
       _verify_noop
 
+    step "$name" "git-pull" \
+      _if_git_outdate feat_enabled_git "$local_path" \
+      _exec_silent \
+      git -C "$local_path" pull origin main \
+      _verify_noop
+
     step "$name" "git-add-all" \
       _if_git_dirty feat_enabled_git "$local_path" \
       _exec_silent \
@@ -156,12 +162,6 @@ main() {
       _if_git_dirty feat_enabled_git "$local_path" \
       _exec_silent \
       git -C "$local_path" commit -m 'perf: update plugin from template [autocommit]' \
-      _verify_noop
-
-    step "$name" "git-pull" \
-      _if_git_outdate feat_enabled_git "$local_path" \
-      _exec_silent \
-      git -C "$local_path" pull origin main \
       _verify_noop
 
     step "$name" "git-push" \
