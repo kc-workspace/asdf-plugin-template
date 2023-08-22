@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.2.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.1.1...v2.2.0) (2023-08-22)
+
+
+### Features
+
+* **download:** support custom how to download source code ([b821ca1](https://github.com/kc-workspace/asdf-plugin-template/commit/b821ca17a5b2e2ccaebe1bcac25569f691c88d0f))
+
+
+### Improvements
+
+* **script:** increase start  workflow wait time from 5s to 30s ([3e26a87](https://github.com/kc-workspace/asdf-plugin-template/commit/3e26a875ff0aa47cfef84f9ebea4b20642ea7925))
+* **template:** support override git repository url when building from source (ref mode) ([ca7d16e](https://github.com/kc-workspace/asdf-plugin-template/commit/ca7d16ecb9b47ced2db5f918b05844ec0653964a))
+
+
+### Bugfixes
+
+* remove internal require function and use `kc_asdf_commands()` instead ([2ec3988](https://github.com/kc-workspace/asdf-plugin-template/commit/2ec3988586a182f9ac822dc3b218214b4599bb9a))
+
+
+### Miscellaneous
+
+* manually update cspell action ([3fab968](https://github.com/kc-workspace/asdf-plugin-template/commit/3fab96801673e47bde550cab61e567c957bd12eb))
+
 ## [2.1.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.1.0...v2.1.1) (2023-07-27)
 
 
