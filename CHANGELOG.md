@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.2.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.2.0...v2.2.1) (2023-08-22)
+
+
+### Bugfixes
+
+* **lint:** readme terminology error ([1f06c4b](https://github.com/kc-workspace/asdf-plugin-template/commit/1f06c4b1bfe6129861ad947995395b09f7961138))
+
+
+### Miscellaneous
+
+* add k6 to component list for development ([74aace9](https://github.com/kc-workspace/asdf-plugin-template/commit/74aace9f5a558822a1f3e31acee41f55198d0166))
+
 ## [2.2.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.1.1...v2.2.0) (2023-08-22)
 
 
