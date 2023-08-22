@@ -33,5 +33,5 @@ source "${KC_ASDF_PLUGIN_PATH:?}/lib/common/defaults.sh" || exit 1
 
 {%- if custom_require_commands != '' %}
 
-__asdf_requirement {{ custom_require_commands }}
+kc_asdf_commands {{ custom_require_commands }}
 {%- endif %}
