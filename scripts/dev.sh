@@ -16,7 +16,7 @@ export COMPONENTS=(
   gh git-chglog golang golangci-lint gradle
   helm hub hyperfine
   jq
-  kind kubectl
+  k6 kind kubectl
   maven mkcert
   pipx
   terraform terragrunt
