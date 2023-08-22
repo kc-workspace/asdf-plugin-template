@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.2](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.2.1...v2.2.2) (2023-08-22)
+
+
+### Bugfixes
+
+* **lint:** update terminology in output README ([8f7d92f](https://github.com/kc-workspace/asdf-plugin-template/commit/8f7d92f568aa1c47881f3f08d95443c541e8b0c0))
+
 ## [2.2.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.2.0...v2.2.1) (2023-08-22)
 
 
