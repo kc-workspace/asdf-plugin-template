@@ -10,7 +10,7 @@
 ##         to custom output format
 ##   - $DEV_ENABLED=prod,prompt,git,wait,single
 ##         to enabled several features
-##   - $DEV_DISABLED=test
+##   - $DEV_DISABLED=list,test
 ##         to disabled several features
 
 export COMPONENTS=(
@@ -18,14 +18,32 @@ export COMPONENTS=(
   argocd aws
   cloudflared cmctl consul cookiecutter copier
   flux2
-  gh git-chglog golang golangci-lint gradle
+  gh git-chglog go-jsonnet golang golangci-lint gradle
   helm hub hyperfine
-  jq
+  jq jsonnet-bundler
   k6 kind kubectl
   maven mkcert
   pipx
   terraform terragrunt
   yamllint yq
+)
+
+export COMPONENTS_LIST_SIZE=(
+  "1password:66"
+  "cookiecutter:38"
+  "copier:57"
+  "git-chglog:14"
+  "go-jsonnet:15"
+  "hyperfine:23"
+  "jq:13"
+  "jsonnet-bundler:6"
+  "k6:83"
+  "kind:32"
+  "maven:77"
+  "mkcert:14"
+  "pipx:55"
+  "yamllint:65"
+  "_:99"
 )
 
 main() {
@@ -96,7 +114,7 @@ main() {
       _verify_noop
 
     step "$name" "get-latest" \
-      _if_cb feat_disabled_test \
+      _if_cb feat_disabled_list \
       _exec_with_errfile \
       asdf latest "$name" \
       _verify_asdf_latest
@@ -105,7 +123,7 @@ main() {
     latest="$(db_get_comp_latest "$name")"
 
     step "$name" "list-all" \
-      _if_cb feat_disabled_test \
+      _if_cb feat_disabled_list \
       _exec_silent \
       asdf list all "$name" \
       _verify_asdf_list
@@ -560,8 +578,15 @@ _verify_asdf_list() {
   local key="$1" name="$2"
   shift 2
 
-  local logfile size=10
+  local logfile size
   logfile="$(db_get_exec_log "$key" "$name")"
+  size="$(echo "${COMPONENTS_LIST_SIZE[*]}" |
+    grep -oE "$key:[0-9]+" |
+    sed "s/$key://")"
+  test -z "$size" &&
+    size="$(echo "${COMPONENTS_LIST_SIZE[*]}" |
+      grep -oE "_:[0-9]+" |
+      sed "s/_://")"
 
   if ! [ -f "$logfile" ]; then
     db_set_verify_msg "$key" "$name" "list-all didn't return any version"
@@ -891,6 +916,9 @@ feat_enabled_single() {
 }
 feat_disabled_test() {
   __feat_disabled test t
+}
+feat_disabled_list() {
+  __feat_disabled list l
 }
 __feat_enabled() {
   local enable key
