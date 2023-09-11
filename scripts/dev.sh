@@ -166,7 +166,7 @@ main() {
 
     step "$name" "git-pull" \
       _if_git_outdate feat_enabled_git "$local_path" \
-      _exec_silent \
+      _exec_ignore \
       git -C "$local_path" pull origin main \
       _verify_noop
 
@@ -503,6 +503,11 @@ _exec_silent() {
   db_set_exec_cmd "$key" "$name" "$@"
   db_set_exec_log "$key" "$name" "$logfile"
   "$@" >"$logfile" 2>&1
+}
+_exec_ignore() {
+  if ! _exec_silent "$@"; then
+    return 0
+  fi
 }
 _exec_prompt() {
   local key="$1" name="$2" args=()
