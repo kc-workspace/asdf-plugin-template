@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.2.3](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.2.2...v2.2.3) (2023-09-15)
+
+
+### Improvements
+
+* **deps:** upgrade actions/checkout to v4 ([7a71571](https://github.com/kc-workspace/asdf-plugin-template/commit/7a715719ebb767ad2e739152ecbd1278d82fc424))
+* **script:** add 2 new packages and add list size per apps configure ([9cb11c8](https://github.com/kc-workspace/asdf-plugin-template/commit/9cb11c8e871ec45f6a8ce21417150ba3ccd5cd67))
+* **template:** add 2 new settings: $ASDF_LOG_QUIET and $ASDF_LOG_SILENT ([91dbefa](https://github.com/kc-workspace/asdf-plugin-template/commit/91dbefa54227f7935740349a5a20813e811b8b8e))
+
+
+### Bugfixes
+
+* **script:** silently ignore if git pull failed because never pushes before ([5a6c1a6](https://github.com/kc-workspace/asdf-plugin-template/commit/5a6c1a6b9b86c6a502e6402c3641aa40047a2f5a))
+
+
+### Miscellaneous
+
+* **deps:** bump actions/checkout from 3 to 4 ([#26](https://github.com/kc-workspace/asdf-plugin-template/issues/26)) ([2c06801](https://github.com/kc-workspace/asdf-plugin-template/commit/2c068015fad9f9a312a4e322c20cced291ef262b))
+* **script:** pull latest before commit new change ([94abdba](https://github.com/kc-workspace/asdf-plugin-template/commit/94abdba5512f8b958f9e4945d2e8bf56f47536e0))
+
 ## [2.2.2](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.2.1...v2.2.2) (2023-08-22)
 
 
