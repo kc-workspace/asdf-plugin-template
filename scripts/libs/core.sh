@@ -67,11 +67,12 @@ core_start() {
   latest="$(db_get_comp_latest "$component")"
 
   runner "$component" list-all \
-    $ check_must_success deploy-plugin \
+    $ check_must_success get-latest deploy-plugin \
     $ exec_with_file asdf list all "$component" \
     $ verify_asdf_list
 
   runner "$component" install-latest \
+    $ check_must_success get-latest \
     $ check_cmd_pass feat_is_test \
     $ exec_with_file asdf install "$component" latest \
     $ verify_asdf_install "$install_path"
@@ -82,6 +83,7 @@ core_start() {
     $ exec_with_file asdf shell "$component" "$latest"
 
   runner "$component" "test-latest" \
+    $ check_must_success get-latest \
     $ check_cmd_pass feat_is_test \
     $ exec_with_file asdf "$component" test
 
