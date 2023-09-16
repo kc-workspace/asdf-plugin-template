@@ -10,7 +10,6 @@
 ##         - prompt  - always ask template question (even answer file exist)
 ##         - deploy  - deploy changes to repository
 ##         - wait    - wait for workflows (only if enabled deploy)
-##         - single  - ask before continue each components
 ##         - test    - enabled test latest changes first
 
 export COMPONENTS=(

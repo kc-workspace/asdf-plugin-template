@@ -86,9 +86,20 @@ core_start() {
     $ check_cmd_pass feat_is_deploy \
     $ exec_ignore git -C "$local_path" add --all
 
-  runner "$component" "git-add-all" \
+  runner "$component" "git-commit" \
+    $ check_no_error git-add-all \
     $ check_cmd_pass feat_is_deploy \
     $ exec_ignore git -C "$local_path" commit -m "$(setting "$component" commit)"
+
+  runner "$component" "git-push" \
+    $ check_no_error git-commit \
+    $ check_cmd_pass feat_is_deploy \
+    $ exec_ignore git -C "$local_path" push origin main
+
+  runner "$component" "wait-workflow" \
+    $ check_must_success git-push \
+    $ check_cmd_pass feat_is_wait \
+    $ exec_with_file gh run watch --exit-status --repo "$plugin_repo"
 
   runner_summary "$component"
 }

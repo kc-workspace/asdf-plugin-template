@@ -198,7 +198,7 @@ _db_set() {
   local __key="${key//./__}" _key
   _key="$(printf '%s%s' "$__DB_VALUE_PREFIX" "${__key//-/_}" |
     tr '[:lower:]' '[:upper:]')"
-  export "${_key//\[\]/}"="$value"
+  export "${_key//[[\]]/}"="$value"
 
   logd "save '%s' ('%s') on database" "$key" "$value"
   echo "$key$sep${value:-true}" >>"$database"
@@ -214,7 +214,7 @@ _db_get() {
   local __key="${key//./__}" _key
   _key="$(printf '%s%s' "$__DB_VALUE_PREFIX" "${__key//-/_}" |
     tr '[:lower:]' '[:upper:]')"
-  eval "value=\${$_key//\[\]/}"
+  eval "value=\${${_key//[[\]]/}}"
   test -n "$value" &&
     logd "get '%s' from cache of '%s'" "$value" "$key" &&
     printf "%s" "$value" &&

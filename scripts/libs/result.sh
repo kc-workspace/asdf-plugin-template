@@ -48,25 +48,26 @@ result_summary_comp_step() {
     status="$(db_get_step_status "$component" "$step")"
   fi
 
-  if [[ "$status" == "$DB_STEP_STATUS_ERROR" ]] ||
-    [[ "$status" == "$DB_STEP_STATUS_INVALID" ]]; then
-    local check_msg exec_msg exec_log exec_err verify_msg
-    check_msg="$(db_get_check_msg "$component" "$step")"
-    exec_msg="$(db_get_exec_msg "$component" "$step")"
-    exec_log="$(db_get_exec_log "$component" "$step")"
-    exec_err="$(db_get_exec_err "$component" "$step")"
-    verify_msg="$(db_get_verify_msg "$component" "$step")"
+  local check_msg exec_msg exec_log exec_err verify_msg
+  check_msg="$(db_get_check_msg "$component" "$step")"
+  exec_msg="$(db_get_exec_msg "$component" "$step")"
+  exec_log="$(db_get_exec_log "$component" "$step")"
+  exec_err="$(db_get_exec_err "$component" "$step")"
+  verify_msg="$(db_get_verify_msg "$component" "$step")"
 
-    logln "step: $step ($status)"
-    test -n "$check_msg" &&
-      logln "  - check    : $check_msg"
+  test -n "$check_msg" &&
+    logf "  %-20s %-10s : %s\n" "$step" "check" "$check_msg"
+
+  if [[ "$status" == "$DB_STEP_STATUS_ERROR" ]]; then
     test -n "$exec_msg" &&
-      logln "  - exec     : $exec_msg"
+      logf "  %-20s %-10s : %s\n" "$step" "exec" "$exec_msg"
     test -n "$exec_log" &&
-      logln "  - exec log : $exec_log"
+      logf "  %-20s %-10s : %s\n" "" "exec log" "$exec_log"
     test -n "$exec_err" &&
-      logln "  - exec err : $exec_err"
-    test -n "$verify_msg" &&
-      logln "  - verify   : $verify_msg"
+      logf "  %-20s %-10s : %s\n" "" "exec err" "$exec_err"
   fi
+
+  [[ "$status" == "$DB_STEP_STATUS_INVALID" ]] &&
+    test -n "$verify_msg" &&
+    logf "  %-20s %-10s : %s\n" "$step" "verify" "$verify_msg"
 }

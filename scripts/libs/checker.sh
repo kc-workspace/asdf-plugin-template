@@ -1,6 +1,28 @@
 #!/usr/bin/env bash
 
-## Verify previous function has no error
+check_must_success() {
+  local component="$1" step="$2" args=()
+  shift 2
+  args+=("$@")
+
+  local input index=0 error
+  for input in "${args[@]}"; do
+    if ! db_has_step_status "$component" "$input"; then
+      db_set_check_msg "$component" "${step}[$index]" \
+        "input '$input' step doesn't have status"
+      error=true
+    elif ! db_is_step_success "$component" "$input"; then
+      db_set_check_msg "$component" "${step}[$index]" \
+        "input '$input' step must be success"
+      error=true
+    fi
+
+    ((index++))
+  done
+
+  test -z "$error"
+}
+
 check_no_error() {
   local component="$1" step="$2" args=()
   shift 2
@@ -25,7 +47,6 @@ check_no_error() {
   test -z "$error"
 }
 
-## Verify all functions has no error
 check_no_errors() {
   local component="$1" step="$2" steps=()
   shift 2

@@ -24,10 +24,6 @@ feat_is_wait() {
   __feat_status waiting wait wit w
 }
 
-feat_is_single() {
-  __feat_status single sng s
-}
-
 feat_is_test() {
   __feat_status test tst t
 }
