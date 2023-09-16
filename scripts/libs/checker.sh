@@ -12,8 +12,8 @@ check_must_success() {
         "step '$input' doesn't have status"
       error=true
     elif ! db_is_step_success "$component" "$input"; then
-      db_set_check_msg "$component" "$step" \
-        "step '$input' must be success"
+      # db_set_check_msg "$component" "$step" \
+      #   "step '$input' must be success"
       error=true
     fi
 
