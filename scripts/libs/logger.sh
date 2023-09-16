@@ -6,7 +6,7 @@ logd() {
   local format="$1"
   shift
   # shellcheck disable=SC2059
-  printf "[DBG] $format\n" "$@" >>"$_PATH_TMP/debugs.log"
+  printf "[DBG] $format\n" "$@" >>"$_PATH_DEBUG"
 }
 
 logi() {
@@ -32,3 +32,14 @@ logf() {
 logln() {
   echo "$@"
 }
+
+__log_setup() {
+  export _PATH_DEBUG="$_PATH_TMP/debug.log"
+}
+
+__log_cleanup() {
+  unset _PATH_DEBUG
+}
+
+_INITIATORS+=(__log_setup)
+_CLEANERS+=(__log_cleanup)

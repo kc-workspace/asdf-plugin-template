@@ -13,10 +13,10 @@ _skip_if_exists:
   - "!lib/bin"
   - .github/linters/cspell-custom.dict.txt
 
-_tasks:
-  - "git init"
-  - "git remote remove origin || exit 0"
-  - "git remote add origin {{ plugin_repo }} || exit 0"
+# _tasks:
+#   - "git init"
+#   - "git remote remove origin || exit 0"
+#   - "git remote add origin {{ plugin_repo }} || exit 0"
 
 _envops:
   comment_end_string: "=}"

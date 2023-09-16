@@ -6,7 +6,8 @@ setting() {
   for value in "${SETTINGS[@]}"; do
     ((index++))
 
-    if [[ "$value" =~ $component: ]]; then
+    if [[ "$value" =~ $component: ]] &&
+      printf '%s' "$value" | grep -qE "$key=[^;]+;"; then
       printf '%s' "$value" | grep -oE "$key=[^;]+" | sed "s/$key=//"
       return 0
     elif [ "$index" -eq "${#SETTINGS[@]}" ]; then

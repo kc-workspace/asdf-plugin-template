@@ -45,11 +45,11 @@ export SETTINGS=(
   "pipx:size=55;"
   "yamllint:size=65;"
   ## The last one is default value
-  "size=99;"
+  "size=99; commit=perf: update plugin from template [autocommit];"
 )
 
 export LIBRARIES=(
-  temp logger result color
+  logger temp result color
   feature database setting
   executor runner verifier checker
   core
@@ -61,8 +61,7 @@ main() {
     components=("${COMPONENTS[@]}")
   fi
 
-  logi "Start script(%s) with %d components (%s)" \
-    "$_SESSION_ID" "${#components[@]}" "$_PATH_DB"
+  logi "Start script(%s) with %d components" "$_SESSION_ID" "${#components[@]}"
   logln
 
   db_set_components "${components[@]}"
@@ -97,12 +96,16 @@ __internal() {
   local cb="$1"
   shift
 
+  ! [ -f "$_PATH_CWD/copier.yml" ] && echo "copier.yml not found" >&2 && exit 1
+  ## This will allow asdf shell to works properly.
+  # shellcheck source=/dev/null
+  [ -f "$HOME/.asdf/asdf.sh" ] && source "$HOME/.asdf/asdf.sh"
+
   _PATH_TMP="$(mktemp -dq "$_PATH_TMP_BASE/dev-XXXXX")"
   _SESSION_ID="$(basename "$_PATH_TMP")"
 
   local init
   for init in "${_INITIATORS[@]}"; do
-    logd "call init service (%s)" "$init"
     "$init"
   done
 
@@ -114,7 +117,6 @@ __exit() {
 
   local clean
   for clean in "${_CLEANERS[@]}"; do
-    logd "call cleaning service (%s)" "$clean"
     "$clean"
   done
 

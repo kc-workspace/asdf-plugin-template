@@ -59,6 +59,17 @@ check_dir_exist() {
   return 0
 }
 
+check_dir_missing() {
+  local component="$1" step="$2" i
+  shift 2
+  for i in "$@"; do
+    if test -d "$i"; then
+      return 1
+    fi
+  done
+  return 0
+}
+
 check_file_exist() {
   local component="$1" step="$2" i
   shift 2

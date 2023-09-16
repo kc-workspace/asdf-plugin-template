@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-DB_STATUS_SUCCESS=COMPLETE
+__DB_VALUE_PREFIX=DB_VALUE_
+
+DB_STATUS_SUCCESS=COMPLETED
 DB_STATUS_FAILURE=FAILURE
 
 ## If check failed, step status will be skipped
@@ -42,6 +44,12 @@ db_is_comp_success() {
 }
 db_is_comp_failure() {
   _db_check status "$@" "$DB_STATUS_FAILURE"
+}
+db_set_comp_latest() {
+  _db_set latest "$@"
+}
+db_get_comp_latest() {
+  _db_get latest "$@"
 }
 
 #############################################
@@ -85,11 +93,11 @@ db_set_check_func() {
 db_get_check_func() {
   _db_get check.func "$@"
 }
-db_set_check_cmd() {
-  _db_set check.cmd "$@"
+db_set_check_args() {
+  _db_set check.args "$@"
 }
-db_get_check_cmd() {
-  _db_get check.cmd "$@"
+db_get_check_args() {
+  _db_get check.args "$@"
 }
 db_set_check_msg() {
   _db_set check.msg "$@"
@@ -112,6 +120,12 @@ db_set_exec_func() {
 }
 db_get_exec_func() {
   _db_get exec.func "$@"
+}
+db_set_exec_args() {
+  _db_set exec.args "$@"
+}
+db_get_exec_args() {
+  _db_get exec.args "$@"
 }
 db_set_exec_cmd() {
   _db_set exec.cmd "$@"
@@ -153,11 +167,11 @@ db_set_verify_func() {
 db_get_verify_func() {
   _db_get verify.func "$@"
 }
-db_set_verify_cmd() {
-  _db_set verify.cmd "$@"
+db_set_verify_args() {
+  _db_set verify.args "$@"
 }
-db_get_verify_cmd() {
-  _db_get verify.cmd "$@"
+db_get_verify_args() {
+  _db_get verify.args "$@"
 }
 db_set_verify_msg() {
   _db_set verify.msg "$@"
@@ -175,10 +189,16 @@ _db_set() {
   local value="$*"
 
   if test -f "$database" && grep -qE "^$key$sep" "$database"; then
-    logd "remove previous value '%s' at '%s'" "$value" "$key"
+    logd "remove previous value from '%s'" "$key"
     ## FIXME: Only sed on MacOS that -i requires argument
     sed -i '' "/^$key$sep/d" "$database"
   fi
+
+  ## Caching data on bash variable (memory)
+  local __key="${key//./__}" _key
+  _key="$(printf '%s%s' "$__DB_VALUE_PREFIX" "${__key//-/_}" |
+    tr '[:lower:]' '[:upper:]')"
+  export "${_key//\[\]/}"="$value"
 
   logd "save '%s' ('%s') on database" "$key" "$value"
   echo "$key$sep${value:-true}" >>"$database"
@@ -189,6 +209,17 @@ _db_get() {
   local sep="=" name="${1:?}"
   local component="${2:?}" step="${3:-global}"
   local key="$component.$step.$name"
+
+  ## Fetch from caching first
+  local __key="${key//./__}" _key
+  _key="$(printf '%s%s' "$__DB_VALUE_PREFIX" "${__key//-/_}" |
+    tr '[:lower:]' '[:upper:]')"
+  eval "value=\${$_key//\[\]/}"
+  test -n "$value" &&
+    logd "get '%s' from cache of '%s'" "$value" "$key" &&
+    printf "%s" "$value" &&
+    return 0
+
   if [ -f "$database" ]; then
     local line
     line="$(grep -E "^$key$sep" "$database" | tail -n 1)"
@@ -242,7 +273,7 @@ __db_setup() {
 }
 
 __db_cleanup() {
-  unset _PATH_DB
+  unset _PATH_DB __DB_VALUE_PREFIX
   unset DB_STATUS_FAILURE DB_STATUS_SUCCESS
   unset DB_STEP_STATUS_SKIPPED DB_STEP_STATUS_ERROR DB_STEP_STATUS_INVALID
 }

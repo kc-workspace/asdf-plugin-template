@@ -21,16 +21,16 @@ runner() {
         check)
           db_set_check_func "$component" "$step" "$cmd"
           [ "${#args[@]}" -gt 0 ] &&
-            db_set_check_cmd "$component" "$step" "${args[@]}"
+            db_set_check_args "$component" "$step" "${args[@]}"
           ;;
         exec)
           db_set_exec_func "$component" "$step" "$cmd"
-          db_set_exec_cmd "$component" "$step" "${args[@]}"
+          db_set_exec_args "$component" "$step" "${args[@]}"
           ;;
         verify)
           db_set_verify_func "$component" "$step" "$cmd"
           [ "${#args[@]}" -gt 0 ] &&
-            db_set_verify_cmd "$component" "$step" "${args[@]}"
+            db_set_verify_args "$component" "$step" "${args[@]}"
           ;;
         esac
 
@@ -100,6 +100,7 @@ runner_summary() {
       db_is_step_invalid "$component" "$step"; then
       db_set_comp_status "$component" "" "$DB_STATUS_FAILURE"
       ((_EXIT_CODE++))
+      result_comp_stop
       return 1
     fi
   done

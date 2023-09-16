@@ -1057,6 +1057,12 @@ __db_set() {
   local key="$_key.${_name:-global}.$namespace"
   local value="${_value:-true}"
 
+  ## Caching data on bash variable (memory)
+  local __key="${key//./__}" _key
+  _key="$(printf '__DB_%s' "${__key//-/_}" | tr '[:lower:]' '[:upper:]')"
+  echo "$_key"
+  export "$_key"="$value"
+
   log_debug "saving '%s' ('%s') on storage" "$key" "$value"
   echo "$key$sep$value" >>"$storage"
 }
@@ -1069,9 +1075,17 @@ __db_get() {
 
   local _key="$1" _name="${2:-global}"
   local key="$_key.$_name.$namespace"
+
+  ## Fetch from caching first
+  local __key="${key//./__}" _key
+  _key="$(printf '__DB_%s' "${__key//-/_}" | tr '[:lower:]' '[:upper:]')"
+  eval "value=\${$_key}"
+  test -n "$value" &&
+    printf "%s" "$value" &&
+    return 0
+
   if [ -f "$storage" ]; then
     log_debug "getting '%s' from storage" "$key"
-    local value
     value="$(grep -E "^$key$sep" "$storage" | tail -n 1)"
 
     local result="${value#*"$sep"}"

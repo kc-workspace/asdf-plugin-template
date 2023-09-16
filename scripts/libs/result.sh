@@ -2,7 +2,7 @@
 
 result_comp_start() {
   local component="$1"
-  logf "> $_C_CYAN$component$_C_RESET: "
+  logf "> $_C_CYAN%-18s$_C_RESET : " "$component"
 }
 
 result_comp_step() {
@@ -24,14 +24,21 @@ result_comp_stop() {
   logln
 }
 
+## All summary will show only when something was wrong
 result_summary_start() {
   logln
   logi ">> Summary results"
+  logf "   - data  : %s\n" "$_PATH_DB"
+  feat_is_debug &&
+    logf "   - debug : %s\n" "$_PATH_DEBUG"
+  logln
 }
 
 result_summary_comp_start() {
-  local component="$1"
-  logf "Component '%s'\n" "$component"
+  if [ "$_EXIT_CODE" -gt 0 ]; then
+    local component="$1"
+    logf "Component '%s'\n" "$component"
+  fi
 }
 
 result_summary_comp_step() {
@@ -43,16 +50,23 @@ result_summary_comp_step() {
 
   if [[ "$status" == "$DB_STEP_STATUS_ERROR" ]] ||
     [[ "$status" == "$DB_STEP_STATUS_INVALID" ]]; then
-    local check_msg exec_msg verify_msg
+    local check_msg exec_msg exec_log exec_err verify_msg
     check_msg="$(db_get_check_msg "$component" "$step")"
     exec_msg="$(db_get_exec_msg "$component" "$step")"
+    exec_log="$(db_get_exec_log "$component" "$step")"
+    exec_err="$(db_get_exec_err "$component" "$step")"
     verify_msg="$(db_get_verify_msg "$component" "$step")"
 
+    logln "step: $step ($status)"
     test -n "$check_msg" &&
-      logln "  - check  : $check_msg"
+      logln "  - check    : $check_msg"
     test -n "$exec_msg" &&
-      logln "  - exec   : $exec_msg"
+      logln "  - exec     : $exec_msg"
+    test -n "$exec_log" &&
+      logln "  - exec log : $exec_log"
+    test -n "$exec_err" &&
+      logln "  - exec err : $exec_err"
     test -n "$verify_msg" &&
-      logln "  - verify : $verify_msg"
+      logln "  - verify   : $verify_msg"
   fi
 }

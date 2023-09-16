@@ -12,7 +12,7 @@ temp_file() {
   local filename
   [ -z "$name" ] &&
     filename="tmp.XXXXXXXX" ||
-    filename="$name.XX"
+    filename="$name.XXX"
 
   mktemp -q "$base/$filename"
 }
@@ -32,7 +32,7 @@ __temp_setup() {
 
   ## If no temp directory found,
   ## create and return as it just created
-  if ! test -d "$time_path"; then
+  if ! test -f "$time_path"; then
     logd "record temp created time"
     date +"%s" >"$time_path"
     return 0
@@ -45,7 +45,9 @@ __temp_setup() {
 
   if [ "$diff" -gt $timeout ]; then
     logd "clean temp directory, and recreate"
-    rm -r "$base" && mkdir -p "$base"
+    rm -r "$base" &&
+      mkdir -p "${_PATH_TMP:?}" &&
+      date +"%s" >"$time_path"
   fi
 }
 
