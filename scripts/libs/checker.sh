@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
 check_must_success() {
+  # jscpd:ignore-start
   local component="$1" step="$2" args=()
   shift 2
   args+=("$@")
+  # jscpd:ignore-end
 
   local input index=0 error
   for input in "${args[@]}"; do
@@ -24,9 +26,11 @@ check_must_success() {
 }
 
 check_no_error() {
+  # jscpd:ignore-start
   local component="$1" step="$2" args=()
   shift 2
   args+=("$@")
+  # jscpd:ignore-end
 
   local input index=0 error
   for input in "${args[@]}"; do
