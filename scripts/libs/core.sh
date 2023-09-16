@@ -95,7 +95,7 @@ core_start() {
     $ exec_ignore git -C "$local_path" pull origin main
 
   runner "$component" "git-add-all" \
-    $ check_cmd_fail git diff --exit-code main \
+    $ check_cmd_fail git -C "$local_path" diff --exit-code main \
     $ check_cmd_pass feat_is_deploy \
     $ exec_ignore git -C "$local_path" add --all
 

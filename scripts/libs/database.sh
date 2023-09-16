@@ -87,18 +87,6 @@ db_is_check_success() {
 db_is_check_failure() {
   _db_check check.status "$@" "$DB_STATUS_FAILURE"
 }
-db_set_check_func() {
-  _db_set check.func "$@"
-}
-db_get_check_func() {
-  _db_get check.func "$@"
-}
-db_set_check_args() {
-  _db_set check.args "$@"
-}
-db_get_check_args() {
-  _db_get check.args "$@"
-}
 db_set_check_msg() {
   _db_set check.msg "$@"
 }
@@ -160,18 +148,6 @@ db_is_verify_success() {
 }
 db_is_verify_failure() {
   _db_check verify.status "$@" "$DB_STATUS_FAILURE"
-}
-db_set_verify_func() {
-  _db_set verify.func "$@"
-}
-db_get_verify_func() {
-  _db_get verify.func "$@"
-}
-db_set_verify_args() {
-  _db_set verify.args "$@"
-}
-db_get_verify_args() {
-  _db_get verify.args "$@"
 }
 db_set_verify_msg() {
   _db_set verify.msg "$@"

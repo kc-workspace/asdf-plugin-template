@@ -19,18 +19,16 @@ runner() {
       if test -n "$cmd"; then
         case "$stage" in
         check)
-          db_set_check_func "$component" "$step" "$cmd"
-          [ "${#args[@]}" -gt 0 ] &&
-            db_set_check_args "$component" "$step" "${args[@]}"
+          logd "run check '%s' '%s' with command: %s [%s]" \
+            "$component" "$step" "$cmd" "${args[*]}"
           ;;
         exec)
           db_set_exec_func "$component" "$step" "$cmd"
           db_set_exec_args "$component" "$step" "${args[@]}"
           ;;
         verify)
-          db_set_verify_func "$component" "$step" "$cmd"
-          [ "${#args[@]}" -gt 0 ] &&
-            db_set_verify_args "$component" "$step" "${args[@]}"
+          logd "run verify '%s' '%s' with command: %s [%s]" \
+            "$component" "$step" "$cmd" "${args[*]}"
           ;;
         esac
 
@@ -71,14 +69,15 @@ runner() {
       continue
 
     cmd="$input"
-    if [[ "$stage" != "${cmd%%_*}" ]]; then
-      case "${stage}-${cmd%%_*}" in
-      exec-check | verify-check | verify-exec)
-        loge "Runner functions must follow this seq (check -> exec -> verify)"
-        ;;
-      esac
-      stage="${cmd%%_*}"
-    fi
+    case "${stage}-${cmd%%_*}" in
+    exec-exec)
+      loge "Runner exec function must existed only once"
+      ;;
+    exec-check | verify-check | verify-exec)
+      loge "Runner functions must follow this seq (check -> exec -> verify)"
+      ;;
+    esac
+    stage="${cmd%%_*}"
   done
 
   if ! db_has_step_status "$component" "$step"; then
