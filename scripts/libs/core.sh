@@ -95,16 +95,17 @@ core_start() {
     $ exec_ignore git -C "$local_path" pull origin main
 
   runner "$component" "git-add-all" \
+    $ check_cmd_fail git diff --exit-code main \
     $ check_cmd_pass feat_is_deploy \
     $ exec_ignore git -C "$local_path" add --all
 
   runner "$component" "git-commit" \
-    $ check_no_error git-add-all \
+    $ check_must_success git-add-all \
     $ check_cmd_pass feat_is_deploy \
     $ exec_ignore git -C "$local_path" commit -m "$(setting "$component" commit)"
 
   runner "$component" "git-push" \
-    $ check_no_error git-commit \
+    $ check_must_success git-commit \
     $ check_cmd_fail git -C "$local_path" diff --exit-code origin/main..main \
     $ check_cmd_pass feat_is_deploy \
     $ exec_ignore git -C "$local_path" push origin main
