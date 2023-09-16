@@ -77,6 +77,32 @@ exec_copier() {
   fi
 }
 
+exec_gh_actions_watch() {
+  local component="${1:?component is missing}" step="${2:?step is missing}"
+  local repo="${3:?github repo is missing}"
+
+  local timeout=30 json id status
+  json="$(temp_file)"
+
+  for ((i = 0; i <= timeout; i++)); do
+    __exec gh run list --limit 1 \
+      --repo "$repo" --workflow 'main' --json 'databaseId,status' >"$json"
+
+    status="$(__exec jq -Mr '.[0].status' "$json")"
+    if [[ "$status" == "in_progress" ]]; then
+      id="$(__exec jq -Mr '.[0].databaseId' "$json")"
+      __exec_cmd "$component" "$step" \
+        gh run watch --exit-status --repo "$repo" "$id"
+      return $?
+    fi
+
+    sleep 1
+  done
+
+  db_set_exec_msg "$component" "$step" "github actions timeout (${timeout}s)"
+  return 1
+}
+
 __exec_cmd() {
   local component="${1:?component is missing}" step="${2:?step is missing}"
   local cmd="${3:?command is missing}"
@@ -88,4 +114,11 @@ __exec_cmd() {
   if ! feat_is_dryrun; then
     "$cmd" "$@"
   fi
+}
+
+__exec() {
+  local cmd="${1:?command is missing}"
+  shift
+  test -f "$_PATH_SCP/bin/$cmd" && cmd="$_PATH_SCP/bin/$cmd"
+  "$cmd" "$@"
 }

@@ -15,7 +15,16 @@ core_start() {
 
   runner "$component" create-gh-repo \
     $ check_cmd_fail gh repo view "$plugin_repo" --json 'name' \
-    $ exec_with_file gh repo create --disable-wiki --public "$plugin_repo"
+    $ exec_with_file gh repo create "$plugin_repo" --disable-wiki --public
+
+  runner "$component" update-gh-repo \
+    $ check_must_success create-gh-repo \
+    $ exec_with_logfile gh repo edit "$plugin_repo" \
+    --add-topic asdf --add-topic asdf-plugin --add-topic asdf-vm \
+    --delete-branch-on-merge --enable-auto-merge \
+    --enable-issues --allow-update-branch \
+    --enable-discussions=false --enable-projects=false --enable-wiki=false \
+    --enable-rebase-merge=false
 
   runner "$component" remove-addon \
     $ check_dir_exist "$local_path/lib/addon" \
@@ -45,11 +54,12 @@ core_start() {
 
   runner "$component" deploy-plugin \
     $ check_no_errors \
+    $ check_must_success copier-copy \
     $ check_dir_exist "$local_path" \
     $ exec_with_file cp -r "$local_path" "$plugin_path"
 
   runner "$component" get-latest \
-    $ check_no_error deploy-plugin \
+    $ check_must_success deploy-plugin \
     $ exec_with_file asdf latest "$component" \
     $ verify_asdf_latest
 
@@ -57,7 +67,7 @@ core_start() {
   latest="$(db_get_comp_latest "$component")"
 
   runner "$component" list-all \
-    $ check_no_error deploy-plugin \
+    $ check_must_success deploy-plugin \
     $ exec_with_file asdf list all "$component" \
     $ verify_asdf_list
 
@@ -67,6 +77,7 @@ core_start() {
     $ verify_asdf_install "$install_path"
 
   runner "$component" shell-latest \
+    $ check_must_success get-latest \
     $ check_cmd_pass feat_is_test \
     $ exec_with_file asdf shell "$component" "$latest"
 
@@ -75,6 +86,7 @@ core_start() {
     $ exec_with_file asdf "$component" test
 
   runner "$component" "uninstall-latest" \
+    $ check_must_success get-latest \
     $ check_cmd_pass feat_is_test \
     $ exec_with_file asdf uninstall "$component" "$latest"
 
@@ -93,13 +105,14 @@ core_start() {
 
   runner "$component" "git-push" \
     $ check_no_error git-commit \
+    $ check_cmd_fail git -C "$local_path" diff --exit-code origin/main..main \
     $ check_cmd_pass feat_is_deploy \
     $ exec_ignore git -C "$local_path" push origin main
 
   runner "$component" "wait-workflow" \
     $ check_must_success git-push \
     $ check_cmd_pass feat_is_wait \
-    $ exec_with_file gh run watch --exit-status --repo "$plugin_repo"
+    $ exec_gh_actions_watch "$plugin_repo"
 
   runner_summary "$component"
 }

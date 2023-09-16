@@ -8,12 +8,12 @@ check_must_success() {
   local input index=0 error
   for input in "${args[@]}"; do
     if ! db_has_step_status "$component" "$input"; then
-      db_set_check_msg "$component" "${step}[$index]" \
-        "input '$input' step doesn't have status"
+      db_set_check_msg "$component" "$step" \
+        "step '$input' doesn't have status"
       error=true
     elif ! db_is_step_success "$component" "$input"; then
-      db_set_check_msg "$component" "${step}[$index]" \
-        "input '$input' step must be success"
+      db_set_check_msg "$component" "$step" \
+        "step '$input' must be success"
       error=true
     fi
 
@@ -31,13 +31,13 @@ check_no_error() {
   local input index=0 error
   for input in "${args[@]}"; do
     if ! db_has_step_status "$component" "$input"; then
-      db_set_check_msg "$component" "${step}[$index]" \
-        "input '$input' step doesn't have status"
+      db_set_check_msg "$component" "${step}" \
+        "step '$input' doesn't have status"
       error=true
     elif db_is_step_error "$component" "$input" ||
       db_is_step_invalid "$component" "$input"; then
-      db_set_check_msg "$component" "${step}[$index]" \
-        "input '$input' step either error or invalid"
+      db_set_check_msg "$component" "$step" \
+        "step '$input' either error or invalid"
       error=true
     fi
 
