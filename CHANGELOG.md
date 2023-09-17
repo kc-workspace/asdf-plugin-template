@@ -1,5 +1,33 @@
 # Changelog
 
+## [2.2.4](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.2.3...v2.2.4) (2023-09-17)
+
+
+### Improvements
+
+* **script:** git add, commit and push now skipping if local git has no change ([e3325c8](https://github.com/kc-workspace/asdf-plugin-template/commit/e3325c8926f8df278157e21a26b2194569136a51))
+* **script:** promote dev-v2 to dev.sh ([3affb98](https://github.com/kc-workspace/asdf-plugin-template/commit/3affb98a83a3b6e743867ab92cecec7b5b4b5e2d))
+* **script:** refactor dev.sh with easier to extends and possible with list of verifiers ([83134e8](https://github.com/kc-workspace/asdf-plugin-template/commit/83134e897c71cde2ca5a44f6ca58010e7623b10a))
+* **script:** remove _func and _args as logging is easier to access ([0e19e4b](https://github.com/kc-workspace/asdf-plugin-template/commit/0e19e4b4c6dd160dd0b986580dd91a10f949889d))
+
+
+### Bugfixes
+
+* **checksum:** when platform doesn't contains shaXXXsum commands pass --algorithm to shasum command as well ([93729a8](https://github.com/kc-workspace/asdf-plugin-template/commit/93729a8d63ed1cfaa2447b01d7d6140029cbac74))
+* **script:** command should use __exec as command executor to use predefine script instead of system script ([7c62e22](https://github.com/kc-workspace/asdf-plugin-template/commit/7c62e22fc211c60c9b38c1919b433a9882b2345e))
+* **script:** duplicate code detected ([e8c7d29](https://github.com/kc-workspace/asdf-plugin-template/commit/e8c7d2990a5a895fc08a00bbaeac96a000650e29))
+* **script:** testing should depends on get-latest step ([0efa8a5](https://github.com/kc-workspace/asdf-plugin-template/commit/0efa8a5e1af9a814e460ff4e8eaf713926df6149))
+* **script:** verifying asdf-install should follow symlink as well ([6163378](https://github.com/kc-workspace/asdf-plugin-template/commit/61633788adf2e3d3d189c62526fc4c34133f6dfc))
+* **script:** wait workflow didn't works as expected ([7f927b5](https://github.com/kc-workspace/asdf-plugin-template/commit/7f927b588ffc0db63fb1fe62f670b190a88bca02))
+
+
+### Miscellaneous
+
+* **dev:** support custom branch name on each component ([27ff80f](https://github.com/kc-workspace/asdf-plugin-template/commit/27ff80fc6ee0bfa2864cad07b4aba7af8d801f00))
+* save progress ([cc780ec](https://github.com/kc-workspace/asdf-plugin-template/commit/cc780ec89b12047507a2a5e34d68874ef2816224))
+* save progress ([bc34a12](https://github.com/kc-workspace/asdf-plugin-template/commit/bc34a126e57c829c8fd206ce921f9a679603321d))
+* **script:** comments check message when expected step is not success ([23601bc](https://github.com/kc-workspace/asdf-plugin-template/commit/23601bc649d688e64d25312894289b7ff9a14217))
+
 ## [2.2.3](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.2.2...v2.2.3) (2023-09-15)
 
 
