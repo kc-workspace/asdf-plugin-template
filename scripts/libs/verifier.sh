@@ -51,8 +51,8 @@ verify_asdf_install() {
   install_path="$install/$latest"
 
   local root_size=0 bin_size=0
-  root_size="$(find "$install_path" -maxdepth 1 | wc -l | bc)"
-  bin_size="$(find "$install_path/bin" -maxdepth 1 -type f | wc -l | bc)"
+  root_size="$(find -L "$install_path" -maxdepth 1 | wc -l | bc)"
+  bin_size="$(find -L "$install_path/bin" -maxdepth 1 -type f | wc -l | bc)"
 
   [ "$root_size" -lt 1 ] || [ "$bin_size" -lt 1 ] &&
     db_set_verify_msg "$component" "$step" \
