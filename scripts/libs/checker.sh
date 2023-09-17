@@ -63,14 +63,16 @@ check_cmd_pass() {
   local component="$1" step="$2"
   shift 2
 
-  "$@" >/dev/null 2>&1
+  __exec "$@" >/dev/null 2>&1
 }
 
 check_cmd_fail() {
   local component="$1" step="$2"
   shift 2
 
-  ! "$@" >/dev/null 2>&1
+  if __exec "$@" >/dev/null 2>&1; then
+    return 1
+  fi
 }
 
 check_dir_exist() {

@@ -91,7 +91,7 @@ exec_gh_actions_watch() {
     status="$(__exec jq -Mr '.[0].status' "$json")"
     if [[ "$status" == "in_progress" ]]; then
       id="$(__exec jq -Mr '.[0].databaseId' "$json")"
-      __exec_cmd "$component" "$step" \
+      exec_with_logfile "$component" "$step" \
         gh run watch --exit-status --repo "$repo" "$id"
       return $?
     fi
