@@ -44,7 +44,7 @@ export SETTINGS=(
   "pipx:size=55;"
   "yamllint:size=65;"
   ## The last one is default value
-  "size=99; commit=perf: update plugin from template [autocommit];"
+  "size=99; commit=perf: update plugin from template [autocommit]; branch=main"
 )
 
 export LIBRARIES=(
