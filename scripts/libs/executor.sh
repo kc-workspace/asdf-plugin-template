@@ -40,7 +40,7 @@ exec_with_file() {
   db_set_exec_log "$component" "$step" "$stdout"
   db_set_exec_err "$component" "$step" "$stderr"
   if ! __exec_cmd "$component" "$step" "$@" >"$stdout" 2>"$stderr"; then
-    db_set_exec_msg "$component" "$step" "$(head -n1 "$stderr")"
+    db_set_exec_msg "$component" "$step" "$(tail -n1 "$stderr")"
     return 1
   fi
 }
