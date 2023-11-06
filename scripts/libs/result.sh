@@ -29,15 +29,18 @@ result_summary_start() {
   logln
   logi ">> Summary results"
   logf "   - data  : %s\n" "$_PATH_DB"
-  feat_is_debug &&
-    logf "   - debug : %s\n" "$_PATH_DEBUG"
+  feat_is_debug && logf "   - debug : %s\n" "$_PATH_DEBUG"
   logln
 }
 
 result_summary_comp_start() {
-  if [ "$_EXIT_CODE" -gt 0 ]; then
-    local component="$1"
-    logf "Component '%s'\n" "$component"
+  local component="$1"
+  logf "Component '%s'\n" "$component"
+
+  if db_is_comp_success "$component"; then
+    local latest
+    latest="$(db_get_comp_latest "$component")"
+    logf "  %-20s %-10s : %s\n" "" "latest" "$latest"
   fi
 }
 

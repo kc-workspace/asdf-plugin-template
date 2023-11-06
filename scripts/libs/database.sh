@@ -40,10 +40,10 @@ db_has_comp_status() {
   _db_has status "$@"
 }
 db_is_comp_success() {
-  _db_check status "$@" "$DB_STATUS_SUCCESS"
+  _db_check status "$1" "" "$DB_STATUS_SUCCESS"
 }
 db_is_comp_failure() {
-  _db_check status "$@" "$DB_STATUS_FAILURE"
+  _db_check status "$1" "" "$DB_STATUS_FAILURE"
 }
 db_set_comp_latest() {
   _db_set latest "$@"
@@ -66,26 +66,26 @@ db_get_step_status() {
   _db_get step.status "$@"
 }
 db_is_step_success() {
-  _db_check step.status "$@" "$DB_STATUS_SUCCESS"
+  _db_check step.status "$1" "$2" "$DB_STATUS_SUCCESS"
 }
 db_is_step_skipped() {
-  _db_check step.status "$@" "$DB_STEP_STATUS_SKIPPED"
+  _db_check step.status "$1" "$2" "$DB_STEP_STATUS_SKIPPED"
 }
 db_is_step_error() {
-  _db_check step.status "$@" "$DB_STEP_STATUS_ERROR"
+  _db_check step.status "$1" "$2" "$DB_STEP_STATUS_ERROR"
 }
 db_is_step_invalid() {
-  _db_check step.status "$@" "$DB_STEP_STATUS_INVALID"
+  _db_check step.status "$1" "$2" "$DB_STEP_STATUS_INVALID"
 }
 
 db_set_check_status() {
   _db_set check.status "$@"
 }
 db_is_check_success() {
-  _db_check check.status "$@" "$DB_STATUS_SUCCESS"
+  _db_check check.status "$1" "$2" "$DB_STATUS_SUCCESS"
 }
 db_is_check_failure() {
-  _db_check check.status "$@" "$DB_STATUS_FAILURE"
+  _db_check check.status "$1" "$2" "$DB_STATUS_FAILURE"
 }
 db_set_check_msg() {
   _db_set check.msg "$@"
@@ -98,10 +98,10 @@ db_set_exec_status() {
   _db_set exec.status "$@"
 }
 db_is_exec_success() {
-  _db_check exec.status "$@" "$DB_STATUS_SUCCESS"
+  _db_check exec.status "$1" "$2" "$DB_STATUS_SUCCESS"
 }
 db_is_exec_failure() {
-  _db_check exec.status "$@" "$DB_STATUS_FAILURE"
+  _db_check exec.status "$1" "$2" "$DB_STATUS_FAILURE"
 }
 db_set_exec_func() {
   _db_set exec.func "$@"
@@ -144,10 +144,10 @@ db_set_verify_status() {
   _db_set verify.status "$@"
 }
 db_is_verify_success() {
-  _db_check verify.status "$@" "$DB_STATUS_SUCCESS"
+  _db_check verify.status "$1" "$2" "$DB_STATUS_SUCCESS"
 }
 db_is_verify_failure() {
-  _db_check verify.status "$@" "$DB_STATUS_FAILURE"
+  _db_check verify.status "$1" "$2" "$DB_STATUS_FAILURE"
 }
 db_set_verify_msg() {
   _db_set verify.msg "$@"
@@ -241,7 +241,10 @@ _db_check() {
   local key="$component.$step.$name"
   shift 3
 
-  [ -f "$database" ] && grep -qE "^$key$sep$*" "$database"
+  [ -f "$database" ] || return 1
+
+  logd "searching %s from database" "$key"
+  grep -qE "^$key$sep$*" "$database"
 }
 
 __db_setup() {
