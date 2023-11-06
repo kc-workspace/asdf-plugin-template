@@ -60,7 +60,17 @@ main() {
     components=("${COMPONENTS[@]}")
   fi
 
-  logi "Start script(%s) with %d components" "$_SESSION_ID" "${#components[@]}"
+  local features=()
+  feat_is_prod && features+=("prod")
+  feat_is_test && features+=("test")
+  feat_is_debug && features+=("debug")
+  feat_is_dryrun && features+=("dry")
+
+  local suffix=""
+  [ "${#features[@]}" -gt 0 ] && suffix=" with features '${features[*]}'"
+  logi "Start script(%s) with %d components%s" \
+    "$_SESSION_ID" "${#components[@]}" \
+    "$suffix"
   logln
 
   db_set_components "${components[@]}"
