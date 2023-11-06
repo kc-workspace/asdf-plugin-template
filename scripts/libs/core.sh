@@ -82,16 +82,19 @@ core_start() {
 
   runner "$component" shell-latest \
     $ check_must_success get-latest \
+    $ check_must_success install-latest \
     $ check_cmd_pass feat_is_test \
     $ exec_with_file asdf shell "$component" "$latest"
 
   runner "$component" "test-latest" \
     $ check_must_success get-latest \
+    $ check_must_success install-latest \
     $ check_cmd_pass feat_is_test \
     $ exec_with_file asdf "$component" test
 
   runner "$component" "uninstall-latest" \
     $ check_must_success get-latest \
+    $ check_must_success install-latest \
     $ check_cmd_pass feat_is_test \
     $ exec_with_file asdf uninstall "$component" "$latest"
 

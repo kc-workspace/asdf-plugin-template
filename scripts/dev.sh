@@ -20,7 +20,7 @@ export COMPONENTS=(
   gh git-chglog go-jsonnet golang golangci-lint gradle
   helm hub hyperfine
   jq jsonnet-bundler
-  k6 kind kubectl
+  k6 kind kops kubectl
   maven mkcert
   pipx
   terraform terragrunt
