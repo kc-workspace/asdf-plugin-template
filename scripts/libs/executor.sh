@@ -21,15 +21,6 @@ exec_with_logfile() {
   __exec_cmd "$component" "$step" "$@" >"$log" 2>&1
 }
 
-exec_with_outfile() {
-  local component="${1:?component is missing}" step="${2:?step is missing}" log
-  log="$(temp_file "$component-$step")"
-  shift 2
-
-  db_set_exec_log "$component" "$step" "$log"
-  __exec_cmd "$component" "$step" "$@" >"$log"
-}
-
 exec_with_file() {
   local component="${1:?component is missing}" step="${2:?step is missing}"
   local stdout stderr
