@@ -121,7 +121,7 @@ core_start() {
     $ check_must_success git-commit \
     $ check_cmd_fail git -C "$local_path" diff --exit-code "origin/$branch..$branch" \
     $ check_cmd_pass feat_is_deploy \
-    $ exec_ignore git -C "$local_path" push
+    $ exec_ignore git -C "$local_path" push --set-upstream origin "$branch"
 
   runner "$component" "wait-workflow" \
     $ check_must_success git-push \
