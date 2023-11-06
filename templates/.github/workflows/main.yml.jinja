@@ -45,6 +45,7 @@ jobs:
       - name: Linting
         uses: super-linter/super-linter/slim@v5
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BRANCH: {{ '${{ env.DEFAULT_BRANCH }}' }}
           VALIDATE_ALL_CODEBASE: false
           IGNORE_GITIGNORED_FILES: true
