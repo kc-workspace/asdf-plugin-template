@@ -40,7 +40,7 @@ exec_with_file() {
   db_set_exec_log "$component" "$step" "$stdout"
   db_set_exec_err "$component" "$step" "$stderr"
   if ! __exec_cmd "$component" "$step" "$@" >"$stdout" 2>"$stderr"; then
-    db_set_exec_msg "$component" "$step" "$(head -n1 "$stderr")"
+    db_set_exec_msg "$component" "$step" "$(tail -n1 "$stderr")"
     return 1
   fi
 }
@@ -67,7 +67,8 @@ exec_copier() {
     args+=(--vcs-ref HEAD)
   fi
 
-  if feat_is_prompt; then
+  ## Enabled prompt mode if user enabled or on newly create plugin
+  if feat_is_prompt || ! test -d "$install_path"; then
     exec_default "$component" "$step" \
       "$cmd" "${args[@]}" "$template" "$install_path"
   else
