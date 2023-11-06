@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.2.5](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.2.4...v2.2.5) (2023-11-06)
+
+
+### Improvements
+
+* **ci:** add GITHUB_TOKEN to report lint results ([3f6cb0f](https://github.com/kc-workspace/asdf-plugin-template/commit/3f6cb0ffcfb2ac7ef718aa85135f0d9af52f0531))
+* **ci:** upgrade github actions ([2f7406b](https://github.com/kc-workspace/asdf-plugin-template/commit/2f7406b71ba11169a2296f6caa03263d1b3f1013))
+* **script:** testing must depends on install steps ([69d549e](https://github.com/kc-workspace/asdf-plugin-template/commit/69d549e133eda26f058b7748401dce108128d8ac))
+* **script:** use tail instead of error message ([1b50558](https://github.com/kc-workspace/asdf-plugin-template/commit/1b50558fc425e55b4f549fd333d29dd9a76f2774))
+
+
+### Bugfixes
+
+* **script:** dev.sh error on create new plugin ([d60dc58](https://github.com/kc-workspace/asdf-plugin-template/commit/d60dc580cb07cc22f81a2f59466a2df3aa20b0cd))
+
+
+### Miscellaneous
+
+* **script:** remove unused functions ([166b66c](https://github.com/kc-workspace/asdf-plugin-template/commit/166b66ce3d40fa58e95194557c654672c80b71c3))
+
 ## [2.2.4](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.2.3...v2.2.4) (2023-09-17)
 
 
