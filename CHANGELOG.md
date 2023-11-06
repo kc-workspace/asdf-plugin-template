@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.6](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.2.5...v2.2.6) (2023-11-06)
+
+
+### Bugfixes
+
+* **template:** cannot generate because no value mask found ([8521571](https://github.com/kc-workspace/asdf-plugin-template/commit/85215710e45a44899450c74ac52d8ad2d43f07f7))
+
 ## [2.2.5](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.2.4...v2.2.5) (2023-11-06)
 
 
