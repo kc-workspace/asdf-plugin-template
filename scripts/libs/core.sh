@@ -62,6 +62,7 @@ core_start() {
     $ exec_with_file cp -r "$local_path" "$plugin_path"
 
   runner "$component" get-latest \
+    $ check_cmd_fail feat_is_dryrun \
     $ check_must_success deploy-plugin \
     $ exec_with_file asdf latest "$component" \
     $ verify_asdf_latest
