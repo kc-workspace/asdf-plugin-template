@@ -67,7 +67,8 @@ exec_copier() {
     args+=(--vcs-ref HEAD)
   fi
 
-  if feat_is_prompt; then
+  ## Enabled prompt mode if user enabled or on newly create plugin
+  if feat_is_prompt || ! test -d "$install_path"; then
     exec_default "$component" "$step" \
       "$cmd" "${args[@]}" "$template" "$install_path"
   else

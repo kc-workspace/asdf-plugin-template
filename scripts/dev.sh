@@ -105,7 +105,7 @@ __internal() {
 
   local init
   for init in "${_INITIATORS[@]}"; do
-    "$init"
+    "$init" || return 1
   done
 
   "$cb" "$@"
