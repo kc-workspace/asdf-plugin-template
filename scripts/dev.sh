@@ -17,7 +17,7 @@ export COMPONENTS=(
   argocd aws
   cloudflared cmctl consul cookiecutter copier
   flux2
-  gh git-chglog go-jsonnet golang golangci-lint gradle
+  gh git-chglog go-jsonnet golang golangci-lint goreleaser gradle
   helm hub hyperfine
   jq jsonnet-bundler
   k6 kind kops kubectl
