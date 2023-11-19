@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.2.7](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.2.6...v2.2.7) (2023-11-19)
+
+
+### Improvements
+
+* **deps:** upgrade cspell-action from v4 to v5 ([5893766](https://github.com/kc-workspace/asdf-plugin-template/commit/5893766bc4c3ad4103da2b4df2c945569eacfbb3))
+* **script:** add features message on start info ([5009c7a](https://github.com/kc-workspace/asdf-plugin-template/commit/5009c7af7cbc2a7b408de015c9625cde16680e5b))
+
+
+### Bugfixes
+
+* **script:** add --set-upstream on git push to set up first time branch publish ([23e195e](https://github.com/kc-workspace/asdf-plugin-template/commit/23e195e3bdd17464b3c710d113630b7bbf4cb6f6))
+* **script:** add latest version when completed successfully ([c0aaeae](https://github.com/kc-workspace/asdf-plugin-template/commit/c0aaeaed03a9b9a72021ae1e336d72c8384cb85e))
+* **script:** get-latest should not fail on dryrun mode ([03397e5](https://github.com/kc-workspace/asdf-plugin-template/commit/03397e503fbb2931832e545ca67cc69dfb0a43e1))
+
+
+### Miscellaneous
+
+* **script:** add goreleaser to template maintainer ([b56332b](https://github.com/kc-workspace/asdf-plugin-template/commit/b56332b21423572f1abbf7000dbf51df73676fd5))
+
 ## [2.2.6](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.2.5...v2.2.6) (2023-11-06)
 
 
