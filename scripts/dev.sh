@@ -83,11 +83,11 @@ main() {
   core_summary "${components[@]}"
 }
 
-_EXIT_CODE=0
-_PATH_CWD="$PWD"
-_PATH_SCP="$_PATH_CWD/scripts"
-_PATH_TMP_BASE="${TMPDIR:-/tmp}/asdf-plugin-template"
-_PATH_TMP=""
+export _EXIT_CODE=0
+export _PATH_CWD="$PWD"
+export _PATH_SCP="$_PATH_CWD/scripts"
+export _PATH_TMP_BASE="${TMPDIR:-/tmp}/asdf-plugin-template"
+export _PATH_TMP=""
 
 _SESSION_ID=""
 _INITIATORS=()
