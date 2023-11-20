@@ -20,7 +20,7 @@ export COMPONENTS=(
   gh git-chglog go-jsonnet golang golangci-lint goreleaser gradle
   helm hub hyperfine
   jq jsonnet-bundler
-  k6 kind kops kubectl
+  k6 kc-tpr kind kops kubectl
   maven mkcert
   pipx
   terraform terragrunt
@@ -38,6 +38,7 @@ export SETTINGS=(
   "jq:size=13;"
   "jsonnet-bundler:size=6;"
   "k6:size=83;"
+  "kc-tpr:size=8;"
   "kind:size=32;"
   "maven:size=77;"
   "mkcert:size=14;"
