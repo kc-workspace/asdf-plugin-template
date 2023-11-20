@@ -14,7 +14,7 @@
 
 export COMPONENTS=(
   '1password'
-  ansible argocd aws
+  ansible ansible-core argocd aws
   cloudflared cmctl consul cookiecutter copier
   flux2
   gh git-chglog go-jsonnet golang golangci-lint goreleaser gradle
