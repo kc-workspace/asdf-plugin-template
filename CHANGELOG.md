@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.3.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.2.7...v2.3.0) (2023-11-20)
+
+
+### Features
+
+* **script:** add ansible to plugin maintainers ([63592bd](https://github.com/kc-workspace/asdf-plugin-template/commit/63592bdc3936bc8f7b599791bd61b3daca450ef9))
+
+
+### Improvements
+
+* **components:** add ansible-core as maintaining packages ([a3d2488](https://github.com/kc-workspace/asdf-plugin-template/commit/a3d248880265b8339a30609a71d77ed1393d8d6c))
+
+
+### Bugfixes
+
+* **script:** dev.sh error '_PATH_TMP: parameter null or not set' on first run ([a67bf84](https://github.com/kc-workspace/asdf-plugin-template/commit/a67bf84dd8b8c0d0d6d6e3ea3b2688b327bf1e17))
+* **template:** on python type, python name should be used for install python package ([06045c2](https://github.com/kc-workspace/asdf-plugin-template/commit/06045c2349d01c8c8053e2d5453a58c24e553772))
+
 ## [2.2.7](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.2.6...v2.2.7) (2023-11-19)
 
 
