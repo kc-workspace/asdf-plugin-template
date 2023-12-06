@@ -28,3 +28,4 @@ envops
 venv
 keyid
 kwargs
+eksctl
