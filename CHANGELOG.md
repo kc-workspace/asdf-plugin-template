@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.3.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.3.0...v2.3.1) (2023-12-06)
+
+
+### Bug Fixes
+
+* **ci:** release-type need to set for release-please to resolve manifest from config ([a253b94](https://github.com/kc-workspace/asdf-plugin-template/commit/a253b942c28b56c24a712e43f7fa951ed39405ea))
+* **ci:** remove manifest json because it seem to cause version not update ([3eacc33](https://github.com/kc-workspace/asdf-plugin-template/commit/3eacc3386ce3fe114efa9d17339a03ca215691a1))
+
+
+### Performance Improvements
+
+* **ci:** upgrade release-please-action from v3 to v4 ([8e2aced](https://github.com/kc-workspace/asdf-plugin-template/commit/8e2acedbbd45d40cf7fdfb8c5ac2ce98a4779fe4))
+* **component:** add operator-sdk as managed plugin ([2121eb1](https://github.com/kc-workspace/asdf-plugin-template/commit/2121eb19bf6b59b7390bfe110a8e5106586afe0e))
+* **components:** add asdf-eksctl to managed by template ([2c9c60b](https://github.com/kc-workspace/asdf-plugin-template/commit/2c9c60b863e23a173954155cf11f8f33d1632a52))
+
 ## [2.3.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.2.7...v2.3.0) (2023-11-20)
 
 
