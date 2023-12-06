@@ -21,7 +21,7 @@ temp_file() {
 __temp_setup() {
   local base="${_PATH_TMP_BASE:?}"
   local timeout=10800 # 3 hours
-  local time_name=.clean-time.tmp
+  local time_name=.createdat.ms
   local time_path="$base/$time_name"
 
   ## If no temp directory found, create it
