@@ -1,6 +1,5 @@
 {
   "$schema": "https://github.com/googleapis/release-please/raw/main/schemas/config.json",
-  "release-type": "simple",
   "changelog-type": "github",
   "changelog-sections": [
     { "type": "feat", "section": "Features", "hidden": false },
