@@ -23,6 +23,7 @@ export COMPONENTS=(
   jq jsonnet-bundler
   k6 kc-tpr kind kops kubectl
   maven mkcert
+  operator-sdk
   pipx
   terraform terragrunt
   yamllint yq
