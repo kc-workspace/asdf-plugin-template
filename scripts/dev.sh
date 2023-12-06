@@ -64,10 +64,13 @@ main() {
   fi
 
   local features=()
-  feat_is_prod && features+=("prod")
-  feat_is_test && features+=("test")
   feat_is_debug && features+=("debug")
+  feat_is_deploy && features+=("deploy")
   feat_is_dryrun && features+=("dry")
+  feat_is_prod && features+=("prod")
+  feat_is_prompt && features+=("prompt")
+  feat_is_test && features+=("test")
+  feat_is_wait && features+=("wait")
 
   local suffix=""
   [ "${#features[@]}" -gt 0 ] && suffix=" with features '${features[*]}'"
