@@ -18,7 +18,7 @@ export COMPONENTS=(
   cloudflared cmctl consul cookiecutter copier
   eksctl
   flux2
-  gh git-chglog go-jsonnet golang golangci-lint goreleaser gradle
+  gh git-chglog go-jsonnet golang golangci-lint gomplate goreleaser gradle
   helm hub hyperfine
   jq jsonnet-bundler
   k6 kc-tpr kind kops kubeconform kubectl
@@ -36,6 +36,7 @@ export SETTINGS=(
   "copier:size=57;"
   "git-chglog:size=14;"
   "go-jsonnet:size=15;"
+  "gomplate:size=64;"
   "hyperfine:size=23;"
   "jq:size=13;"
   "jsonnet-bundler:size=6;"
