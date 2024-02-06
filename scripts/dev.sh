@@ -94,7 +94,6 @@ export _EXIT_CODE=0
 export _PATH_CWD="$PWD"
 export _PATH_SCP="$_PATH_CWD/scripts"
 export _PATH_TMP_BASE="${TMPDIR:-/tmp}/asdf-plugin-template"
-export _PATH_TMP=""
 
 _SESSION_ID=""
 _INITIATORS=()
@@ -117,6 +116,7 @@ __internal() {
   # shellcheck source=/dev/null
   [ -f "$HOME/.asdf/asdf.sh" ] && source "$HOME/.asdf/asdf.sh"
 
+  ! [ -d "$_PATH_TMP_BASE" ] && mkdir -p "$_PATH_TMP_BASE"
   _PATH_TMP="$(mktemp -dq "$_PATH_TMP_BASE/dev-XXXXX")"
   _SESSION_ID="$(basename "$_PATH_TMP")"
 

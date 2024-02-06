@@ -34,7 +34,7 @@ logln() {
 }
 
 __log_setup() {
-  export _PATH_DEBUG="$_PATH_TMP/debug.log"
+  export _PATH_DEBUG="${_PATH_TMP:?}/debug.log"
 }
 
 __log_cleanup() {
