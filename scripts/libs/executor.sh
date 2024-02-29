@@ -48,7 +48,15 @@ exec_copier() {
   shift 2
 
   local install_path="${1:?install path is missing}"
-  local template="$_PATH_CWD" cmd="python" args=(-m copier)
+  local template="$_PATH_CWD"
+
+  local cmd args
+  if command -v copier >/dev/null; then
+    cmd="copier" args=()
+  else
+    cmd="python" args=(-m copier)
+  fi
+
   args+=(copy)
   args+=(--trust --overwrite)
 
