@@ -1,7 +1,7 @@
 ---
 _subdirectory: templates
 
-_min_copier_version: "8.1.0"
+_min_copier_version: "9.0.0"
 
 _skip_if_exists:
   - README.plugin.md
@@ -124,7 +124,7 @@ archive_regex:
 archive_conf_strip:
   type: int
   help: "[ARC] How many times we should strip directory when extract result (not support by unzip)?"
-  placeholder: 0
+  placeholder: "0"
   validator: "{% from pathjoin('macros', 'validators.jinja') import v_uint %}{{ v_uint(archive_conf_strip, required=false) }}"
   when: "{{ archive_enabled }}"
 
