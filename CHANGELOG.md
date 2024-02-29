@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.4.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.3.1...v2.4.0) (2024-02-29)
+
+
+### Features
+
+* **plugin:** add new gomplate plugin ([4638009](https://github.com/kc-workspace/asdf-plugin-template/commit/4638009f0b5dc8758584a291e14624dfcaab877b))
+* **script:** add kubeconform cli to managed by template ([5142377](https://github.com/kc-workspace/asdf-plugin-template/commit/5142377ec2292e3f9e504a9c49b1b6715d605e9f))
+
+
+### Bug Fixes
+
+* copier config failed on copier version 9+ ([5902bd6](https://github.com/kc-workspace/asdf-plugin-template/commit/5902bd6868e2390094410b720d1f7c2459749b7d))
+* **script:** first run always failed because tmp directory is missing ([9ea6eee](https://github.com/kc-workspace/asdf-plugin-template/commit/9ea6eee62c48dafbc19025037dbc7765e4fe9b24))
+
+
+### Performance Improvements
+
+* **script:** print all enabled features when start dev script ([693776a](https://github.com/kc-workspace/asdf-plugin-template/commit/693776a6670d56ac558792acd2b86215396c93ef))
+* **script:** support standalone copier command as well as python module ([f4f83c0](https://github.com/kc-workspace/asdf-plugin-template/commit/f4f83c0b6b2ab14e927471764e1bf8314a8ce292))
+
 ## [2.3.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.3.0...v2.3.1) (2023-12-06)
 
 
