@@ -77,7 +77,7 @@ core_start() {
     $ check_must_success get-latest deploy-plugin \
     $ check_cmd_pass feat_is_test \
     $ exec_with_file asdf plugin test "$component" "$plugin_repo_url" \
-    --asdf-plugin-gitref "$plugin_branch" op --version
+    --asdf-plugin-gitref "$plugin_branch" asdf "$component" test
 
   ## This manual test got replaced by plugin-test command
   # local latest
