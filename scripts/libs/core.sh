@@ -5,6 +5,7 @@ core_start() {
 
   local plugin_name="asdf-$component"
   local plugin_repo="kc-workspace/$plugin_name"
+  local plugin_branch="main"
   local plugin_repo_url="https://github.com/$plugin_repo.git"
 
   local local_path="$_PATH_CWD/.temp/$plugin_name"
@@ -27,7 +28,7 @@ core_start() {
     --delete-branch-on-merge --enable-auto-merge \
     --enable-issues --allow-update-branch \
     --enable-discussions=false --enable-projects=false --enable-wiki=false \
-    --enable-rebase-merge=false
+    --enable-rebase-merge=false --default-branch "$plugin_branch"
 
   runner "$component" remove-addon \
     $ check_dir_exist "$local_path/lib/addon" \
@@ -43,7 +44,7 @@ core_start() {
   runner "$component" git-init \
     $ check_no_errors \
     $ check_dir_missing "$local_path/.git" \
-    $ exec_with_file git -C "$local_path" init
+    $ exec_with_file git -C "$local_path" init --initial-branch "$plugin_branch"
 
   runner "$component" git-remote-add \
     $ check_no_errors \
@@ -67,37 +68,40 @@ core_start() {
     $ exec_with_file asdf latest "$component" \
     $ verify_asdf_latest
 
-  local latest
-  latest="$(db_get_comp_latest "$component")"
-
   runner "$component" list-all \
     $ check_must_success get-latest deploy-plugin \
     $ exec_with_file asdf list all "$component" \
     $ verify_asdf_list
 
-  runner "$component" install-latest \
-    $ check_must_success get-latest \
+  runner "$component" plugin-test \
+    $ check_must_success get-latest deploy-plugin \
     $ check_cmd_pass feat_is_test \
-    $ exec_with_file asdf install "$component" latest \
-    $ verify_asdf_install "$install_path"
+    $ exec_with_file asdf plugin test "$component" "$plugin_repo_url" \
+    --asdf-plugin-gitref "$plugin_branch" op --version
 
-  runner "$component" shell-latest \
-    $ check_must_success get-latest \
-    $ check_must_success install-latest \
-    $ check_cmd_pass feat_is_test \
-    $ exec_with_file asdf shell "$component" "$latest"
-
-  runner "$component" "test-latest" \
-    $ check_must_success get-latest \
-    $ check_must_success install-latest \
-    $ check_cmd_pass feat_is_test \
-    $ exec_with_file asdf "$component" test
-
-  runner "$component" "uninstall-latest" \
-    $ check_must_success get-latest \
-    $ check_must_success install-latest \
-    $ check_cmd_pass feat_is_test \
-    $ exec_with_file asdf uninstall "$component" "$latest"
+  ## This manual test got replaced by plugin-test command
+  # local latest
+  # latest="$(db_get_comp_latest "$component")"
+  # runner "$component" install-latest \
+  #   $ check_must_success get-latest \
+  #   $ check_cmd_pass feat_is_test \
+  #   $ exec_with_file asdf install "$component" latest \
+  #   $ verify_asdf_install "$install_path"
+  # runner "$component" shell-latest \
+  #   $ check_must_success get-latest \
+  #   $ check_must_success install-latest \
+  #   $ check_cmd_pass feat_is_test \
+  #   $ exec_with_file asdf shell "$component" "$latest"
+  # runner "$component" "test-latest" \
+  #   $ check_must_success get-latest \
+  #   $ check_must_success install-latest \
+  #   $ check_cmd_pass feat_is_test \
+  #   $ exec_with_file asdf "$component" test
+  # runner "$component" "uninstall-latest" \
+  #   $ check_must_success get-latest \
+  #   $ check_must_success install-latest \
+  #   $ check_cmd_pass feat_is_test \
+  #   $ exec_with_file asdf uninstall "$component" "$latest"
 
   runner "$component" "git-pull" \
     $ check_cmd_pass feat_is_deploy \
