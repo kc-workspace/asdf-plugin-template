@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.5.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.4.0...v2.5.0) (2024-03-04)
+
+
+### Features
+
+* **script:** use plugin-test instead of manually test ([5dc170e](https://github.com/kc-workspace/asdf-plugin-template/commit/5dc170e0a1c1a4d4443c4360cb1ca6f1ef3a77b3))
+* **template:** add list of possible command with `asdf &lt;plugin&gt; <cmd>` ([f96f99b](https://github.com/kc-workspace/asdf-plugin-template/commit/f96f99b2666ffe8e6f3f9d806f342be8d031df63))
+* use gpg url instead of processed file name ([76f333d](https://github.com/kc-workspace/asdf-plugin-template/commit/76f333d95a6175e6c535c8e5e4a52f3e6e2d24c6))
+
+
+### Bug Fixes
+
+* **script:** plugin test should not hard coded command name ([d772ae9](https://github.com/kc-workspace/asdf-plugin-template/commit/d772ae9d8c7c9f9d29191be8c729f95bae1206ec))
+* **template:** kc_asdf_optional didn't silently ignore command if not exist ([bbc7f65](https://github.com/kc-workspace/asdf-plugin-template/commit/bbc7f653a262adb4cde580c0357f967eab9bff18))
+* update cspell dict to support cli name ([0befbbb](https://github.com/kc-workspace/asdf-plugin-template/commit/0befbbb70de00d9599135f0d84975554e7909b02))
+
+
+### Performance Improvements
+
+* improve help with extra commands ([a592f97](https://github.com/kc-workspace/asdf-plugin-template/commit/a592f971be3cd90a216c560f76463326a875a319))
+* **templates:** testing version on `asdf &lt;plugin&gt; version` command ([56c209c](https://github.com/kc-workspace/asdf-plugin-template/commit/56c209cbb269654ce27c97643bb11f4d7ff8089f))
+* **template:** support get plugin version from custom command (asdf &lt;tool&gt; version) ([f641c71](https://github.com/kc-workspace/asdf-plugin-template/commit/f641c71ef2b8f9e295453259509ab005c04101da))
+
 ## [2.4.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.3.1...v2.4.0) (2024-02-29)
 
 
