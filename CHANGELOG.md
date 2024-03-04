@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.5.0...v2.5.1) (2024-03-04)
+
+
+### Bug Fixes
+
+* missing new dict on all plugins cause ci to fail ([266865c](https://github.com/kc-workspace/asdf-plugin-template/commit/266865c9ee9eff63d1979daa49fbda022fac7df8))
+
 ## [2.5.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.4.0...v2.5.0) (2024-03-04)
 
 
