@@ -28,7 +28,7 @@ core_start() {
     --delete-branch-on-merge --enable-auto-merge \
     --enable-issues --allow-update-branch \
     --enable-discussions=false --enable-projects=false --enable-wiki=false \
-    --enable-rebase-merge=false --default-branch "$plugin_branch"
+    --enable-rebase-merge=false # --default-branch "$plugin_branch"
 
   runner "$component" remove-addon \
     $ check_dir_exist "$local_path/lib/addon" \
