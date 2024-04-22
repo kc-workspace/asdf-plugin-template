@@ -41,7 +41,7 @@ kc_asdf_download_channel() {
   fi
 
   ## Matched with non-stable version
-  if printf '%s' "$input" | grep -qivE "$query"; then
+  if printf '%s' "$input" | grep -qiE "$query"; then
     printf 'beta'
     return 0
   fi
