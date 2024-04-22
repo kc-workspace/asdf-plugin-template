@@ -46,6 +46,7 @@ __asdf_bin() {
   if kc_asdf_present_dir "$outdir"; then
     kc_asdf_debug "$ns" "found download cache at %s" "$outdir"
     if [ -n "${ASDF_FORCE_DOWNLOAD:-}" ]; then
+      kc_asdf_debug "$ns" "force remove downloaded cache"
       rm -fr "$outdir" && mkdir "$outdir"
     else
       kc_asdf_info "$ns" \
