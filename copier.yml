@@ -65,7 +65,7 @@ python_name:
 
 download_url:
   type: str
-  help: "[DLD] Where is your download link (variables: {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os}, {ext})?"
+  help: "[DLD] Where is your download link (variables: {version}, {major_version}, {minor_version}, {patch_version}, {channel}, {arch}, {os}, {ext})?"
   placeholder: https://example.com/{version}/{arch}/{os}/download
   validator: "{% from pathjoin('macros', 'validators.jinja') import v_https %}{{ v_https(download_url) }}"
   when: "{{ app_type == 'standalone' }}"
@@ -90,7 +90,7 @@ source_type:
 
 source_url:
   type: str
-  help: "[SUR] Where is your application source link (variables: {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os}, {ext})?"
+  help: "[SUR] Where is your application source link (variables: {version}, {major_version}, {minor_version}, {patch_version}, {channel}, {arch}, {os}, {ext})?"
   placeholder: |
     {%- if source_enabled and source_type == 'git' -%}
       https://github.com/org/repo.git
@@ -166,7 +166,7 @@ checksum_enabled:
 
 checksum_url:
   type: str
-  help: "[CKS] Where is your checksum link (variables: {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os}, {ext})?"
+  help: "[CKS] Where is your checksum link (variables: {version}, {major_version}, {minor_version}, {patch_version}, {channel}, {arch}, {os}, {ext})?"
   placeholder: https://example.com/{version}/{arch}/{os}/checksum.shasum
   validator: "{% from pathjoin('macros', 'validators.jinja') import v_https %}{{ v_https(checksum_url) }}"
   when: "{{ checksum_enabled }}"
@@ -238,7 +238,7 @@ gpg_public_key_fingerprint:
 
 gpg_sig_url:
   type: str
-  help: "[GPG] Where is your gpg signature link (variables: {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os}, {ext})?"
+  help: "[GPG] Where is your gpg signature link (variables: {version}, {major_version}, {minor_version}, {patch_version}, {channel}, {arch}, {os}, {ext})?"
   placeholder: https://example.com/{version}.sig
   validator: "{% from pathjoin('macros', 'validators.jinja') import v_https %}{{ v_https(gpg_sig_url, required=false) }}"
   when: "{{ gpg_enabled }}"
@@ -250,7 +250,7 @@ install_map_enabled:
 
 install_map_yaml:
   type: yaml
-  help: "[IST] What is your scripts mapping (variables: {version}, {major_version}, {minor_version}, {patch_version}, {arch}, {os}, {ext})?"
+  help: "[IST] What is your scripts mapping (variables: {version}, {major_version}, {minor_version}, {patch_version}, {channel}, {arch}, {os}, {ext})?"
   multiline: true
   default: |
     {%- if app_type == 'python' -%}

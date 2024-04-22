@@ -6,7 +6,10 @@
       "{{ key }}:{{ value }}"
     {%- endfor %}
     )
-    local vars=("version=$version")
+    local vars=(
+      "version=$version"
+      "channel=$(kc_asdf_tag_get_channel "$version")"
+    )
     [ -n "${KC_ASDF_OS:-}" ] && vars+=("os=$KC_ASDF_OS")
     [ -n "${KC_ASDF_ARCH:-}" ] && vars+=("arch=$KC_ASDF_ARCH")
     [ -n "${KC_ASDF_EXT:-}" ] && vars+=("ext=$KC_ASDF_EXT")
