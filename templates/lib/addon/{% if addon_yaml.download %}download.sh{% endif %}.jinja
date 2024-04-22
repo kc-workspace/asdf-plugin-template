@@ -26,3 +26,25 @@ kc_asdf_download_mode() {
     "$filename" "$mode"
   printf "%s" "$mode"
 }
+
+## get current channel based on input tag (either stable or beta)
+## usage: `channel="$(kc_asdf_download_channel "v1.0.0")"`
+## limitation: due to the config, all non-stable channel will always be 'beta'
+kc_asdf_download_channel() {
+  local input="$1"
+  local query='{{ custom_non_stable_version }}'
+
+  ## Empty string is not stable version
+  if [ -z "$input" ]; then
+    printf 'unknown'
+    return 0
+  fi
+
+  ## Matched with non-stable version
+  if printf '%s' "$input" | grep -qivE "$query"; then
+    printf 'beta'
+    return 0
+  fi
+
+  printf 'stable'
+}

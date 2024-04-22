@@ -8,7 +8,7 @@
     )
     local vars=(
       "version=$version"
-      "channel=$(kc_asdf_tag_get_channel "$version")"
+      "channel=$(kc_asdf_download_channel "$version")"
     )
     [ -n "${KC_ASDF_OS:-}" ] && vars+=("os=$KC_ASDF_OS")
     [ -n "${KC_ASDF_ARCH:-}" ] && vars+=("arch=$KC_ASDF_ARCH")
