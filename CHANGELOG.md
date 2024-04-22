@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.6.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.5.1...v2.6.0) (2024-04-22)
+
+
+### Features
+
+* add new features called 'github_latest' ([41ddb26](https://github.com/kc-workspace/asdf-plugin-template/commit/41ddb26ca09696b90cf15f3484ed1e04eea6388c))
+
+
+### Bug Fixes
+
+* channel didn't resolve correctly ([e7d5f07](https://github.com/kc-workspace/asdf-plugin-template/commit/e7d5f07e6b2cfe8e3ea8d4e6807cac2980b79306))
+* **script:** --default-branch didn't works because new created repo didn't have branch yet ([3bc2721](https://github.com/kc-workspace/asdf-plugin-template/commit/3bc2721edb7b9e9721a3a06f5f6ecd083627d38b))
+* **script:** disable plugin test on script because it won't works on local development plugin ([a0b8e89](https://github.com/kc-workspace/asdf-plugin-template/commit/a0b8e8907ef3e294f640b5ebb16592f1dc77e6f1))
+
+
+### Performance Improvements
+
+* move version channel to download addon instead ([d288c50](https://github.com/kc-workspace/asdf-plugin-template/commit/d288c50c8e6fe5382eafa93d80f19c0f2b25d8e0))
+* support version channel (only stable and beta for now) ([a0b1acb](https://github.com/kc-workspace/asdf-plugin-template/commit/a0b1acb497b46c4564b6dd148c3089826f166928))
+* **template:** add debug logs when user force download resources ([abf64f9](https://github.com/kc-workspace/asdf-plugin-template/commit/abf64f986903b22bb47ca9721556b5fd3c1f5eb9))
+
 ## [2.5.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.5.0...v2.5.1) (2024-03-04)
 
 
