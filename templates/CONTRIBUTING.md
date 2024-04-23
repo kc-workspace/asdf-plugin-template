@@ -275,6 +275,15 @@ _kc_asdf_custom_source_build() {
 }
 ```
 
+2. To support action after installed, use `_kc_asdf_custom_post_install()`
+
+```bash
+_kc_asdf_custom_post_install() {
+  local download_dir="$1" install_dir="$2"
+  printf 'Installed at %s\n' "$install_dir"
+}
+```
+
 ## Parse legacy file callback
 
 1. To support parsing legacy version, use `_kc_asdf_custom_parse_version_file()`

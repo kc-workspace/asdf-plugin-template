@@ -30,3 +30,7 @@
       return 1
     fi
   done
+
+  command -v _kc_asdf_custom_post_install >/dev/null &&
+    kc_asdf_debug "$ns" "developer has post install source function defined" &&
+    _kc_asdf_custom_post_install "$indir" "$outdir"
