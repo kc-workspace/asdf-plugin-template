@@ -26,9 +26,9 @@ kc_asdf_archive_extract() {
     args+=(-f "$input" -C "$tmppath")
     kc_asdf_exec tar -x \
       {%- if archive_conf_strip is not none and archive_conf_strip > 0 %}
-    --strip-components "{{ archive_conf_strip }}" \
+      --strip-components "{{ archive_conf_strip }}" \
       {%- endif %}
-    "${args[@]}" ||
+      "${args[@]}" ||
       return 1
   fi
 
