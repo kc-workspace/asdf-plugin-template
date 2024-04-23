@@ -17,12 +17,12 @@ kc_asdf_archive_extract() {
     kc_asdf_exec unzip -qo "$input" -d "$tmppath" ||
       return 1
   else
-    kc_asdf_exec tar -xzf \
-      -C "$tmppath" \
+    kc_asdf_exec tar -xz \
       {%- if archive_conf_strip is not none and archive_conf_strip > 0 %}
       --strip-components "{{ archive_conf_strip }}" \
       {%- endif %}
-      "$input" ||
+      -C "$tmppath" \
+      -f "$input" ||
       return 1
   fi
 
