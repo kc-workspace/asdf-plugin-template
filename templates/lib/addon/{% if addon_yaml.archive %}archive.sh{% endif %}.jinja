@@ -18,9 +18,11 @@ kc_asdf_archive_extract() {
       return 1
   else
     kc_asdf_exec tar -xzf \
-      "$input" \
       -C "$tmppath" \
-      --strip-components "{{ 0 if archive_conf_strip is none else archive_conf_strip }}" ||
+      {%- if archive_conf_strip is not none and archive_conf_strip > 0 %}
+      --strip-components "{{ archive_conf_strip }}" \
+      {%- endif %}
+      "$input" ||
       return 1
   fi
 
