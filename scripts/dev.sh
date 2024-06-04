@@ -24,7 +24,7 @@ export COMPONENTS=(
   k6 kc-tpr kind kops kubeconform kubectl
   maven mkcert
   operator-sdk
-  pipx
+  pipx pomerium
   terraform terragrunt
   yamllint yq
 )
@@ -47,6 +47,7 @@ export SETTINGS=(
   "maven:size=77;"
   "mkcert:size=14;"
   "pipx:size=55;"
+  "pomerium:size=17;"
   "yamllint:size=65;"
   ## The last one is default value
   "size=99; commit=perf: update plugin from template [autocommit]; branch=main"
