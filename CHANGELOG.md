@@ -1,5 +1,38 @@
 # Changelog
 
+## [2.6.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.5.1...v2.6.0) (2024-07-10)
+
+
+### Features
+
+* add new callback `_kc_asdf_custom_post_install` when post install ([5577194](https://github.com/kc-workspace/asdf-plugin-template/commit/55771948318ed2b495f1ed913313b85cfe88efe4))
+* add new features called 'github_latest' ([41ddb26](https://github.com/kc-workspace/asdf-plugin-template/commit/41ddb26ca09696b90cf15f3484ed1e04eea6388c))
+* **plugin:** add new codecrafter cli plugin ([1e882b0](https://github.com/kc-workspace/asdf-plugin-template/commit/1e882b040a6c0a29d62a1b9545e6037f6650f29d))
+
+
+### Bug Fixes
+
+* **addons:** when sorting tags we always calculate as number ([1473bf2](https://github.com/kc-workspace/asdf-plugin-template/commit/1473bf27fc82ec312ca13d3d0d0f4f40c9e4eeb0))
+* channel didn't resolve correctly ([e7d5f07](https://github.com/kc-workspace/asdf-plugin-template/commit/e7d5f07e6b2cfe8e3ea8d4e6807cac2980b79306))
+* **script:** --default-branch didn't works because new created repo didn't have branch yet ([3bc2721](https://github.com/kc-workspace/asdf-plugin-template/commit/3bc2721edb7b9e9721a3a06f5f6ecd083627d38b))
+* **script:** disable plugin test on script because it won't works on local development plugin ([a0b8e89](https://github.com/kc-workspace/asdf-plugin-template/commit/a0b8e8907ef3e294f640b5ebb16592f1dc77e6f1))
+* **template:** arch should mapping to arch yaml file ([b9642da](https://github.com/kc-workspace/asdf-plugin-template/commit/b9642daa9d37235995a38f34d3119e216f877648))
+* **templates:** --strip-components only add when needed ([cdc2525](https://github.com/kc-workspace/asdf-plugin-template/commit/cdc252588d422fcc2d7896dd90c8b1719b9ff354))
+* **template:** support xz file ([d7e29d4](https://github.com/kc-workspace/asdf-plugin-template/commit/d7e29d44ad877419622c4451e8719f7e4f45cfd5))
+* **template:** tar didn't get correct path ([331df5c](https://github.com/kc-workspace/asdf-plugin-template/commit/331df5cbcb629952045dcdae965881c727778d11))
+* update invalid template ([a46ba6f](https://github.com/kc-workspace/asdf-plugin-template/commit/a46ba6fdd4fe34a3c4a95f69ea4896aa1de980dc))
+* update linter ([2d50078](https://github.com/kc-workspace/asdf-plugin-template/commit/2d50078fea83e97922c812e43e17338c6717fd56))
+
+
+### Performance Improvements
+
+* move version channel to download addon instead ([d288c50](https://github.com/kc-workspace/asdf-plugin-template/commit/d288c50c8e6fe5382eafa93d80f19c0f2b25d8e0))
+* **plugin:** add pomerium-cli to managed plugin ([097c363](https://github.com/kc-workspace/asdf-plugin-template/commit/097c3639cf9e48a25a7fadfa141df0ad6ca5a68e))
+* **scripts:** add --help options to dev.sh script ([d834e22](https://github.com/kc-workspace/asdf-plugin-template/commit/d834e22963fc445af8ccde45ee4bfabb6e1ce37d))
+* support version channel (only stable and beta for now) ([a0b1acb](https://github.com/kc-workspace/asdf-plugin-template/commit/a0b1acb497b46c4564b6dd148c3089826f166928))
+* **template:** add debug logs when user force download resources ([abf64f9](https://github.com/kc-workspace/asdf-plugin-template/commit/abf64f986903b22bb47ca9721556b5fd3c1f5eb9))
+* **template:** os and arch is now always existed even it empty ([ddcf20f](https://github.com/kc-workspace/asdf-plugin-template/commit/ddcf20f9afe3c9ad7f9332970f071bafa1ec30b7))
+
 ## [2.5.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.5.0...v2.5.1) (2024-03-04)
 
 
