@@ -15,7 +15,7 @@
 export COMPONENTS=(
   '1password'
   ansible ansible-core argocd aws
-  cloudflared cmctl consul cookiecutter copier
+  cloudflared cmctl codecrafters consul cookiecutter copier
   eksctl
   flux2
   gh git-chglog go-jsonnet golang golangci-lint gomplate goreleaser gradle
@@ -32,6 +32,7 @@ export COMPONENTS=(
 ## <component>:[<key>=<value>;]+
 export SETTINGS=(
   "1password:size=66;"
+  "codecrafters:size=32;"
   "cookiecutter:size=38;"
   "copier:size=57;"
   "git-chglog:size=14;"
