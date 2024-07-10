@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.6.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.6.0...v2.6.1) (2024-07-10)
+
+
+### Bug Fixes
+
+* **lint:** update cspell dict to include pomerium ([b287938](https://github.com/kc-workspace/asdf-plugin-template/commit/b287938a2c79c65d54ad4f7164de46c39fe202e2))
+* **templates:** move utils.sh load to after common command so we can load addon file on utils ([b5c4a85](https://github.com/kc-workspace/asdf-plugin-template/commit/b5c4a857f191e30480df7c09ee02423834458e61))
+* **templates:** post install always return error when no custom post install function defined ([a3736b1](https://github.com/kc-workspace/asdf-plugin-template/commit/a3736b1c8b818e73175887f6bbad81d87a26d0bc))
+
 ## [2.6.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.5.1...v2.6.0) (2024-07-10)
 
 
