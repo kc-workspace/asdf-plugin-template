@@ -61,7 +61,7 @@ kc_asdf_tags_sort() {
   kc_asdf_debug "$ns" "sorting from %s" "$input"
   if [ -f "$input" ] &&
     sed 'h; s/[+-]/./g; s/.p\([[:digit:]]\)/.z\1/; s/$/.z/; G; s/\n/ /' "$input" |
-    LC_ALL=C sort -t. -k 1,1 -k 2,2n -k 3,3n -k 4,4n -k 5,5n | awk '{print $2}' >"$output"; then
+    LC_ALL=C sort -t. -k 1,1n -k 2,2n -k 3,3n -k 4,4n -k 5,5n | awk '{print $2}' >"$output"; then
     __asdf_if_not_debug rm "$input"
     printf "%s" "$output"
     return 0
