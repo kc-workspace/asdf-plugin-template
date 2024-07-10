@@ -5,10 +5,10 @@
 
 ns="commands.lib"
 
-# shellcheck source-path=SCRIPTDIR/utils.sh
-source "${KC_ASDF_PLUGIN_PATH:?}/lib/utils.sh"
 # shellcheck source-path=SCRIPTDIR/common/index.sh
 source "${KC_ASDF_PLUGIN_PATH:?}/lib/common/index.sh"
+# shellcheck source-path=SCRIPTDIR/utils.sh
+source "${KC_ASDF_PLUGIN_PATH:?}/lib/utils.sh"
 
 if command -v _kc_asdf_custom_env >/dev/null; then
   kc_asdf_debug "$ns" "user defined custom environment variables"
