@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
 
-## example: ./scripts/dev.sh [<components>...]
-## variables:
-##   - $FEAT_ENABLED=debug,dryrun,prod,prompt,deploy,wait,single,test
-##         by default all features is disabled:
-##         - debug   - enabled debug logs
-##         - dryrun  - all execution will only print without executes
-##         - prod    - enabled production templates
-##         - prompt  - always ask template question (even answer file exist)
-##         - deploy  - deploy changes to repository
-##         - wait    - wait for workflows (only if enabled deploy)
-##         - test    - enabled test latest changes first
+#= example: ./scripts/dev.sh [<components>...]
+#= options:
+#=   - -h | --help   - for get help
+#= variables:
+#=   - $FEAT_ENABLED=debug,dryrun,prod,prompt,deploy,wait,single,test
+#=         by default all features is disabled:
+#=         - debug   - enabled debug logs
+#=         - dryrun  - all execution will only print without executes
+#=         - prod    - enabled production templates
+#=         - prompt  - always ask template question (even answer file exist)
+#=         - deploy  - deploy changes to repository
+#=         - wait    - wait for workflows (only if enabled deploy)
+#=         - test    - enabled test latest changes first
 
 export COMPONENTS=(
   '1password'
@@ -62,7 +64,20 @@ export LIBRARIES=(
 )
 
 main() {
-  local components=("$@")
+  local components=() component
+
+  ## Load components from commandline parameters
+  for component in "$@"; do
+    if [[ "$component" =~ ^-h ]] || [[ "$component" =~ ^--help ]] || [[ "$component" =~ help ]]; then
+      ## Print file header for help
+      grep '^#=' "$0" | sed 's/#= //'
+      return 0
+    else
+      components+=("$component")
+    fi
+  done
+
+  ## Load default components if no commandline supply
   if [ "${#components[@]}" -eq 0 ]; then
     components=("${COMPONENTS[@]}")
   fi
