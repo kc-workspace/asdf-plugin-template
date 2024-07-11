@@ -6,9 +6,11 @@
 ns="commands.lib"
 
 # shellcheck source=/dev/null
-source "${KC_ASDF_PLUGIN_PATH:?}/lib/utils.sh"
+source "${KC_ASDF_PLUGIN_PATH:?}/lib/init.sh"
 # shellcheck source=/dev/null
 source "${KC_ASDF_PLUGIN_PATH:?}/lib/common/index.sh"
+# shellcheck source=/dev/null
+source "${KC_ASDF_PLUGIN_PATH:?}/lib/utils.sh"
 
 if command -v _kc_asdf_custom_env >/dev/null; then
   kc_asdf_debug "$ns" "user defined custom environment variables"

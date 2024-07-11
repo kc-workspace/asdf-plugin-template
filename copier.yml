@@ -7,6 +7,7 @@ _skip_if_exists:
   - README.plugin.md
   - bin
   - "!bin/README.md"
+  - lib/init.sh
   - lib/utils.sh
   - lib/commands/*.bash
   - "!lib/commands/command-test.bash"
