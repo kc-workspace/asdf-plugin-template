@@ -94,7 +94,11 @@ kc_asdf_get_ext() {
     return 0
   fi
 
-  local key="$KC_ASDF_OS-$KC_ASDF_ARCH"
+  local os arch
+  os="$(kc_asdf_get_os)"
+  arch="$(kc_asdf_get_arch)"
+
+  local key="$os-$arch"
   ext="{{ sys_ext_default }}"
   case "$key" in
   {% for key, value in sys_ext_yaml.items() -%}
