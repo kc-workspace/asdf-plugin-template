@@ -5,9 +5,9 @@
 
 ns="commands.lib"
 
-# shellcheck source-path=SCRIPTDIR/utils.sh
+# shellcheck source=/dev/null
 source "${KC_ASDF_PLUGIN_PATH:?}/lib/utils.sh"
-# shellcheck source-path=SCRIPTDIR/common/index.sh
+# shellcheck source=/dev/null
 source "${KC_ASDF_PLUGIN_PATH:?}/lib/common/index.sh"
 
 if command -v _kc_asdf_custom_env >/dev/null; then
