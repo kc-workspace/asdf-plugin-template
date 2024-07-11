@@ -28,6 +28,10 @@ feat_is_test() {
   __feat_status test tst t
 }
 
+feat_is_fast() {
+  __feat_status fast fst f
+}
+
 __feat_status() {
   local key enabled
   for enabled in ${FEAT_ENABLED//,/ }; do

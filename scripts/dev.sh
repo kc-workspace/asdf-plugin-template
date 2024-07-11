@@ -13,6 +13,7 @@
 #=         - deploy  - deploy changes to repository
 #=         - wait    - wait for workflows (only if enabled deploy)
 #=         - test    - enabled test latest changes first
+#=         - fast    - enabled fast mode to skipped all slow command
 
 export COMPONENTS=(
   '1password'
@@ -90,6 +91,7 @@ main() {
   feat_is_prompt && features+=("prompt")
   feat_is_test && features+=("test")
   feat_is_wait && features+=("wait")
+  feat_is_fast && features+=("fast")
 
   local suffix=""
   [ "${#features[@]}" -gt 0 ] && suffix=" with features '${features[*]}'"
