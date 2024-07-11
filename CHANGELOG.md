@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.6.3](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.6.2...v2.6.3) (2024-07-11)
+
+
+### Performance Improvements
+
+* **script:** add fast mode to skip all slow actions ([cd8eaf0](https://github.com/kc-workspace/asdf-plugin-template/commit/cd8eaf0b4921d90e41fe5577b432cb2bcb7cb2ba))
+* **template:** add debug logs on is_* functions ([994b2a9](https://github.com/kc-workspace/asdf-plugin-template/commit/994b2a9332e167cd02d94bb63f32ad9d180260d1))
+* **template:** add new init.sh script for set up custom function ([7ce9b73](https://github.com/kc-workspace/asdf-plugin-template/commit/7ce9b73aea59f54ce57f6473194982d0f68e686b))
+* **template:** get system functions will always use latest data ([ac05edc](https://github.com/kc-workspace/asdf-plugin-template/commit/ac05edcdcbb7a7b559256a3a8f793489f30b5ceb))
+* **template:** the kc_asdf_is_* function in system.sh will always fetch latest data ([2410835](https://github.com/kc-workspace/asdf-plugin-template/commit/24108359de75c6a649d90eb9069d13fe69211ec5))
+
 ## [2.6.2](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.6.1...v2.6.2) (2024-07-11)
 
 
