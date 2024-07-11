@@ -36,7 +36,8 @@ kc_asdf_get_os() {
 ## Is current OS is macOS
 ## usage: `kc_asdf_is_darwin`
 kc_asdf_is_darwin() {
-  local os="${KC_ASDF_OS}" custom="{{ sys_os_yaml.darwin if 'darwin' in sys_os_yaml and sys_os_enabled }}"
+  local os custom="{{ sys_os_yaml.darwin if 'darwin' in sys_os_yaml and sys_os_enabled }}"
+  os="$(kc_asdf_get_os)"
   local darwin="${custom:-darwin}"
   [[ "$os" == "$darwin" ]]
 }
@@ -44,7 +45,8 @@ kc_asdf_is_darwin() {
 ## Is current OS is LinuxOS
 ## usage: `kc_asdf_is_linux`
 kc_asdf_is_linux() {
-  local os="${KC_ASDF_OS}" custom="{{ sys_os_yaml.linux if 'linux' in sys_os_yaml and sys_os_enabled }}"
+  local os custom="{{ sys_os_yaml.linux if 'linux' in sys_os_yaml and sys_os_enabled }}"
+  os="$(kc_asdf_get_os)"
   local linux="${custom:-linux}"
   [[ "$os" == "$linux" ]]
 }
