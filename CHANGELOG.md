@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.6.2](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.6.1...v2.6.2) (2024-07-11)
+
+
+### Bug Fixes
+
+* **template:** fix shellcheck warning ([fb3c9ee](https://github.com/kc-workspace/asdf-plugin-template/commit/fb3c9ee60d8366f60a3a34664c6f590ec86f81ac))
+* **template:** move utils.sh first because utils needed for common script ([1f6e91e](https://github.com/kc-workspace/asdf-plugin-template/commit/1f6e91e64790781a1c6915152ddf80773b55505d))
+
+
+### Performance Improvements
+
+* **scripts:** update commit syntax when update from template ([a64ce32](https://github.com/kc-workspace/asdf-plugin-template/commit/a64ce32f4bcf66aaee367369a31be598923fc8c9))
+
 ## [2.6.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.6.0...v2.6.1) (2024-07-10)
 
 
