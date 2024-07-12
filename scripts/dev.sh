@@ -26,7 +26,7 @@ export COMPONENTS=(
   jq jsonnet-bundler
   k6 kc-tpr kind kops kubeconform kubectl
   maven mkcert
-  operator-sdk
+  opentofu operator-sdk
   pipx pomerium
   terraform terragrunt
   yamllint yq
@@ -50,6 +50,7 @@ export SETTINGS=(
   "kind:size=32;"
   "maven:size=77;"
   "mkcert:size=14;"
+  "opentofu:size=25;"
   "pipx:size=55;"
   "pomerium:size=17;"
   "yamllint:size=65;"
