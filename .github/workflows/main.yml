@@ -21,7 +21,7 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
       - name: Running cspell
-        uses: streetsidesoftware/cspell-action@v5
+        uses: streetsidesoftware/cspell-action@v6
         with:
           config: ".github/linters/cspell.json"
           # Log progress and other information during the action execution.
@@ -44,7 +44,7 @@ jobs:
           fetch-depth: 0
       - name: Linting
         # https://github.com/super-linter/super-linter#slim-image
-        uses: super-linter/super-linter/slim@v5
+        uses: super-linter/super-linter/slim@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BRANCH: ${{ env.DEFAULT_BRANCH }}
