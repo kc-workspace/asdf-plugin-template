@@ -55,7 +55,7 @@ export SETTINGS=(
   "pomerium:size=17;"
   "yamllint:size=65;"
   ## The last one is default value
-  "size=99; commit=perf(plugin): update template version [bot]; branch=main"
+  "size=99; commit=perf(plugin): upgrade template to version %s [bot]; branch=main"
 )
 
 export LIBRARIES=(

@@ -119,6 +119,13 @@ __exec_cmd() {
 __exec() {
   local cmd="${1:?command is missing}"
   shift
-  test -f "$_PATH_SCP/bin/$cmd" && cmd="$_PATH_SCP/bin/$cmd"
-  "$cmd" "$@"
+
+  if test -f "$_PATH_SCP/bin/$cmd"; then
+    "$_PATH_SCP/bin/$cmd" "$@"
+  elif command -v "$cmd" >/dev/null; then
+    "$cmd" "$@"
+  else
+    loge "command not found: %s" "$cmd"
+    return 1
+  fi
 }

@@ -119,10 +119,14 @@ core_start() {
     $ check_cmd_pass feat_is_deploy \
     $ exec_ignore git -C "$local_path" add --all
 
+  local commit_message template_version
+  template_version="$(__exec yq --unwrapScalar --expression '._commit' "$local_path/.copier-answers.yml")"
+  # shellcheck disable=SC2059
+  printf -v commit_message "$(setting "$component" commit)" "$template_version"
   runner "$component" "git-commit" \
     $ check_must_success git-add-all \
     $ check_cmd_pass feat_is_deploy \
-    $ exec_ignore git -C "$local_path" commit -m "$(setting "$component" commit)"
+    $ exec_ignore git -C "$local_path" commit -m "$commit_message"
 
   runner "$component" "git-set-upstream" \
     $ check_must_success git-add-all \
