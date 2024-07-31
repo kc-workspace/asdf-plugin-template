@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.3](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.7.2...v2.7.3) (2024-07-31)
+
+
+### Bug Fixes
+
+* **script:** support template version when writing commit message ([b31297c](https://github.com/kc-workspace/asdf-plugin-template/commit/b31297cf3dd252109e15ab2f669924f8da8218c6))
+
 ## [2.7.2](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.7.1...v2.7.2) (2024-07-31)
 
 
