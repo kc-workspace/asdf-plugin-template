@@ -10,6 +10,11 @@ KC_ASDF_RES_PATH="${KC_ASDF_PLUGIN_PATH:?}/res"
 KC_ASDF_ADDON_LIST=""
 export KC_ASDF_RES_PATH KC_ASDF_ADDON_LIST
 
+## ASDF directories
+KC_ASDF_PLUGIN_DIR="${KC_ASDF_PLUGIN_PATH:-$(cd "$(dirname "$(dirname "${BASH_SOURCE[0]}")")" && pwd)}"
+KC_ASDF_PLUGIN_NAME="$(basename "$KC_ASDF_PLUGIN_DIR")"
+KC_ASDF_CORE_DIR="${ASDF_DIR:-$(cd "$(dirname "$(dirname "$pdir")")" && pwd)}"
+
 ## Plugin information
 KC_ASDF_ORG="{{ plugin_org }}"
 KC_ASDF_NAME="{{ plugin_name }}"
