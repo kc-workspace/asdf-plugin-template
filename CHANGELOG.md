@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.7.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.7.0...v2.7.1) (2024-07-31)
+
+
+### Performance Improvements
+
+* **template:** add kc_asdf_tags_contains on tag addon to use with if condition to check is version exist or not ([0b0ea3a](https://github.com/kc-workspace/asdf-plugin-template/commit/0b0ea3af2461f8e4f1671c17b8b99715528d3bba))
+* **template:** kc_asdf_tags_list_installed now support first args as version filtering ([b5a9a0c](https://github.com/kc-workspace/asdf-plugin-template/commit/b5a9a0c4b45a5e6fe1b742ce03734bc743bdbab6))
+
 ## [2.7.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.6.3...v2.7.0) (2024-07-31)
 
 
