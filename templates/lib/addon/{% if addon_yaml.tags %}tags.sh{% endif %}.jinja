@@ -34,9 +34,10 @@ kc_asdf_tags_list() {
 
 ## List all installed tags from install directory
 ## usage: `output_file="$(kc_asdf_tags_list_installed)"`
+## usage: `output_file="$(kc_asdf_tags_list_installed "^1")"`
 kc_asdf_tags_list_installed() {
   local ns="tags-list-installed.addon"
-  local install_path install
+  local install_path install regex="${1:-.*}"
   printf -v install_path "%s/installs/%s" \
     "$KC_ASDF_CORE_PATH" \
     "$KC_ASDF_PLUGIN_NAME"
@@ -47,7 +48,8 @@ kc_asdf_tags_list_installed() {
     for install in "$install_path"/*/; do
       [[ -e $install ]] || break
 
-      basename "$install" | sed 's/^ref-/ref:/' >"$output"
+      [[ "$install" =~ $regex ]] &&
+        basename "$install" | sed 's/^ref-/ref:/' >"$output"
     done
     printf "%s" "$output"
   else
