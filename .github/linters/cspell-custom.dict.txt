@@ -2,3 +2,4 @@ eksctl
 kubeconform
 gomplate
 pomerium
+opentufu
