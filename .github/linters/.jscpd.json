@@ -1,0 +1,10 @@
+{
+  "absolute": true,
+  "ignore": [
+    "**/.github/workflows/**",
+    "**/.github/linters/**",
+    "**/.github/release-please/**"
+  ],
+  "reporters": ["consoleFull"],
+  "threshold": 0
+}
