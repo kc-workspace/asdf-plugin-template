@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.7.0](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.6.3...v2.7.0) (2024-07-31)
+
+
+### Features
+
+* **template:** add KC_ASDF_PLUGIN_* variables for plugin information ([6187c8c](https://github.com/kc-workspace/asdf-plugin-template/commit/6187c8c3bbebaca3198af8cc7444e7f90a353c5e))
+* **template:** add new KC_ASDF_PLUGIN_NAME variable to all scripts ([ee76568](https://github.com/kc-workspace/asdf-plugin-template/commit/ee76568ef2816494ef3c37c27284cb71b3a52b1d))
+
+
+### Bug Fixes
+
+* **linter:** update linter configs ([8e104f8](https://github.com/kc-workspace/asdf-plugin-template/commit/8e104f81f961076811f2d8c3692170dae19dc88c))
+
+
+### Performance Improvements
+
+* **plugin:** add opentufu as managed plugin ([ea87b5e](https://github.com/kc-workspace/asdf-plugin-template/commit/ea87b5e994847ebb21e5a06223744283d7f21011))
+* **template:** add new KC_ASDF_CORE_PATH variable resolved to where asdf is ([d8ce2e0](https://github.com/kc-workspace/asdf-plugin-template/commit/d8ce2e0595695a23097375fe4a6160346f9779e8))
+* **template:** add new kc_asdf_tags_list_installed on tags addon to list installed tags on local machine ([582c9a3](https://github.com/kc-workspace/asdf-plugin-template/commit/582c9a31baffb0c6e8ea86fb5accdc3cc5f4a516))
+
 ## [2.6.3](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.6.2...v2.6.3) (2024-07-11)
 
 
