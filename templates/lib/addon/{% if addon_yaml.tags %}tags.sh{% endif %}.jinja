@@ -115,6 +115,18 @@ kc_asdf_tags_only() {
   return 1
 }
 
+## Check is input file contains input regex or not
+## e.g. kc_asdf_tags_contains "$input_file" ^v1.0.0 && echo "contains version 1"
+kc_asdf_tags_contains() {
+  local ns="tags-only.addon"
+  local input="$1"
+  local regex="${2:-^\\s*v}"
+
+  kc_asdf_debug "$ns" \
+    "check tags contain %s from %s or not" "$regex" "$input"
+  [ -f "$input" ] && grep -qiE "$regex" "$input"
+}
+
 ## Formatting tags by remove input regex
 ## usage: `output_file="$(kc_asdf_tags_format "$input_file" ^v)"`
 kc_asdf_tags_format() {
