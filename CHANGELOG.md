@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.2](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.7.1...v2.7.2) (2024-07-31)
+
+
+### Bug Fixes
+
+* **template:** update linter complain on ci and variable unused ([ff43fd9](https://github.com/kc-workspace/asdf-plugin-template/commit/ff43fd96fb8c38f7a67d8f418afc02e6bf03fb22))
+
 ## [2.7.1](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.7.0...v2.7.1) (2024-07-31)
 
 
