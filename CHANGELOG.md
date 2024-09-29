@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.7.4](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.7.3...v2.7.4) (2024-09-29)
+
+
+### Bug Fixes
+
+* linter cannot reports status on github-actions for all plugins ([09d6ce8](https://github.com/kc-workspace/asdf-plugin-template/commit/09d6ce83e652bf56200aef5f660282080fa22d2a))
+
+
+### Performance Improvements
+
+* **template:** update deprecated release please action ([5ea6f1c](https://github.com/kc-workspace/asdf-plugin-template/commit/5ea6f1c3bc6a49a579b4a447e847581e72816183))
+
 ## [2.7.3](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.7.2...v2.7.3) (2024-07-31)
 
 
