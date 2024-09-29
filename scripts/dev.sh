@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
 #= example: ./scripts/dev.sh [<components>...]
+#= commands:
+#=   - help          - for get help
+#=   - list          - for list supported components
 #= options:
 #=   - -h | --help   - for get help
+#=   - -l | --list   - for list supported components
 #= variables:
 #=   - $FEAT_ENABLED=debug,dryrun,prod,prompt,deploy,wait,single,test
 #=         by default all features is disabled:
@@ -70,13 +74,10 @@ main() {
 
   ## Load components from commandline parameters
   for component in "$@"; do
-    if [[ "$component" =~ ^-h ]] || [[ "$component" =~ ^--help ]] || [[ "$component" =~ help ]]; then
-      ## Print file header for help
-      grep '^#=' "$0" | sed 's/#= //'
-      return 0
-    else
-      components+=("$component")
-    fi
+    cmd_on_help "$component"
+    cmd_on_list "$component"
+
+    components+=("$component")
   done
 
   ## Load default components if no commandline supply
@@ -109,6 +110,28 @@ main() {
   done
 
   core_summary "${components[@]}"
+}
+
+cmd_on_help() {
+  local input="$1"
+  if [[ "$input" =~ ^-h ]] || [[ "$input" =~ ^--help ]] || [[ "$input" =~ help ]]; then
+    ## Print file header for help
+    grep '^#=' "$0" | sed 's/#= //'
+    exit 0
+  fi
+}
+
+cmd_on_list() {
+  local input="$1"
+  if [[ "$input" =~ ^-l ]] || [[ "$input" =~ ^--list ]] || [[ "$input" =~ list ]]; then
+    local component
+    echo "Components:"
+    for component in "${COMPONENTS[@]}"; do
+      printf -- '- %s\n' "$component"
+    done
+    echo
+    exit 0
+  fi
 }
 
 export _EXIT_CODE=0
