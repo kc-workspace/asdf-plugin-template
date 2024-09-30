@@ -22,6 +22,7 @@
 export COMPONENTS=(
   '1password'
   ansible ansible-core argocd aws
+  bun
   cloudflared cmctl codecrafters consul cookiecutter copier
   eksctl
   flux2
