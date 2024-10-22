@@ -32,7 +32,7 @@ export COMPONENTS=(
   k6 kc-tpr kind kops kubeconform kubectl
   maven mkcert
   opentofu operator-sdk
-  pipx pomerium
+  pipx pomerium popeye
   terraform terragrunt
   yamllint yq
 )
@@ -58,6 +58,7 @@ export SETTINGS=(
   "opentofu:size=25;"
   "pipx:size=55;"
   "pomerium:size=17;"
+  "popeye:size=67;"
   "yamllint:size=65;"
   ## The last one is default value
   "size=99; commit=perf(plugin): upgrade template to version %s [bot]; branch=main"
