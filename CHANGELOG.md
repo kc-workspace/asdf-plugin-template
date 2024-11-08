@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.7.5](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.7.4...v2.7.5) (2024-11-08)
+
+
+### Performance Improvements
+
+* **plugin:** add new jfrog plugins ([20e9f2e](https://github.com/kc-workspace/asdf-plugin-template/commit/20e9f2e5eca7335b0122b043a18ad7c5f8df257a))
+* **plugin:** add new popeye plugins ([2706206](https://github.com/kc-workspace/asdf-plugin-template/commit/27062065ba69b4930e00eafc584111c09715e592))
+* **plugin:** support bun plugin ([601ff97](https://github.com/kc-workspace/asdf-plugin-template/commit/601ff97cdd542a6a1b2ec76e7ae4b8c1a7e9c85a))
+* **script:** add list command to list all plugins ([e41c311](https://github.com/kc-workspace/asdf-plugin-template/commit/e41c311c05acbbbbb957085e8491bef993efc5f3))
+
 ## [2.7.4](https://github.com/kc-workspace/asdf-plugin-template/compare/v2.7.3...v2.7.4) (2024-09-29)
 
 
