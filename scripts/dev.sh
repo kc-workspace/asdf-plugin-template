@@ -28,7 +28,7 @@ export COMPONENTS=(
   flux2
   gh git-chglog go-jsonnet golang golangci-lint gomplate goreleaser gradle
   helm hub hyperfine
-  jq jsonnet-bundler
+  jfrog jq jsonnet-bundler
   k6 kc-tpr kind kops kubeconform kubectl
   maven mkcert
   opentofu operator-sdk
