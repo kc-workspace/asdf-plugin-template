@@ -10,10 +10,47 @@ shared:
     - check-success=linting
 
 queue_rules:
+  - name: duplicated default from Automatic merging by approval
+    queue_conditions:
+      - "#approved-reviews-by>=1"
+    merge_conditions:
+      - and:
+          - -closed
+          - -draft
+          - -conflict
+          - -label=do-not-automerge
+          - "#review-threads-unresolved=0"
+      - and:
+          - check-success=spellcheck
+          - check-success=linting
+
+
+    merge_method: squash
+  - name: duplicated default from Automatic merging by owner
+    queue_conditions:
+      - or:
+          - author=kc-bot
+          - author=kamontat
+          - author=dependabot
+      - base=main
+    merge_conditions:
+      - and:
+          - -closed
+          - -draft
+          - -conflict
+          - -label=do-not-automerge
+          - "#review-threads-unresolved=0"
+      - and:
+          - check-success=spellcheck
+          - check-success=linting
+
+
+    merge_method: squash
   - name: default
     conditions:
       - and: *pr_status
       - and: *ci_status
+
 
 pull_request_rules:
   - name: Convert wip to draft PR
@@ -21,28 +58,10 @@ pull_request_rules:
       - label=wip
     actions:
       edit:
-        draft: True
+        draft: true
       label:
         remove:
           - wip
-  - name: Automatic merging by approval
-    conditions:
-      - "#approved-reviews-by>=1"
-    actions:
-      queue:
-        name: default
-        method: squash
-  - name: Automatic merging by owner
-    conditions:
-      - or:
-          - author=kc-bot
-          - author=kamontat
-          - author=dependabot
-      - base=main
-    actions:
-      queue:
-        name: default
-        method: squash
   - name: Notify author on queue failure
     conditions:
       - "check-failure=Queue: Embarked in merge train"
@@ -55,3 +74,7 @@ pull_request_rules:
           with `@mergifyio requeue`.
           More details can be found on the `Queue: Embarked in merge train`
           check-run.
+  - name: Automatic merging by approval + Automatic merging by owner
+    conditions: []
+    actions:
+      queue:
