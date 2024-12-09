@@ -23,7 +23,7 @@ export COMPONENTS=(
   '1password'
   ansible ansible-core argocd aws
   bun
-  cloudflared cmctl codecrafters consul cookiecutter copier
+  chezmoi cloudflared cmctl codecrafters consul cookiecutter copier
   eksctl
   flux2
   gh git-chglog go-jsonnet golang golangci-lint gomplate goreleaser gradle
