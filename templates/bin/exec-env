@@ -16,7 +16,7 @@
 
 ## -----------------------
 
-set -euo pipefail
+set -eo pipefail
 
 export KC_ASDF_PLUGIN_ENTRY_PATH=${BASH_SOURCE[0]}
 export KC_ASDF_PLUGIN_ENTRY_NAME
