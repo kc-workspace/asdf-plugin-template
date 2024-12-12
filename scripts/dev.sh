@@ -25,7 +25,7 @@ export COMPONENTS=(
   bun
   chezmoi cloudflared cmctl codecrafters consul cookiecutter copier
   eksctl
-  flux2
+  fastfetch flux2
   gh git-chglog go-jsonnet golang golangci-lint gomplate goreleaser gradle
   helm hub hyperfine
   jfrog jq jsonnet-bundler
